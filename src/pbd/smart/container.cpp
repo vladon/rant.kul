@@ -5,4 +5,4 @@
  *      Author: philix
  */
 
-#include "pbd/SmartVector.hpp"
+#include "pbd/smart/container.hpp"

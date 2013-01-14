@@ -15,7 +15,7 @@ namespace pbd {
 template <class T> class SmartVector{
 	private:
 		const std::vector<T*>* ts;
-		SmartVector<T>& operator=(const SmartVector& s){ return *this;}
+
 
 	public:
 		explicit SmartVector<T>(const std::vector<T*> * ts = 0 ) : ts(ts){}
@@ -28,6 +28,8 @@ template <class T> class SmartVector{
 				delete ts;
 			}
 		}
+
+		SmartVector<T>& operator=(const SmartVector& s){ return *this;}
 
 		const std::vector<T*>* get() const {
 			return ts;
