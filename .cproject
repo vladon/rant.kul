@@ -5,9 +5,12 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.debug.101481482.1192188328.1500700214.525061794.1875739157" moduleId="org.eclipse.cdt.core.settings" name="linux-static-64bit-debug">
 				<externalSettings>
 					<externalSetting>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/pbd.common"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/pbd.common/linux-static-64bit-debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="pbd.common" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/kul.common"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/kul"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/kul.common/linux-static-64bit-debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/kul/linux-static-64bit-debug"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="kul.common" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="RESOLVED" kind="libraryFile" name="kul" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -30,8 +33,7 @@
 								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.1184291825" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.239796949" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1467821642" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pbd.local/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pbd.common/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/kul/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="/home/philix/sand/repo/cpp/p/pugixml/1.2/src"/>
 									<listOptionValue builtIn="false" value="/home/philix/sand/repo/cpp/g/google/glog/make/include"/>
 									<listOptionValue builtIn="false" value="/home/philix/sand/repo/cpp/g/google/sparse/hash/make/src"/>
@@ -74,9 +76,12 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.debug.101481482.1192188328.1500700214.525061794.1875739157.248406291" moduleId="org.eclipse.cdt.core.settings" name="linux-static-64bit-debug-Weffc++">
 				<externalSettings>
 					<externalSetting>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/pbd.common"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/pbd.common/linux-static-64bit-debug-Weffc++"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="pbd.common" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/kul.common"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/kul"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/kul.common/linux-static-64bit-debug-Weffc++"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/kul/linux-static-64bit-debug-Weffc++"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="kul.common" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="RESOLVED" kind="libraryFile" name="kul" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -99,8 +104,8 @@
 								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.1096974010" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.1843825958" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1591387750" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pbd.common/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pbd.local/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/kul.common/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/kul.local/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="/home/philix/sand/repo/cpp/p/pugixml/1.2/src"/>
 									<listOptionValue builtIn="false" value="/home/philix/sand/repo/cpp/g/google/glog/make/include"/>
 									<listOptionValue builtIn="false" value="/home/philix/sand/repo/cpp/g/google/sparse/hash/make/src"/>
@@ -167,14 +172,14 @@
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Release">
-			<resource resourceType="PROJECT" workspacePath="/pbd.common"/>
+			<resource resourceType="PROJECT" workspacePath="/kul.common"/>
 		</configuration>
 		<configuration configurationName="linux-static-64bit-debug-Weffc++"/>
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/pbd.common"/>
+			<resource resourceType="PROJECT" workspacePath="/kul.common"/>
 		</configuration>
 		<configuration configurationName="linux-static-64bit-debug">
-			<resource resourceType="PROJECT" workspacePath="/pbd.common"/>
+			<resource resourceType="PROJECT" workspacePath="/kul.common"/>
 		</configuration>
 	</storageModule>
 </cproject>

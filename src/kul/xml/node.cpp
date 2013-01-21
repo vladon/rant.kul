@@ -5,11 +5,11 @@
  *      Author: philix
  */
 
-#include "pbd/xml.hpp"
+#include "kul/xml.hpp"
 
 #include "glog/logging.h"
 
-void pbd::xml::NodeFactory::log(const Node* node){
+void kul::xml::NodeFactory::log(const Node* node){
 	if(node->getChildren()->empty()) return;
 	LOG(INFO) << "printing children for node " << node->getName();
 	for(Node* n : *node->getChildren())
@@ -18,7 +18,7 @@ void pbd::xml::NodeFactory::log(const Node* node){
 		log(n);
 }
 
-std::vector<pbd::xml::Node*>* pbd::xml::NodeFactory::validate(std::vector<Node*>* nodes, const pugi::xml_node& node, const NodeValidator& v){
+std::vector<kul::xml::Node*>* kul::xml::NodeFactory::validate(std::vector<Node*>* nodes, const pugi::xml_node& node, const NodeValidator& v){
 
 	LOG(INFO) << "Document node name: 	" << node.name();
 	LOG(INFO) << "Document node path: 	" << node.path('/');
@@ -80,7 +80,7 @@ std::vector<pbd::xml::Node*>* pbd::xml::NodeFactory::validate(std::vector<Node*>
 	return nodes;
 }
 
-pbd::xml::Node* pbd::xml::NodeFactory::create(const std::string& location, const std::string& root, const NodeValidator& v){
+kul::xml::Node* kul::xml::NodeFactory::create(const std::string& location, const std::string& root, const NodeValidator& v){
 
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(location.c_str());
@@ -95,10 +95,10 @@ pbd::xml::Node* pbd::xml::NodeFactory::create(const std::string& location, const
 	}
 	LOG(INFO) << "Validing xml file";
 
-	return new Node(validate(new std::vector<pbd::xml::Node*>(), doc.child(root.c_str()), v), root);
+	return new Node(validate(new std::vector<kul::xml::Node*>(), doc.child(root.c_str()), v), root);
 }
 
-const pbd::xml::Node& pbd::xml::Node::operator[](std::string s) const{
+const kul::xml::Node& kul::xml::Node::operator[](std::string s) const{
 
 	for(const Node* n : *this->getChildren())
 		if(s.compare(n->getName()) == 0)
