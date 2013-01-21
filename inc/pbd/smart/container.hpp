@@ -21,7 +21,7 @@ template <class T> class SmartVector{
 		~SmartVector() {
 			if(ts){
 				for(typename std::vector<T*, std::allocator<T*> >::const_iterator it = ts->begin();  it != ts->end(); it++){
-					delete *it;
+					if(*it) delete *it;
 				}
 				delete ts;
 			}
