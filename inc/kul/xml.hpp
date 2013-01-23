@@ -15,7 +15,7 @@
 
 #include "pugixml.hpp"
 
-#include "kul/smart/container.hpp"
+#include "kul/smart.hpp"
 
 #include "sparsehash/sparse_hash_map"
 
@@ -46,12 +46,12 @@ class NodeFactory{
 
 class Node{
 	private:
-		const SmartVector<Node> children;
+		const smart::Vector<Node> children;
 		//TODO attributes
 		const std::string name;
 	public:
 		Node(const std::vector<Node*>* children, const std::string name) :
-			children(SmartVector<Node>(children)),
+			children(smart::Vector<Node>(children)),
 			name(name){}
 		const Node& operator[](std::string s) const;
 		const std::vector<Node*>*	getChildren()		const { return this->children.get(); }
