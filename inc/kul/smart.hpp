@@ -10,33 +10,49 @@
 
 #include <vector>
 
-namespace kul { namespace smart{
+#include "glog/logging.h"
 
-class test{ public: void Test();};
+#include "kul/alloc.hpp"
+
+namespace kul { namespace smart{
 
 template <class T> class Iterator{
 	private:
-		const T* t;
+		T* t;
 		int pos;
 	public:
-		Iterator(const T* t, int pos) : t(t), pos(pos){}
-		const Iterator& 	operator++() 									 				{ ++pos; return *this;}
-		const bool 			operator!=		(const Iterator& i)	const 	{ return pos != i.pos;}
-		const T					operator*() 										const 	{ return t[pos];}
+		Iterator(T* t, int pos) : t(t), pos(pos){}
+		Iterator& 	operator++() 									 					{ ++pos; return *this;}
+		bool 			operator!=		(const Iterator& i)		const 	{ return pos != i.pos;}
+		T&				operator*() 											const 	{ return t[pos];}
 };
+
+template <class T> class ArrayHelper;
 
 template <class T> class Array{
 	private:
-		const T* ts;
+		T* ts;
+		int cap, siz;
+		Array& swap(const Array& a)	{ T* ots = ts; T* nts = new T[a.siz]; 			std::copy(&a.ts[0]	, &a.ts[a.siz], nts); 						ts = nts; delete[] ots; 	siz=a.siz; cap=a.cap; return *this;}
+		void add(T* p){ if(siz == cap)	{ T* ots = ts; T* nts = new T[cap + 10]; 	std::copy(&ts[0]		, &ts[siz]		, nts); cap += 10; 	ts = nts; delete[] ots;} T& r = *p;  ts[siz++] = r; delete p;}
 	public:
-		Array(T* ts) : ts(ts){}
-		Array(std::vector<T*>& vts) 	{ std::copy(vts.begin()	, vts.end()	, ts);}
-		Array(std::vector<T*>* vts) 	{ std::copy(vts->begin(), vts->end()	, ts);}
-		~Array(){ delete[] ts; }
-		const T* 	get() 							const { return ts;}
-		const int 	size() 						const { return (sizeof(ts)/sizeof(T)); }
-		const Iterator<T> begin()		const { return Iterator<T>(ts, 0); }
-		const Iterator<T> end()			const { return Iterator<T>(ts, this->size() + 1); }
+		Array() : ts(new T[1]), cap(1), siz(0){}
+		Array(const Array& a) : ts(0), cap(0), siz(0)		{ swap(a); }
+		~Array()																			{ if(ts) delete[] ts; }
+		Array&						operator=(const Array& a)	{ return swap(a); }
+		ArrayHelper<T>	add()												{ return ArrayHelper<T>(this); }
+		const int& 				size() 			const						{ return this->siz; }
+		Iterator<T> 			begin()			const						{ return Iterator<T>(ts, 0); }
+		Iterator<T> 			end()				const						{ return Iterator<T>(ts, this->size()); }
+		friend class ArrayHelper<T>;
+};
+
+template <class T> class ArrayHelper{
+	private:
+		Array<T>* ts;
+	public:
+		ArrayHelper(Array<T>* ts) : ts(ts){}
+		ArrayHelper& operator()(T* t){ ts->add(t); return *this;}
 };
 
 template <class T> class Vector{
@@ -45,19 +61,14 @@ template <class T> class Vector{
 	public:
 		explicit Vector<T>(const std::vector<T*> * ts = 0 ) : ts(ts){}
 		Vector<T>(const Vector<T>& s) : ts(s.get()){}
-		~Vector() {
-			if(ts){
-				for(typename std::vector<T*, std::allocator<T*> >::const_iterator it = ts->begin();  it != ts->end(); it++){
-					if(*it) delete *it;
-				}
-				delete ts;
-			}
-		}
-		Vector<T>& 						operator=(const Vector& s) 	const { return *this;}
-		const std::vector<T*>* 	get() 													const { return ts; }
-		const std::vector<T*>* 	operator->() 									const { return ts; }
+		~Vector() { if(ts){ for(T* t : *ts) if(t) delete t; delete ts; } }
+		Vector<T>& 						operator=(const Vector& s)const { return *this;}
+		const std::vector<T*>* 	get() 												const { return ts; }
+		const int& 							size() 											const	 { return this->ts.size(); }
+		Iterator<T> 						begin()											const	 { return Iterator<T>(ts, 0); }
+		Iterator<T> 						end()												const	 { return Iterator<T>(ts, this->size()); }
+		const std::vector<T*>* 	operator->() 								const { return ts; }
 };
-
 
 
 };};

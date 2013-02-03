@@ -1,8 +1,11 @@
 /*
- * SmartVector.cpp
+ * Array.cpp
  *
- *  Created on: 13 Jan 2013
+ *  Created on: 26 Jan 2013
  *      Author: philix
  */
 
 #include "kul/smart.hpp"
+
+
+

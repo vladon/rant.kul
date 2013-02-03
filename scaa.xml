@@ -1,0 +1,64 @@
+<scaa>
+	<project>
+		<name>kul</name>		
+		<version>0.0.1</version>
+	</project>	
+	<includes>
+		<include>./inc</include>
+		<include>/home/philix/sand/repo/cpp/p/pugixml/1.2/src</include>
+		<include>/home/philix/sand/repo/cpp/g/google/glog/make/include</include>
+		<include>/home/philix/sand/repo/cpp/g/google/sparse/hash/make/src</include>
+	</includes>
+
+	<build type="lib" mode="static"> <!-- used when no profile is specified. supplied default values to profiles if required -->		<artifact>
+			<name></name> <!-- defaults to ${project-name}-${profile}-${version} -->
+			<extension></extension>
+			<prefix></prefix>
+		</artifact>
+		<env>
+			<vars>
+				<var name="PATH" mode="replace"></var> <!-- modes = append/prepend/replace name IS CASE SENSITIVE!--> 
+			</vars>
+		</env>		
+		<files>
+			<file type="cpp">
+				<archiver>ar</archiver>
+				<assembler>as</assembler>
+				<compiler>ccache g++ -m64</compiler>
+				<linker>ccache g++ -m64</linker>
+				<args>
+					<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
+					<arg>-O0</arg><arg>-g3</arg><arg>-Wall</arg>
+					<arg>-c </arg><arg>-fmessage-length=0</arg>
+				</args>
+			</file>
+			<file type="c">
+				<archiver>ar</archiver>
+				<assembler>as</assembler>
+				<compiler>ccache gcc -m64</compiler>
+				<linker>ccache gcc -m64</linker>
+				<args>
+					<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
+					<arg>-O0</arg><arg>-g3</arg><arg>-Wall</arg>
+					<arg>-c </arg><arg>-fmessage-length=0</arg>
+				</args>
+			</file>
+			<file type="cu">
+				<compiler>ccache nvcc -c -m64</compiler>
+			</file>
+		</files>
+	</build>
+	<profiles>
+		<profile name="linux-static-64bit-debug">  <!-- Name can anything, must be unique, is mandatory -->
+
+			<build type="lib" mode="static"/>
+		</profile>
+	</profiles>
+</scaa>
+
+
+<!-- 
+DateTime formatting reference
+http://www.boost.org/doc/libs/1_52_0/doc/html/date_time/date_time_io.html#date_time.format_flags
+-->
+
