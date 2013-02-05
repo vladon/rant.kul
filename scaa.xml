@@ -11,7 +11,7 @@
 	</includes>
 
 	<build type="lib" mode="static"> <!-- used when no profile is specified. supplied default values to profiles if required -->		
-
+	
 		<env>
 			<vars>
 				<var name="PATH" mode="replace"></var> <!-- modes = append/prepend/replace name IS CASE SENSITIVE!--> 
