@@ -10,11 +10,8 @@
 		<include>/home/philix/sand/repo/cpp/g/google/sparse/hash/make/src</include>
 	</includes>
 
-	<build type="lib" mode="static"> <!-- used when no profile is specified. supplied default values to profiles if required -->		<artifact>
-			<name></name> <!-- defaults to ${project-name}-${profile}-${version} -->
-			<extension></extension>
-			<prefix></prefix>
-		</artifact>
+	<build type="lib" mode="static"> <!-- used when no profile is specified. supplied default values to profiles if required -->		
+
 		<env>
 			<vars>
 				<var name="PATH" mode="replace"></var> <!-- modes = append/prepend/replace name IS CASE SENSITIVE!--> 
