@@ -54,10 +54,10 @@ class NodeFactory{
 class Node{
 	private:
 		const smart::Vector<Node> children;
-		const stringToStringGMap attributes;
+		const StringToStringHashMap attributes;
 		const std::string name;
 	public:
-		Node(const std::vector<Node*>* c, const stringToStringGMap atts, const std::string n) :
+		Node(const std::vector<Node*>* c, const StringToStringHashMap atts, const std::string n) :
 			children(smart::Vector<Node>(c)), attributes(atts),
 			name(n){}
 		Node(const std::vector<Node*>* c, const std::string n) :
@@ -68,7 +68,7 @@ class Node{
 		const std::string		 				txt() const throw (Exception);
 		const std::string		 				att(const std::string& s) const throw (Exception);
 		const std::vector<Node*>&	getChildren()		const { return *this->children.get(); }
-		const stringToStringGMap&	getAttributes()	const	 { return attributes; }
+		const StringToStringHashMap&	getAttributes()	const	 { return attributes; }
 		const std::string& 					getName() 			const { return this->name; }
 };
 
@@ -76,7 +76,7 @@ class TextNode : public Node{
 	private:
 		const std::string text;
 	public:
-		TextNode(const stringToStringGMap atts, const std::string n, const std::string t) : Node(new std::vector<Node*>(), atts, n), text(t){}
+		TextNode(const StringToStringHashMap atts, const std::string n, const std::string t) : Node(new std::vector<Node*>(), atts, n), text(t){}
 		TextNode(const std::string n, const std::string t) : Node(new std::vector<Node*>(), n), text(t){}
 		const std::string getText() const { return text; }
 };

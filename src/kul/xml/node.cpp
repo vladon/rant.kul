@@ -64,7 +64,7 @@ std::vector<kul::xml::Node*>* kul::xml::NodeFactory::validate(std::vector<Node*>
 
 	for(std::pair<std::string, NodeValidator> pair  : v.getChildren()){
 		for(const pugi::xml_node& n : node.children(pair.first.c_str())){
-			stringToStringGMap atts;
+			StringToStringHashMap atts;
 			if(n.attributes().begin() != n.attributes().end())
 				for(pugi::xml_attribute a : n.attributes())
 					atts.insert(std::pair<std::string, std::string>(std::string(a.name()), std::string(a.value())));

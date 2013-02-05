@@ -23,8 +23,8 @@ struct StdStringComparator{
 		}
 };
 
-typedef google::sparse_hash_map<std::string, std::string, std::tr1::hash<std::string>, StdStringComparator> stringToStringGMap;
-typedef google::sparse_hash_set<std::string, std::tr1::hash<std::string>, StdStringComparator> stringGSet;
+typedef google::sparse_hash_map<std::string, std::string, std::tr1::hash<std::string>, StdStringComparator> StringToStringHashMap;
+typedef google::sparse_hash_set<std::string, std::tr1::hash<std::string>, StdStringComparator> StringHashSet;
 
 using namespace google;
 template <class T, class HashFcn = std::tr1::hash<std::string>, class EqualKey = StdStringComparator, class Alloc = libc_allocator_with_realloc<std::pair<const std::string, T> > >
