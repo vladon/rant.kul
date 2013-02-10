@@ -11,15 +11,15 @@
 #include "kul/xml.hpp"
 
 void kul::xml::NodeFactory::log(const Node* node){
-	if(node->getChildren().empty()) return;
-	LOG(INFO) << "printing children for node " << node->getName();
-	for(Node* n : node->getChildren())
-		LOG(INFO) << n->getName() <<  " is a child of node " << node->getName();
-	for(Node* n : node->getChildren())
+	if(node->children().empty()) return;
+	LOG(INFO) << "printing children for node " << node->name();
+	for(const Node* n : node->children())
+		LOG(INFO) << n->name() <<  " is a child of node " << node->name();
+	for(const Node* n : node->children())
 		log(n);
 }
 
-std::vector<kul::xml::Node*>* kul::xml::NodeFactory::validate(std::vector<Node*>* nodes, const pugi::xml_node& node, const NodeValidator& v){
+std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, std::vector<const Node*>* ns, const pugi::xml_node& node, const NodeValidator& v){
 	for(const pugi::xml_node& n : node.children()){
 		bool found = false;
 		for(std::pair<std::string, NodeValidator> pair  : v.getChildren()){
@@ -69,46 +69,47 @@ std::vector<kul::xml::Node*>* kul::xml::NodeFactory::validate(std::vector<Node*>
 				for(pugi::xml_attribute a : n.attributes())
 					atts.insert(std::pair<std::string, std::string>(std::string(a.name()), std::string(a.value())));
 			if(pair.second.isText() && n.text().empty())
-				nodes->push_back(new TextNode(atts, pair.first, ""));
-			else if(n.text().empty())
-				nodes->push_back(new Node(validate(new std::vector<Node*>, n, pair.second), atts, pair.first));
-			else if(!pair.second.isText())
+				ns->push_back(new TextNode(p, atts, pair.first, ""));
+			else if(n.text().empty()){
+				   Node** parent = new Node*;
+				ns->push_back((*parent = new Node(p, validate(parent, new std::vector<const Node*>, n, pair.second) , atts, pair.first)));
+			}else if(!pair.second.isText())
 				throw Exception("XML Exception: text not expected in node " + std::string(n.name()));
 			else
-				nodes->push_back(new TextNode(atts, pair.first, n.child_value()));
+				ns->push_back(new TextNode(p, atts, pair.first, n.child_value()));
 		}
 	}
 
-	return nodes;
+	return ns;
 }
 
-void kul::xml::NodeFactory::validateAttributes(const std::vector<Node*>& nodes, const NodeAttributeValidator& v){
+void kul::xml::NodeFactory::validateAttributes(const std::vector<const Node*>& nodes, const NodeAttributeValidator& v){
 	for(std::pair<std::string, std::vector<std::string> > valPair  : v.getAllowedValues()){
 		if(!valPair.second.empty()){
 			for(const Node* n : nodes){
 				bool f = false;
-				for(const std::pair<std::string, std::string>& attPair  : n->getAttributes())
+				for(const std::pair<std::string, std::string>& attPair  : n->attributes())
 					if(valPair.first.compare(attPair.first) == 0){
 						for(std::string s : valPair.second)
 							if(s.compare(attPair.second)){ f= true; break; }
 						if(f) break;
 					}
-				if(!f) throw Exception("Attribute " + valPair.first + " on node " + n->getName() + " is not one of the expected values!");
+				if(!f) throw Exception("Attribute " + valPair.first + " on node " + n->name() + " is not one of the expected values!");
 			}
 		}
 		for(const Node* n : nodes)
 			if(v.isMandatory()){
 				try{
 					n->att(valPair.first);
-				}catch(kul::xml::Exception& e){ throw Exception("Attribute " + valPair.first + " on node " + n->getName() + " is MANDATORY!");}
+				}catch(kul::xml::Exception& e){ throw Exception("Attribute " + valPair.first + " on node " + n->name() + " is MANDATORY!");}
 			}
 
 		if(v.isUnique()){
 			std::string name = "";
 			std::vector<std::string> atts;
 			for(const Node* n : nodes){
-				name = n->getName();
-				for(const std::pair<std::string, std::string>& attPair  : n->getAttributes())
+				name = n->name();
+				for(const std::pair<std::string, std::string>& attPair  : n->attributes())
 					if(valPair.first.compare(attPair.first) == 0)
 						atts.push_back(attPair.second);
 			}
@@ -123,13 +124,13 @@ void kul::xml::NodeFactory::validateAttributes(const std::vector<Node*>& nodes, 
 }
 
 void kul::xml::NodeFactory::validateAttributes(const Node& node, const NodeValidator& v){
-	for(const Node* n : node.getChildren()){
+	for(const Node* n : node.children()){
 		for(std::pair<std::string, NodeValidator> pair  : v.getChildren()){
-			if(pair.first.compare(n->getName()) == 0){
+			if(pair.first.compare(n->name()) == 0){
 				for(NodeAttributeValidator nav : pair.second.getAtVals()){
-					std::vector<Node*> ns;
-					for(Node* in : node.getChildren())
-						if(n->getName().compare(in->getName()) == 0)
+					std::vector<const Node*> ns;
+					for(const Node* in : node.children())
+						if(n->name().compare(in->name()) == 0)
 							ns.push_back(in);
 					validateAttributes(ns, nav);
 				}
@@ -139,56 +140,51 @@ void kul::xml::NodeFactory::validateAttributes(const Node& node, const NodeValid
 	}
 }
 
-kul::xml::Node* kul::xml::NodeFactory::create(const std::string& location, const std::string& root, const NodeValidator& v){
-
+const kul::xml::Node* kul::xml::NodeFactory::create(const std::string& location, const std::string& root, const NodeValidator& v){
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(location.c_str());
-
 	if(!result){
 		LOG(ERROR) << result.description();
 		throw Exception("PUGIXML Exception creation document - file not found potentially\n");
 	}
-
-	if(doc.child(root.c_str()).empty()){
-		throw Exception("root element \"" + root + "\" not found, malformed document");
-	}
-	LOG(INFO) << "Validing xml file";
-	Node* n = new Node(validate(new std::vector<kul::xml::Node*>(), doc.child(root.c_str()), v), root);
-
-	std::vector<Node*> rootV; rootV.push_back(n);
+	if(doc.child(root.c_str()).empty())
+		throw Exception("root element \"" + root + "\" not found, malformed document");	
+	Node** n = new Node*;
+	*n = new Node(0, validate(n, new std::vector<const kul::xml::Node*>(), doc.child(root.c_str()), v), root);
+	std::vector<const Node*> rootV; rootV.push_back(*n);
 	for(const NodeAttributeValidator& nav : v.getAtVals()){
 		validateAttributes(rootV, nav);
 	}
-	validateAttributes(*n, v);
-	return n;
+	validateAttributes(**n, v);
+	return *n;
 }
 
 const kul::xml::Node& kul::xml::Node::operator[](const std::string& s) const  throw (Exception){
-	for(const Node* n : this->getChildren())
-		if(s.compare(n->getName()) == 0)
+	for(const Node* n : this->children())
+		if(s.compare(n->name()) == 0)
 			return *n;
-	throw Exception("XML Exception: Element " + s + " doesn't exist under node " + this->getName());
+	throw Exception("XML Exception: Element " + s + " doesn't exist under node " + this->name());
 }
 
 const kul::xml::Node& kul::xml::Node::operator()(const std::string& c, const std::string& a, const std::string& v) const throw (Exception){
-	for(const Node* n : this->getChildren())
-			if(c.compare(n->getName()) == 0){
+	for(const Node* n : this->children())
+			if(c.compare(n->name()) == 0){
 				try{
 					if(n->att(a).compare(v) == 0) return *n;
 				}catch(const Exception& e){ LOG(INFO) << e.what();}
 			}
-	throw Exception("XML Exception: No Element " + c + " contains attribute " + a + " with value " + v + " under node " + this->getName());
+	throw Exception("XML Exception: No Element " + c + " contains attribute " + a + " with value " + v + " under node " + this->name());
 }
 
 const std::string kul::xml::Node::txt() const throw (Exception){
 	const TextNode* txt = static_cast<const TextNode*>(this);
-	if(txt) return txt->getText();
-	throw Exception("XML Exception: " +this->getName() + " is not a text node");
+	if(txt) return txt->txt();
+	throw Exception("XML Exception: " +this->name() + " is not a text node");
 }
 
 const std::string kul::xml::Node::att(const std::string& s) const throw (Exception){
-	for(const std::pair<const std::string, std::string> p : this->getAttributes())
+	for(const std::pair<const std::string, std::string> p : this->attributes())
 		if(s.compare(p.first) == 0)
 			return p.second;
-	throw Exception("XML Exception: Attribute " + s + " doesn't exist under node " + this->getName());
+	throw Exception("XML Exception: Attribute " + s + " doesn't exist under node " + this->name());
 }

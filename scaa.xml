@@ -11,7 +11,9 @@
 	</includes>
 
 	<build type="lib" mode="static"> <!-- used when no profile is specified. supplied default values to profiles if required -->		
-	
+		<artifacts>
+			<artifact name="libkul.a">cpp</artifact> <!-- one artifact mandatory for exe -->
+		</artifacts>
 		<env>
 			<vars>
 				<var name="PATH" mode="replace"></var> <!-- modes = append/prepend/replace name IS CASE SENSITIVE!--> 
@@ -19,7 +21,7 @@
 		</env>		
 		<files>
 			<file type="cpp">
-				<archiver>ar</archiver>
+				<archiver>ar -r</archiver>
 				<assembler>as</assembler>
 				<compiler>ccache g++ -m64</compiler>
 				<linker>ccache g++ -m64</linker>
@@ -30,7 +32,7 @@
 				</args>
 			</file>
 			<file type="c">
-				<archiver>ar</archiver>
+				<archiver>ar -r</archiver>
 				<assembler>as</assembler>
 				<compiler>ccache gcc -m64</compiler>
 				<linker>ccache gcc -m64</linker>

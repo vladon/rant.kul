@@ -41,11 +41,11 @@ class Exception : public std::runtime_error{
 
 class NodeFactory{
 	private:
-		static std::vector<Node*>* validate(std::vector<Node*>* ns, const pugi::xml_node& n, const NodeValidator& v);
-		static void validateAttributes(const std::vector<Node*>& n, const NodeAttributeValidator& v);
+		static std::vector<const Node*>* validate(Node** p, std::vector<const Node*>* ns, const pugi::xml_node& n, const NodeValidator& v);
+		static void validateAttributes(const std::vector<const Node*>& n, const NodeAttributeValidator& v);
 		static void validateAttributes(const Node& n, const NodeValidator& v);
 	public:
-		static Node* create(const std::string& l, const std::string& r, const NodeValidator& v);
+		static const Node* create(const std::string& l, const std::string& r, const NodeValidator& v);
 		static void writeToFile(std::string f, const NodeValidator& v);
 		static void log(const Node* n);
 
@@ -53,32 +53,38 @@ class NodeFactory{
 
 class Node{
 	private:
-		const smart::Vector<Node> children;
-		const StringToStringHashMap attributes;
-		const std::string name;
+		Node**const prev;
+		const smart::Vector<const Node> kinder;
+		const StringToStringHashMap atts;
+		const std::string namai;
 	public:
-		Node(const std::vector<Node*>* c, const StringToStringHashMap atts, const std::string n) :
-			children(smart::Vector<Node>(c)), attributes(atts),
-			name(n){}
-		Node(const std::vector<Node*>* c, const std::string n) :
-			children(smart::Vector<Node>(c)),
-			name(n){}
-		const Node& 								operator[](const std::string& s) const throw (Exception);
-		const Node&				 				operator()(const std::string& c, const std::string& a, const std::string& v) const throw (Exception);
-		const std::string		 				txt() const throw (Exception);
-		const std::string		 				att(const std::string& s) const throw (Exception);
-		const std::vector<Node*>&	getChildren()		const { return *this->children.get(); }
-		const StringToStringHashMap&	getAttributes()	const	 { return attributes; }
-		const std::string& 					getName() 			const { return this->name; }
+		Node(Node**const p, const std::vector<const Node*>* c, const StringToStringHashMap atts, const std::string n) :
+			prev(p),
+			kinder(smart::Vector<const Node>(c)), atts(atts),
+			namai(n){}
+		Node(Node**const p, const std::vector<const Node*>* c, const std::string n) :
+			prev(p),
+			kinder(smart::Vector<const Node>(c)),
+			namai(n){}
+		const Node& 					operator[](const std::string& s) const throw (Exception);
+		const Node&				 		operator()(const std::string& c, const std::string& a, const std::string& v) const throw (Exception);
+		const Node*						parent() const{ return *prev; }
+		const std::string		 		txt() 			const throw (Exception);
+		const std::string		 		att(const std::string& s) const throw (Exception);
+		const std::vector<const Node*>&	children()		const { return *this->kinder.get(); }
+		const StringToStringHashMap&	attributes()	const	 { return atts; }
+		const std::string& 				name() 			const { return this->namai; }
 };
 
 class TextNode : public Node{
 	private:
 		const std::string text;
 	public:
-		TextNode(const StringToStringHashMap atts, const std::string n, const std::string t) : Node(new std::vector<Node*>(), atts, n), text(t){}
-		TextNode(const std::string n, const std::string t) : Node(new std::vector<Node*>(), n), text(t){}
-		const std::string getText() const { return text; }
+		TextNode(Node**const p, const StringToStringHashMap atts, const std::string n, const std::string t) :
+			Node(p, new std::vector<const Node*>(), atts, n), text(t){}
+		TextNode(Node**const p, const std::string n, const std::string t) :
+			Node(p, new std::vector<const Node*>(), n), text(t){}
+		const std::string txt() const { return text; }
 };
 
 template <class T>
@@ -87,17 +93,17 @@ class NodeUser{
 		NodeUser();
 	protected:
 		std::shared_ptr<const Node> rootNode;
-		const std::string file;
-		const void 						reset(Node* node)	{ rootNode.reset(node);}
+		const std::string f;
+		const void 						reset(const Node* node)	{ rootNode.reset(node);}
 		const void						reset() 							{ return rootNode.reset(); }
 
 	public:
-		NodeUser(std::string f) : rootNode(0), file(f) {}
+		NodeUser(std::string f) : rootNode(0), f(f) {}
 		virtual ~NodeUser(){}
 		virtual T* 									get() = 0;
-		const virtual NodeValidator 	getValidator() = 0;
-		const Node* 								getRoot() 	const		{ return rootNode.get(); }
-		const std::string& 					getFile() 		const		{ return file; }
+		const virtual NodeValidator 	validator() = 0;
+		const Node* 								root() 	const		{ return rootNode.get(); }
+		const std::string& 					file() 		const		{ return f; }
 };
 
 class NodeValidator{
@@ -151,6 +157,17 @@ class NodeAttributeValidator{
 		const bool 							isUnique() 						const { return unique; }
 		const bool 							isMandatory() 				const { return mandatory; }
 		const stringToVectorTGMap<std::string>& 	getAllowedValues() 	const { return allowedValues;}
+};
+
+class NodeTextFunction{
+	private:
+		const char* f;
+	public:
+		NodeTextFunction(const char* f) : f(f){}
+		virtual ~NodeTextFunction(){}
+		virtual const char* txt() = 0;
+
+
 };
 
 
