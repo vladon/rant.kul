@@ -48,7 +48,7 @@
 		</files>
 	</build>
 	<profiles>
-		<profile name="linux-static-64bit-debug">  <!-- Name can anything, must be unique, is mandatory -->
+		<profile name="scaa">  <!-- Name can anything, must be unique, is mandatory -->
 
 			<build type="lib" mode="static"/>
 		</profile>
