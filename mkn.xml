@@ -1,4 +1,4 @@
-<scaa>
+<maiken>
 	<project>
 		<name>kul</name>		
 		<version>0.0.1</version>
@@ -48,12 +48,12 @@
 		</files>
 	</build>
 	<profiles>
-		<profile name="scaa">  <!-- Name can anything, must be unique, is mandatory -->
+		<profile name="maiken">  <!-- Name can anything, must be unique, is mandatory -->
 
 			<build type="lib" mode="static"/>
 		</profile>
 	</profiles>
-</scaa>
+</maiken>
 
 
 <!-- 

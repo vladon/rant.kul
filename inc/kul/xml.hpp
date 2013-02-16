@@ -16,6 +16,7 @@
 #include <stdexcept>
 
 #include "kul/smart.hpp"
+#include "kul/except.hpp"
 #include "kul/ext/google.hpp"
 
 namespace kul{ namespace xml{
@@ -28,15 +29,9 @@ class NodeAttributeValidator;
 
 typedef  kul::ext::goo_gle::stringToTGMap<NodeValidator> stringToNodeValidatorGMap;
 
-class Exception : public std::runtime_error{
-	private:
-		Exception& operator=(Exception& e){ return *this;}
+class Exception : public kul::Exception{
 	public:
-		~Exception() throw(){}
-		Exception(std::string s) : std::runtime_error(s){}
-		Exception(const Exception& e) : std::runtime_error(e.what()){}
-
-		const char* what() const throw() {return std::runtime_error::what();}
+		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
 };
 
 class NodeFactory{

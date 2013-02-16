@@ -35,7 +35,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 						}
 						if(!attFound) {
 							LOG(ERROR) << "Attribute \"" << a.name() << "\" for Element : \"" << n.name() << "\" is unknown";
-							throw Exception("XML Exception: Attribute: \"" + std::string(a.name()) + "\" for Element : \"" + std::string(n.name()) + "\" is unknown");
+							throw Exception(__FILE__, __LINE__, "XML Exception: Attribute: \"" + std::string(a.name()) + "\" for Element : \"" + std::string(n.name()) + "\" is unknown");
 						}
 					}
 				}
@@ -44,7 +44,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 		}
 		if(!found){
 			LOG(ERROR) << "Element \"" << n.name() << "\" is unknown";
-			throw Exception("XML Exception: Element " + std::string(n.name()) + " is unknown");
+			throw Exception(__FILE__, __LINE__, "XML Exception: Element " + std::string(n.name()) + " is unknown");
 		}
 	}
 
@@ -53,12 +53,12 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 		if(pair.second.getMin() != 0 && i < pair.second.getMin()){
 			LOG(ERROR) << "Invalid minimum number of Element: " << pair.first;
 			LOG(ERROR) << "Minimum number expected: " << pair.second.getMin();
-			throw Exception("XML Exception: Invalid minimum number of Element: " + pair.first);
+			throw Exception(__FILE__, __LINE__, "XML Exception: Invalid minimum number of Element: " + pair.first);
 		}
 		if(pair.second.getMax() != 0 && i > pair.second.getMax()){
 			LOG(ERROR) << "Invalid maximum number of Element: " << pair.first;
 			LOG(ERROR) << "Maximum number expected: " << pair.second.getMax();
-			throw Exception("XML Exception: Invalid maximum number of Element: " + pair.first);
+			throw Exception(__FILE__, __LINE__, "XML Exception: Invalid maximum number of Element: " + pair.first);
 		}
 	}
 
@@ -74,7 +74,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 				   Node** parent = new Node*;
 				ns->push_back((*parent = new Node(p, validate(parent, new std::vector<const Node*>, n, pair.second) , atts, pair.first)));
 			}else if(!pair.second.isText())
-				throw Exception("XML Exception: text not expected in node " + std::string(n.name()));
+				throw Exception(__FILE__, __LINE__, "XML Exception: text not expected in node " + std::string(n.name()));
 			else
 				ns->push_back(new TextNode(p, atts, pair.first, n.child_value()));
 		}
@@ -94,14 +94,14 @@ void kul::xml::NodeFactory::validateAttributes(const std::vector<const Node*>& n
 							if(s.compare(attPair.second)){ f= true; break; }
 						if(f) break;
 					}
-				if(!f) throw Exception("Attribute " + valPair.first + " on node " + n->name() + " is not one of the expected values!");
+				if(!f) throw Exception(__FILE__, __LINE__, "Attribute " + valPair.first + " on node " + n->name() + " is not one of the expected values!");
 			}
 		}
 		for(const Node* n : nodes)
 			if(v.isMandatory()){
 				try{
 					n->att(valPair.first);
-				}catch(kul::xml::Exception& e){ throw Exception("Attribute " + valPair.first + " on node " + n->name() + " is MANDATORY!");}
+				}catch(kul::xml::Exception& e){ throw Exception(__FILE__, __LINE__, "Attribute " + valPair.first + " on node " + n->name() + " is MANDATORY!");}
 			}
 
 		if(v.isUnique()){
@@ -117,7 +117,7 @@ void kul::xml::NodeFactory::validateAttributes(const std::vector<const Node*>& n
 				int i = 0;
 				for(std::string s2 : atts)
 					if(s1.compare(s2) == 0) i++;
-				if(i > 1) throw Exception("Attribute " + valPair.first + " on node " + name + " must be unique!");
+				if(i > 1) throw Exception(__FILE__, __LINE__, "Attribute " + valPair.first + " on node " + name + " must be unique!");
 			}
 		}
 	}
@@ -145,10 +145,10 @@ const kul::xml::Node* kul::xml::NodeFactory::create(const std::string& location,
 	pugi::xml_parse_result result = doc.load_file(location.c_str());
 	if(!result){
 		LOG(ERROR) << result.description();
-		throw Exception("PUGIXML Exception creation document - file not found potentially\n");
+		throw Exception(__FILE__, __LINE__, "PUGIXML Exception creation document - file not found potentially\n");
 	}
 	if(doc.child(root.c_str()).empty())
-		throw Exception("root element \"" + root + "\" not found, malformed document");	
+		throw Exception(__FILE__, __LINE__, "root element \"" + root + "\" not found, malformed document");
 	Node** n = new Node*;
 	*n = new Node(0, validate(n, new std::vector<const kul::xml::Node*>(), doc.child(root.c_str()), v), root);
 	std::vector<const Node*> rootV; rootV.push_back(*n);
@@ -163,7 +163,7 @@ const kul::xml::Node& kul::xml::Node::operator[](const std::string& s) const  th
 	for(const Node* n : this->children())
 		if(s.compare(n->name()) == 0)
 			return *n;
-	throw Exception("XML Exception: Element " + s + " doesn't exist under node " + this->name());
+	throw Exception(__FILE__, __LINE__, "XML Exception: Element " + s + " doesn't exist under node " + this->name());
 }
 
 const kul::xml::Node& kul::xml::Node::operator()(const std::string& c, const std::string& a, const std::string& v) const throw (Exception){
@@ -173,18 +173,18 @@ const kul::xml::Node& kul::xml::Node::operator()(const std::string& c, const std
 					if(n->att(a).compare(v) == 0) return *n;
 				}catch(const Exception& e){ LOG(INFO) << e.what();}
 			}
-	throw Exception("XML Exception: No Element " + c + " contains attribute " + a + " with value " + v + " under node " + this->name());
+	throw Exception(__FILE__, __LINE__, "XML Exception: No Element " + c + " contains attribute " + a + " with value " + v + " under node " + this->name());
 }
 
 const std::string kul::xml::Node::txt() const throw (Exception){
 	const TextNode* txt = static_cast<const TextNode*>(this);
 	if(txt) return txt->txt();
-	throw Exception("XML Exception: " +this->name() + " is not a text node");
+	throw Exception(__FILE__, __LINE__, "XML Exception: " +this->name() + " is not a text node");
 }
 
 const std::string kul::xml::Node::att(const std::string& s) const throw (Exception){
 	for(const std::pair<const std::string, std::string> p : this->attributes())
 		if(s.compare(p.first) == 0)
 			return p.second;
-	throw Exception("XML Exception: Attribute " + s + " doesn't exist under node " + this->name());
+	throw Exception(__FILE__, __LINE__, "XML Exception: Attribute " + s + " doesn't exist under node " + this->name());
 }
