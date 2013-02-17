@@ -25,14 +25,14 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 		for(std::pair<std::string, NodeValidator> pair  : v.getChildren()){
 			if(std::string(n.name()).compare(pair.first) == 0){
 				if(n.attributes().begin() != n.attributes().end()){
-					for(pugi::xml_attribute a : n.attributes()){
+					for(pugi::xml_attribute a : n.attributes()){						
 						bool attFound = false;
 						for(NodeAttributeValidator nav : pair.second.getAtVals()){
 							for(std::pair<std::string, std::vector<std::string> > attVals : nav.getAllowedValues()){
 								if(attVals.first.compare(std::string(a.name())) == 0){ attFound = true; break;}
 							}
 							if(attFound) break;
-						}
+						}	
 						if(!attFound) {
 							LOG(ERROR) << "Attribute \"" << a.name() << "\" for Element : \"" << n.name() << "\" is unknown";
 							throw Exception(__FILE__, __LINE__, "XML Exception: Attribute: \"" + std::string(a.name()) + "\" for Element : \"" + std::string(n.name()) + "\" is unknown");
@@ -91,17 +91,17 @@ void kul::xml::NodeFactory::validateAttributes(const std::vector<const Node*>& n
 				for(const std::pair<std::string, std::string>& attPair  : n->attributes())
 					if(valPair.first.compare(attPair.first) == 0){
 						for(std::string s : valPair.second)
-							if(s.compare(attPair.second)){ f= true; break; }
+							if(s.compare(attPair.second) == 0){ f = true; break; }
 						if(f) break;
 					}
-				if(!f) throw Exception(__FILE__, __LINE__, "Attribute " + valPair.first + " on node " + n->name() + " is not one of the expected values!");
+				if(!f) throw Exception(__FILE__, __LINE__, "Attribute \"" + valPair.first + "\" on node \"" + n->name() + "\" is not one of the expected values!");
 			}
 		}
 		for(const Node* n : nodes)
 			if(v.isMandatory()){
 				try{
 					n->att(valPair.first);
-				}catch(kul::xml::Exception& e){ throw Exception(__FILE__, __LINE__, "Attribute " + valPair.first + " on node " + n->name() + " is MANDATORY!");}
+				}catch(kul::xml::Exception& e){ throw Exception(__FILE__, __LINE__, "Attribute \"" + valPair.first + "\" on node \"" + n->name() + "\" is MANDATORY!");}
 			}
 
 		if(v.isUnique()){
@@ -145,7 +145,7 @@ const kul::xml::Node* kul::xml::NodeFactory::create(const std::string& location,
 	pugi::xml_parse_result result = doc.load_file(location.c_str());
 	if(!result){
 		LOG(ERROR) << result.description();
-		throw Exception(__FILE__, __LINE__, "PUGIXML Exception creation document - file not found potentially\n");
+		throw Exception(__FILE__, __LINE__, "PUGIXML Exception: " + std::string(result.description()));
 	}
 	if(doc.child(root.c_str()).empty())
 		throw Exception(__FILE__, __LINE__, "root element \"" + root + "\" not found, malformed document");

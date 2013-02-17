@@ -16,7 +16,8 @@
 		</artifacts>
 		<env>
 			<vars>
-				<var name="PATH" mode="replace"></var> <!-- modes = append/prepend/replace name IS CASE SENSITIVE!--> 
+				<!-- modes = append/prepend/replace name IS CASE SENSITIVE!-->
+				<!--var name="PATH" mode="replace"></var-->   
 			</vars>
 		</env>		
 		<files>
