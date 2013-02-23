@@ -10,9 +10,11 @@
 		<include>/home/philix/sand/repo/cpp/g/google/sparse/hash/make/src</include>
 	</includes>
 
-	<build type="lib" mode="static"> <!-- used when no profile is specified. supplied default values to profiles if required -->		
+	<!-- used when no profile is specified. supplied default values to profiles if required -->	
+	<build type="lib" mode="static"> 
 		<artifacts>
-			<artifact name="libkul.a">cpp</artifact> <!-- one artifact mandatory for exe -->
+			<!-- one artifact mandatory for exe -->
+			<artifact name="libkul.a">cpp</artifact> 
 		</artifacts>
 		<env>
 			<vars>
@@ -28,30 +30,34 @@
 				<linker>ccache g++ -m64</linker>
 				<args>
 					<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
-					<arg>-O0</arg><arg>-g3</arg><arg>-Wall</arg>
-					<arg>-c </arg><arg>-fmessage-length=0</arg>
+					<arg>-Wall</arg><arg>-c </arg><arg>-fmessage-length=0</arg>
 				</args>
-			</file>
-			<file type="c">
-				<archiver>ar -r</archiver>
-				<assembler>as</assembler>
-				<compiler>ccache gcc -m64</compiler>
-				<linker>ccache gcc -m64</linker>
-				<args>
-					<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
-					<arg>-O0</arg><arg>-g3</arg><arg>-Wall</arg>
-					<arg>-c </arg><arg>-fmessage-length=0</arg>
-				</args>
-			</file>
-			<file type="cu">
-				<compiler>ccache nvcc -c -m64</compiler>
 			</file>
 		</files>
 	</build>
 	<profiles>
-		<profile name="maiken">  <!-- Name can anything, must be unique, is mandatory -->
-
-			<build type="lib" mode="static"/>
+		<!-- Name can anything, must be unique, is mandatory -->
+		<profile name="release">
+			<build type="lib" mode="static">
+				<files>
+					<file type="cpp">
+						<args>
+							<arg>-O3</arg><arg>-g0</arg>
+						</args>
+					</file>
+				</files>
+			</build>
+		</profile>
+		<profile name="debug">
+			<build type="lib" mode="static">
+				<files>
+					<file type="cpp">
+						<args>
+							<arg>-O0</arg><arg>-g3</arg>
+						</args>
+					</file>
+				</files>
+			</build>
 		</profile>
 	</profiles>
 </maiken>

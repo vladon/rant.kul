@@ -90,15 +90,15 @@ class NodeUser{
 		std::shared_ptr<const Node> rootNode;
 		const std::string f;
 		const void 						reset(const Node* node)	{ rootNode.reset(node);}
-		const void						reset() 							{ return rootNode.reset(); }
+		const void						reset() 				{ return rootNode.reset(); }
 
 	public:
 		NodeUser(std::string f) : rootNode(0), f(f) {}
 		virtual ~NodeUser(){}
-		virtual T* 									get() = 0;
+		virtual T* 						get() = 0;
 		const virtual NodeValidator 	validator() = 0;
-		const Node* 								root() 	const		{ return rootNode.get(); }
-		const std::string& 					file() 		const		{ return f; }
+		const Node* 					root() 			const 	{ return rootNode.get(); }
+		const std::string& 				file() 			const	{ return f; }
 };
 
 class NodeValidator{
