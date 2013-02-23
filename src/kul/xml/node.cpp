@@ -159,6 +159,8 @@ const kul::xml::Node* kul::xml::NodeFactory::create(const std::string& location,
 	return *n;
 }
 
+void kul::xml::NodeFactory::writeToFile(std::string f, const NodeValidator& v){}
+
 const kul::xml::Node& kul::xml::Node::operator[](const std::string& s) const  throw (Exception){
 	for(const Node* n : this->children())
 		if(s.compare(n->name()) == 0)

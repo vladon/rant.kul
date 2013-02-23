@@ -11,8 +11,9 @@
 #include "kul/ext/google.hpp"
 
 #include <string>
-#include <string.h>
 #include <vector>
+#include <string.h>
+#include <sstream>
 
 namespace kul { namespace st_d{
 

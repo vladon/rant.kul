@@ -5,6 +5,7 @@
 	</project>	
 	<includes>
 		<include>./inc</include>
+		<include>./tst</include>
 		<include>/home/philix/sand/repo/cpp/p/pugixml/1.2/src</include>
 		<include>/home/philix/sand/repo/cpp/g/google/glog/make/include</include>
 		<include>/home/philix/sand/repo/cpp/g/google/sparse/hash/make/src</include>
