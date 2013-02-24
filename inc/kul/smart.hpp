@@ -39,6 +39,7 @@ template <class T> class Array{
 		Array() : ts(new T[1]), cap(1), siz(0)					{}
 		Array(const Array& a) : ts(0), cap(0), siz(0)			{ swap(a); }
 		~Array()												{ if(ts) delete[] ts; }
+		T&					operator[](const int& i)	const	{ return ts[i];}
 		Array&				operator=(const Array& a)			{ return swap(a); }
 		ArrayHelper<T>		add()								{ return ArrayHelper<T>(this); }
 		const int& 			size() 						const	{ return this->siz; }

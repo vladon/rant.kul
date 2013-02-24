@@ -10,7 +10,9 @@
 		<include>/home/philix/sand/repo/cpp/g/google/glog/make/include</include>
 		<include>/home/philix/sand/repo/cpp/g/google/sparse/hash/make/src</include>
 	</includes>
-
+	<libraries>
+		<library>rt</library>
+	</libraries>
 	<!-- used when no profile is specified. supplied default values to profiles if required -->	
 	<build type="lib" mode="static"> 
 		<artifacts>

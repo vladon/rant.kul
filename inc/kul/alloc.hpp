@@ -16,9 +16,9 @@ template <class T>
 class HeapObject{
 	private:
 		void *	operator 	new(size_t size);
-		void 		operator 	delete(void *p);
+		void 	operator 	delete(void *p);
 		void *	operator 	new[](size_t size);
-		void  		operator 	delete[](void *p);
+		void  	operator 	delete[](void *p);
 	public:
 		static T* create(){ return new T();}
 		template <class X, class Y> static T* create(X x, Y y) { return new T(x, y);}
