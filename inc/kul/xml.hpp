@@ -51,35 +51,35 @@ class Node{
 		Node**const prev;
 		const smart::Vector<const Node> kinder;
 		const StringToStringHashMap atts;
-		const char* n;
+		const std::string n;
 	public:
-		Node(Node**const p, const std::vector<const Node*>* c, const StringToStringHashMap atts, const char*n) :
+		Node(Node**const p, const std::vector<const Node*>* c, const StringToStringHashMap atts, const std::string n) :
 			prev(p),
 			kinder(smart::Vector<const Node>(c)), atts(atts),
 			n(n){}
-		Node(Node**const p, const std::vector<const Node*>* c, const char*n) :
+		Node(Node**const p, const std::vector<const Node*>* c, std::string n) :
 			prev(p),
 			kinder(smart::Vector<const Node>(c)),
 			n(n){}
 		const Node& 					operator[](const std::string& s) const throw (Exception);
 		const Node&				 		operator()(const std::string& c, const std::string& a, const std::string& v) const throw (Exception);
-		const Node*						parent() const{ return *prev; }
+		const Node*						parent() 		const{ return *prev; }
 		const std::string		 		txt() 			const throw (Exception);
 		const std::string		 		att(const std::string& s) const throw (Exception);
 		const std::vector<const Node*>&	children()		const { return *this->kinder.get(); }
 		const StringToStringHashMap&	attributes()	const	 { return atts; }
-		const char* 				name() 			const { return this->n; }
+		const std::string&				name() 			const { return this->n; }
 };
 
 class TextNode : public Node{
 	private:
-		const std::string text;
+		const std::string t;
 	public:
-		TextNode(Node**const p, const StringToStringHashMap atts, const char*n, const std::string t) :
-			Node(p, new std::vector<const Node*>(), atts, n), text(t){}
-		TextNode(Node**const p, const char*n, const std::string t) :
-			Node(p, new std::vector<const Node*>(), n), text(t){}
-		const std::string txt() const { return text; }
+		TextNode(Node**const p, const StringToStringHashMap atts, const std::string n, const std::string t) :
+			Node(p, new std::vector<const Node*>(), atts, n), t(t){}
+		TextNode(Node**const p, const std::string n, const std::string t) :
+			Node(p, new std::vector<const Node*>(), n), t(t){}
+		const std::string txt() const { return t; }
 };
 
 template <class T>

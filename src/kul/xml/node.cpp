@@ -13,8 +13,9 @@
 void kul::xml::NodeFactory::log(const Node* node){
 	if(node->children().empty()) return;
 	LOG(INFO) << "printing children for node " << node->name();
-	for(const Node* n : node->children())
+	for(const Node* n : node->children()){
 		LOG(INFO) << n->name() <<  " is a child of node " << node->name();
+	}
 	for(const Node* n : node->children())
 		log(n);
 }
@@ -69,14 +70,14 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 				for(pugi::xml_attribute a : n.attributes())
 					atts.insert(std::pair<std::string, std::string>(std::string(a.name()), std::string(a.value())));
 			if(pair.second.isText() && n.text().empty())
-				ns->push_back(new TextNode(p, atts, pair.first.c_str(), ""));
+				ns->push_back(new TextNode(p, atts, pair.first, ""));
 			else if(n.text().empty()){
 				   Node** parent = new Node*;
 				ns->push_back((*parent = new Node(p, validate(parent, new std::vector<const Node*>, n, pair.second) , atts, pair.first.c_str())));
 			}else if(!pair.second.isText())
 				throw Exception(__FILE__, __LINE__, "XML Exception: text not expected in node " + std::string(n.name()));
 			else
-				ns->push_back(new TextNode(p, atts, pair.first.c_str(), n.child_value()));
+				ns->push_back(new TextNode(p, atts, pair.first, n.child_value()));
 		}
 	}
 
@@ -130,7 +131,7 @@ void kul::xml::NodeFactory::validateAttributes(const Node& node, const NodeValid
 				for(NodeAttributeValidator nav : pair.second.getAtVals()){
 					std::vector<const Node*> ns;
 					for(const Node* in : node.children())
-						if(strcmp(n->name(), in->name()) == 0)
+						if(n->name().compare(in->name()) == 0)
 							ns.push_back(in);
 					validateAttributes(ns, nav);
 				}
