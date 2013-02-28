@@ -15,6 +15,7 @@
 #include <memory>
 #include <stdexcept>
 
+#include "kul/file.hpp"
 #include "kul/smart.hpp"
 #include "kul/except.hpp"
 #include "kul/ext/google.hpp"
@@ -27,8 +28,6 @@ class Node;
 class NodeValidator;
 class NodeAttributeValidator;
 
-typedef  kul::ext::goo_gle::stringToTGMap<NodeValidator> stringToNodeValidatorGMap;
-
 class Exception : public kul::Exception{
 	public:
 		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
@@ -39,9 +38,10 @@ class NodeFactory{
 		static std::vector<const Node*>* validate(Node** p, std::vector<const Node*>* ns, const pugi::xml_node& n, const NodeValidator& v);
 		static void validateAttributes(const std::vector<const Node*>& n, const NodeAttributeValidator& v);
 		static void validateAttributes(const Node& n, const NodeValidator& v);
+		static void writeToFile(const char*n, const NodeValidator& v, kul::file::Writer& w, int t);
 	public:
-		static const Node* create(const std::string& l, const std::string& r, const NodeValidator& v);
-		static void writeToFile(std::string f, const NodeValidator& v);
+		static const Node* create(const char*l, const char*r, const NodeValidator& v);
+		static void writeToFile(const char*n, const char*f,  const NodeValidator& v);
 		static void log(const Node* n);
 
 };
@@ -51,16 +51,16 @@ class Node{
 		Node**const prev;
 		const smart::Vector<const Node> kinder;
 		const StringToStringHashMap atts;
-		const std::string namai;
+		const char* n;
 	public:
-		Node(Node**const p, const std::vector<const Node*>* c, const StringToStringHashMap atts, const std::string n) :
+		Node(Node**const p, const std::vector<const Node*>* c, const StringToStringHashMap atts, const char*n) :
 			prev(p),
 			kinder(smart::Vector<const Node>(c)), atts(atts),
-			namai(n){}
-		Node(Node**const p, const std::vector<const Node*>* c, const std::string n) :
+			n(n){}
+		Node(Node**const p, const std::vector<const Node*>* c, const char*n) :
 			prev(p),
 			kinder(smart::Vector<const Node>(c)),
-			namai(n){}
+			n(n){}
 		const Node& 					operator[](const std::string& s) const throw (Exception);
 		const Node&				 		operator()(const std::string& c, const std::string& a, const std::string& v) const throw (Exception);
 		const Node*						parent() const{ return *prev; }
@@ -68,16 +68,16 @@ class Node{
 		const std::string		 		att(const std::string& s) const throw (Exception);
 		const std::vector<const Node*>&	children()		const { return *this->kinder.get(); }
 		const StringToStringHashMap&	attributes()	const	 { return atts; }
-		const std::string& 				name() 			const { return this->namai; }
+		const char* 				name() 			const { return this->n; }
 };
 
 class TextNode : public Node{
 	private:
 		const std::string text;
 	public:
-		TextNode(Node**const p, const StringToStringHashMap atts, const std::string n, const std::string t) :
+		TextNode(Node**const p, const StringToStringHashMap atts, const char*n, const std::string t) :
 			Node(p, new std::vector<const Node*>(), atts, n), text(t){}
-		TextNode(Node**const p, const std::string n, const std::string t) :
+		TextNode(Node**const p, const char*n, const std::string t) :
 			Node(p, new std::vector<const Node*>(), n), text(t){}
 		const std::string txt() const { return text; }
 };
@@ -103,42 +103,42 @@ class NodeUser{
 
 class NodeValidator{
 	private:
-		const stringToNodeValidatorGMap children;
+		const std::vector<std::pair<std::string, NodeValidator> > children;
 		const std::vector<NodeAttributeValidator> attributeValidators;
 		const int min;
 		const int max;
 		const bool text;
 	public:
 		NodeValidator(
-				const stringToNodeValidatorGMap c,
+				const std::vector<std::pair<std::string, NodeValidator> > c,
 				const std::vector<NodeAttributeValidator> a,
 				const int mi, const int ma, const bool isT) :
-					children(c)	, attributeValidators(a)	,
-					min(mi)		, max(ma)							, text(isT){}
+					children(c)	, attributeValidators(a),
+					min(mi)		, max(ma)				, text(isT){}
 		NodeValidator(
-				const stringToNodeValidatorGMap c,
+				const std::vector<std::pair<std::string, NodeValidator> > c,
 				const int mi, const int ma, const bool isT) :
 					children(c)	, attributeValidators()	,
-					min(mi)		, max(ma)							, text(isT){}
+					min(mi)		, max(ma)				, text(isT){}
 		NodeValidator(
 				const std::vector<NodeAttributeValidator> a,
 				const int mi, const int ma, const bool isT) :
-					children()	, attributeValidators(a)	,
-					min(mi)		, max(ma)							, text(isT){}
+					children()	, attributeValidators(a),
+					min(mi)		, max(ma)				, text(isT){}
 		NodeValidator(
 						const int mi, const int ma, const bool isT) :
 							children()	, attributeValidators()	,
-							min(mi)		, max(ma)							, text(isT){}
+							min(mi)		, max(ma)				, text(isT){}
 		NodeValidator(const NodeValidator& v)  :
 			children(v.getChildren())	, attributeValidators(v.attributeValidators),
-			min(v.getMin())					, max(v.getMax())					, text(v.isText()){}
+			min(v.minimum())			, max(v.maximum())					, text(v.isText()){}
 
-		const NodeValidator 	operator=(const NodeValidator& n) const { return *this; }
-		const stringToNodeValidatorGMap& 	getChildren() 				const { return this->children; }
-		const std::vector<NodeAttributeValidator> getAtVals()			const	 { return attributeValidators; }
-		const int& 						getMin() 														const { return this->min; }
-		const int& 						getMax() 														const { return this->max; }
-		const bool& 					isText() 														const { return this->text; }
+		const NodeValidator 	operator=(const NodeValidator& n)					const { return *this; }
+		const std::vector<std::pair<std::string, NodeValidator> >&	getChildren() 	const { return this->children; }
+		const std::vector<NodeAttributeValidator> 					getAtVals()		const { return attributeValidators; }
+		const int& 													minimum() 		const { return this->min; }
+		const int& 													maximum() 		const { return this->max; }
+		const bool& 												isText() 		const { return this->text; }
 };
 
 class NodeAttributeValidator{
@@ -149,9 +149,9 @@ class NodeAttributeValidator{
 	public:
 		NodeAttributeValidator(const stringToVectorTGMap<std::string> a, const bool u, const bool m) : allowedValues(a),unique(u), mandatory(m){}
 		NodeAttributeValidator(const NodeAttributeValidator& n) : allowedValues(n.getAllowedValues()),unique(n.isUnique()), mandatory(n.isMandatory()){}
-		const bool 							isUnique() 						const { return unique; }
-		const bool 							isMandatory() 				const { return mandatory; }
-		const stringToVectorTGMap<std::string>& 	getAllowedValues() 	const { return allowedValues;}
+		const bool 								isUnique() 			const { return unique; }
+		const bool 								isMandatory() 		const { return mandatory; }
+		const stringToVectorTGMap<std::string>& getAllowedValues() 	const { return allowedValues;}
 };
 
 class NodeTextFunction{

@@ -11,9 +11,11 @@
 #include <time.h>
 #include <fstream>
 #include <memory>
+#include <iostream>
 #include <stdexcept>
 
-#include "kul/smart.hpp"
+#include "kul/os.hpp"
+#include "kul/except.hpp"
 
 namespace kul{  namespace file {
 
@@ -27,7 +29,7 @@ class Reader{
 		std::ifstream f;
 		std::auto_ptr<std::string> string;
 	public:
-		Reader(const char* c) : f(c), string(0) { if(!f) throw Exception("FileException : file \"" + std::string(c) + "\" not found");}
+		Reader(const char* c) : f(c), string(0) { if(!f) throw Exception(__FILE__, __LINE__, "FileException : file \"" + std::string(c) + "\" not found");}
 		std::string* read(){
 			string.reset(0);
 			std::string s;
@@ -36,6 +38,22 @@ class Reader{
 				string.reset(new std::string(s));
 			}
 			return string.get();
+		}
+};
+
+class Writer{
+	private:
+		std::ofstream ofs;
+	public:
+		Writer(const char*f)  {
+			if(!f) throw Exception(__FILE__, __LINE__, "FileException : file \"" + std::string(f) + "\" not found");
+			if(!kul::OS::isDir(kul::OS::dirDotDot(f))) kul::OS::mkDir(kul::OS::dirDotDot(f));
+			ofs.open(f);
+		}
+		~Writer() { ofs.close();}
+		void write(const char*c, bool nl = false){ 
+			if(nl) 	ofs << c << "\n";
+			else	ofs << c;
 		}
 };
 

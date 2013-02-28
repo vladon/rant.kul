@@ -1,5 +1,5 @@
 /*
- * xml.cpp
+ * node.cpp
  *
  *  Created on: 14 Jan 2013
  *      Author: philix
@@ -50,14 +50,14 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 
 	for(std::pair<std::string, NodeValidator> pair  : v.getChildren()){
 		const int i = node.select_nodes(pugi::xpath_query(pair.first.c_str(), 0)).size();
-		if(pair.second.getMin() != 0 && i < pair.second.getMin()){
+		if(pair.second.minimum() != 0 && i < pair.second.minimum()){
 			LOG(ERROR) << "Invalid minimum number of Element: " << pair.first;
-			LOG(ERROR) << "Minimum number expected: " << pair.second.getMin();
+			LOG(ERROR) << "Minimum number expected: " << pair.second.minimum();
 			throw Exception(__FILE__, __LINE__, "XML Exception: Invalid minimum number of Element: " + pair.first);
 		}
-		if(pair.second.getMax() != 0 && i > pair.second.getMax()){
+		if(pair.second.maximum() != 0 && i > pair.second.maximum()){
 			LOG(ERROR) << "Invalid maximum number of Element: " << pair.first;
-			LOG(ERROR) << "Maximum number expected: " << pair.second.getMax();
+			LOG(ERROR) << "Maximum number expected: " << pair.second.maximum();
 			throw Exception(__FILE__, __LINE__, "XML Exception: Invalid maximum number of Element: " + pair.first);
 		}
 	}
@@ -69,14 +69,14 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 				for(pugi::xml_attribute a : n.attributes())
 					atts.insert(std::pair<std::string, std::string>(std::string(a.name()), std::string(a.value())));
 			if(pair.second.isText() && n.text().empty())
-				ns->push_back(new TextNode(p, atts, pair.first, ""));
+				ns->push_back(new TextNode(p, atts, pair.first.c_str(), ""));
 			else if(n.text().empty()){
 				   Node** parent = new Node*;
-				ns->push_back((*parent = new Node(p, validate(parent, new std::vector<const Node*>, n, pair.second) , atts, pair.first)));
+				ns->push_back((*parent = new Node(p, validate(parent, new std::vector<const Node*>, n, pair.second) , atts, pair.first.c_str())));
 			}else if(!pair.second.isText())
 				throw Exception(__FILE__, __LINE__, "XML Exception: text not expected in node " + std::string(n.name()));
 			else
-				ns->push_back(new TextNode(p, atts, pair.first, n.child_value()));
+				ns->push_back(new TextNode(p, atts, pair.first.c_str(), n.child_value()));
 		}
 	}
 
@@ -130,7 +130,7 @@ void kul::xml::NodeFactory::validateAttributes(const Node& node, const NodeValid
 				for(NodeAttributeValidator nav : pair.second.getAtVals()){
 					std::vector<const Node*> ns;
 					for(const Node* in : node.children())
-						if(n->name().compare(in->name()) == 0)
+						if(strcmp(n->name(), in->name()) == 0)
 							ns.push_back(in);
 					validateAttributes(ns, nav);
 				}
@@ -140,17 +140,18 @@ void kul::xml::NodeFactory::validateAttributes(const Node& node, const NodeValid
 	}
 }
 
-const kul::xml::Node* kul::xml::NodeFactory::create(const std::string& location, const std::string& root, const NodeValidator& v){
+const kul::xml::Node* kul::xml::NodeFactory::create(const char*location, const char* root, const NodeValidator& v){
 	pugi::xml_document doc;
-	pugi::xml_parse_result result = doc.load_file(location.c_str());
+	LOG(INFO) << location;
+	pugi::xml_parse_result result = doc.load_file(location);
 	if(!result){
 		LOG(ERROR) << result.description();
 		throw Exception(__FILE__, __LINE__, "PUGIXML Exception: " + std::string(result.description()));
 	}
-	if(doc.child(root.c_str()).empty())
-		throw Exception(__FILE__, __LINE__, "root element \"" + root + "\" not found, malformed document");
+	if(doc.child(root).empty())
+		throw Exception(__FILE__, __LINE__, "root element \"" + std::string(root) + "\" not found, malformed document");
 	Node** n = new Node*;
-	*n = new Node(0, validate(n, new std::vector<const kul::xml::Node*>(), doc.child(root.c_str()), v), root);
+	*n = new Node(0, validate(n, new std::vector<const kul::xml::Node*>(), doc.child(root), v), root);
 	std::vector<const Node*> rootV; rootV.push_back(*n);
 	for(const NodeAttributeValidator& nav : v.getAtVals()){
 		validateAttributes(rootV, nav);
@@ -159,7 +160,6 @@ const kul::xml::Node* kul::xml::NodeFactory::create(const std::string& location,
 	return *n;
 }
 
-void kul::xml::NodeFactory::writeToFile(std::string f, const NodeValidator& v){}
 
 const kul::xml::Node& kul::xml::Node::operator[](const std::string& s) const  throw (Exception){
 	for(const Node* n : this->children())
@@ -181,7 +181,7 @@ const kul::xml::Node& kul::xml::Node::operator()(const std::string& c, const std
 const std::string kul::xml::Node::txt() const throw (Exception){
 	const TextNode* txt = static_cast<const TextNode*>(this);
 	if(txt) return txt->txt();
-	throw Exception(__FILE__, __LINE__, "XML Exception: " +this->name() + " is not a text node");
+	throw Exception(__FILE__, __LINE__, "XML Exception: " + std::string(this->name()) + " is not a text node");
 }
 
 const std::string kul::xml::Node::att(const std::string& s) const throw (Exception){
