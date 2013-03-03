@@ -33,6 +33,15 @@ class Exception : public kul::Exception{
 		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
 };
 
+class PugiXMLService{
+	public:
+		static void setupDocument(pugi::xml_document& doc, const char*f){
+			pugi::xml_parse_result result = doc.load_file(f);
+			if(!result)		
+				throw Exception(__FILE__, __LINE__, "PUGIXML Exception: " + std::string(result.description()));		
+		}
+};
+
 class NodeFactory{
 	private:
 		static std::vector<const Node*>* validate(Node** p, std::vector<const Node*>* ns, const pugi::xml_node& n, const NodeValidator& v);
@@ -41,9 +50,20 @@ class NodeFactory{
 		static void writeToFile(const char*n, const NodeValidator& v, kul::file::Writer& w, int t);
 	public:
 		static const Node* create(const char*l, const char*r, const NodeValidator& v);
-		static void writeToFile(const char*n, const char*f,  const NodeValidator& v);
+		static void writeToFile(const char*n, const char*f,  const NodeValidator& v);		
 		static void log(const Node* n);
+};
 
+class XPather{
+	private:
+		const char*f;
+		pugi::xml_document doc;
+	public:
+		XPather(const char*f) : f(f){ PugiXMLService::setupDocument(doc, f); }
+		~XPather(){ doc.save_file(f);}
+		void writeNode(const char*x, const Node& node);
+		void writeText(const char*x, const char*t);
+		void writeAttr(const char*x, const char*n, const char*v);
 };
 
 class Node{
@@ -143,15 +163,15 @@ class NodeValidator{
 
 class NodeAttributeValidator{
 	private:
-		const stringToVectorTGMap<std::string> allowedValues;
+		const StringToVectorTGMap<std::string> allowedValues;
 		const bool unique;
 		const bool mandatory;
 	public:
-		NodeAttributeValidator(const stringToVectorTGMap<std::string> a, const bool u, const bool m) : allowedValues(a),unique(u), mandatory(m){}
+		NodeAttributeValidator(const StringToVectorTGMap<std::string> a, const bool u, const bool m) : allowedValues(a),unique(u), mandatory(m){}
 		NodeAttributeValidator(const NodeAttributeValidator& n) : allowedValues(n.getAllowedValues()),unique(n.isUnique()), mandatory(n.isMandatory()){}
 		const bool 								isUnique() 			const { return unique; }
 		const bool 								isMandatory() 		const { return mandatory; }
-		const stringToVectorTGMap<std::string>& getAllowedValues() 	const { return allowedValues;}
+		const StringToVectorTGMap<std::string>& getAllowedValues() 	const { return allowedValues;}
 };
 
 class NodeTextFunction{
