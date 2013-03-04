@@ -36,9 +36,9 @@ class Exception : public kul::Exception{
 class PugiXMLService{
 	public:
 		static void setupDocument(pugi::xml_document& doc, const char*f){
-			pugi::xml_parse_result result = doc.load_file(f);
+			pugi::xml_parse_result result = doc.load_file(f, pugi::parse_full);
 			if(!result)		
-				throw Exception(__FILE__, __LINE__, "PUGIXML Exception: " + std::string(result.description()));		
+				throw Exception(__FILE__, __LINE__, "PUGIXML Exception: " + std::string(result.description()) + " : " + std::string(f + result.offset));
 		}
 };
 
@@ -49,7 +49,7 @@ class NodeFactory{
 		static void validateAttributes(const Node& n, const NodeValidator& v);
 		static void writeToFile(const char*n, const NodeValidator& v, kul::file::Writer& w, int t);
 	public:
-		static const Node* create(const char*l, const char*r, const NodeValidator& v);
+		static const Node* create(const char*f, const char*r, const NodeValidator& v);
 		static void writeToFile(const char*n, const char*f,  const NodeValidator& v);		
 		static void log(const Node* n);
 };

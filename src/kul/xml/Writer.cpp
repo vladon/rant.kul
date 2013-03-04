@@ -68,6 +68,7 @@ class NodeWriterService{
 
 void kul::xml::NodeFactory::writeToFile(const char*n, const char*f, const NodeValidator& v){
 	kul::file::Writer w(f);
+	w.write("<?xml version=\"1.0\"?>", true);
 	writeToFile(n, v, w, 0);
 }
 
@@ -76,18 +77,18 @@ void kul::xml::NodeFactory::writeToFile(const char*n, const NodeValidator& v, ku
 	NodeWriterService::addTabs(t, tabs);
 	s += t + "<" + std::string(n) + ">";
 	bool comment = v.isText() && v.minimum() == 0;
-	if(comment) NodeWriterService::openingComment(s);		
+	if(comment) NodeWriterService::openingComment(s);
 
 	if(!v.getAtVals().empty()){
 				
 		for(std::vector<std::pair<std::string, std::string> >  vecPairs : NodeWriterService::attributes(v)){
 			s = t + "<" + std::string(n) + ">";
+			if(comment) NodeWriterService::openingComment(s);
 			std::string a;
 			for(std::pair<std::string, std::string>  pairs : vecPairs)
 				a += " " + pairs.first+"=\"" + pairs.second + "\"";
 			NodeWriterService::addAttributes(s, a);	
 			LOG(INFO) << "a: " << a;
-			if(comment) NodeWriterService::openingComment(s);	
 			
 			writer.write(s.c_str(), !v.isText());
 			for(const std::pair<std::string, NodeValidator>& pair  : v.getChildren()){
@@ -97,7 +98,7 @@ void kul::xml::NodeFactory::writeToFile(const char*n, const NodeValidator& v, ku
 			s = !v.isText() ? t : "";
 			s += "</" + std::string(n) + ">";
 			if(comment) NodeWriterService::closingComment(s);
-			LOG(INFO) << "s: " << s;
+
 			writer.write(s.c_str(), true);
 			int i = 0;			
 			if(v.maximum() > 0 && i == v.maximum()){ // print the remaining possibile attributes values
@@ -106,7 +107,7 @@ void kul::xml::NodeFactory::writeToFile(const char*n, const NodeValidator& v, ku
 		}
 	}
 	else{
-		LOG(INFO) << "s: " << s;
+
 		writer.write(s.c_str(), !v.isText());
 		for(const std::pair<std::string, NodeValidator>& pair  : v.getChildren()){
 			writeToFile(pair.first.c_str(), pair.second, writer, ++tabs);
@@ -115,7 +116,7 @@ void kul::xml::NodeFactory::writeToFile(const char*n, const NodeValidator& v, ku
 		s = !v.isText() ? t : "";
 		s += "</" + std::string(n) + ">";
 		if(comment) NodeWriterService::closingComment(s);
-		LOG(INFO) << "s: " << s;
+
 		writer.write(s.c_str(), true);
 	}
 }

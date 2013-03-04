@@ -27,7 +27,7 @@ class test{ public: test(){
 	LOG(INFO) << OS::dirSep();
 	LOG(INFO) << OS::pwd();
 	LOG(INFO) << OS::userDir();
-	LOG(INFO) << OS::userAppDir("scaa");
+	LOG(INFO) << OS::userAppDir("maiken");
 	for(std::string s : OS::dirs()){
 		LOG(INFO) << s;
 	}

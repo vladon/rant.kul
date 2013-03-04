@@ -140,10 +140,10 @@ void kul::xml::NodeFactory::validateAttributes(const Node& node, const NodeValid
 	}
 }
 
-const kul::xml::Node* kul::xml::NodeFactory::create(const char*location, const char* root, const NodeValidator& v){
+const kul::xml::Node* kul::xml::NodeFactory::create(const char*f, const char* root, const NodeValidator& v){
 	pugi::xml_document doc;
-	LOG(INFO) << location;
-	pugi::xml_parse_result result = doc.load_file(location);
+	LOG(INFO) << f;
+	pugi::xml_parse_result result = doc.load_file(f);
 	if(!result){
 		LOG(ERROR) << result.description();
 		throw Exception(__FILE__, __LINE__, "PUGIXML Exception: " + std::string(result.description()));
