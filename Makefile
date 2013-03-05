@@ -21,31 +21,41 @@ fedora:
 	
 general:
 	@@echo CXXFLAGS = $(CXXFLAGS)	
-	svn co http://google-glog.googlecode.com/svn/trunk/ ext/glog/trunk
-	rm -rf ./ext/glog/make
-	mkdir ./ext/glog/make
-	cd ./ext/glog/make; bash ../trunk/configure --prefix=$(CURDIR)/ext/glog/make
-	$(MAKE) -C ext/glog/make
-	$(MAKE) -C ext/glog/make install
+		
+	@if [ ! -d "$(CURDIR)/ext/glog/make" ]; then \
+		svn co http://google-glog.googlecode.com/svn/trunk/ ext/glog/trunk; \
+		mkdir ./ext/glog/make; \
+		cd ./ext/glog/make; bash ../trunk/configure --prefix=$(CURDIR)/ext/glog/make; \
+		$(MAKE) -C $(CURDIR)/ext/glog/make; \
+		$(MAKE) -C $(CURDIR)/ext/glog/make install; \
+	fi;
 	
-	svn co http://sparsehash.googlecode.com/svn/trunk/ ext/sparsehash/trunk
-	rm -rf ./ext/sparsehash/make
-	mkdir ./ext/sparsehash/make
-	cd ./ext/sparsehash/make; bash ../trunk/configure --prefix=$(CURDIR)/ext/sparsehash/make
-	$(MAKE) -C ext/sparsehash/make
-	$(MAKE) -C ext/sparsehash/make install
+	@if [ ! -d "$(CURDIR)/ext/sparsehash/make" ]; then \
+		svn co http://sparsehash.googlecode.com/svn/trunk/ ext/sparsehash/trunk; \
+		mkdir ./ext/sparsehash/make; \
+		cd ./ext/sparsehash/make; bash ../trunk/configure --prefix=$(CURDIR)/ext/sparsehash/make; \
+		$(MAKE) -C $(CURDIR)/ext/sparsehash/make; \
+		$(MAKE) -C $(CURDIR)/ext/sparsehash/make install; \
+	fi;
 
 	svn co http://pugixml.googlecode.com/svn/tags/latest/ ext/pugixml/trunk
-	cd ./ext/pugixml/trunk/scripts; cmake CMakeLists.txt
+	cd ./ext/pugixml/trunk/scripts; cmake CMakeLists.txt	
 
-	rm -rf bin
-	 
 	@for f in $(shell find src -type f -name *.cpp); do \
-		mkdir -p $(CURDIR)/bin/$$f; \
+		if [ ! -d "$(CURDIR)/bin/$$f" ]; then \
+			mkdir -p $(CURDIR)/bin/$$f; \
+		fi; \
 		$(CXX) $(INCS) -o "$(CURDIR)/bin/$$f.o" "$(CURDIR)/$$f"; \
 	done;
 
 	$(eval OBJS:=)
-	$(eval FILES := $(foreach dir,$(shell find bin -type f -name *.o),$(dir)))
+	$(eval FILES := $(foreach dir,$(shell find $(CURDIR)/bin -type f -name *.o),$(dir)))
 	
 	cd $(CURDIR); ar -r "$(LIB)" $(FILES)
+
+
+clean:
+	rm -rf ./ext/glog/make
+	rm -rf ./ext/sparsehash/make
+	rm -rf ./ext/pugixml/trunk/scripts
+	rm -rf bin
