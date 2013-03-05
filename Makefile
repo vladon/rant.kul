@@ -19,9 +19,7 @@ fedora:
 	$(eval OS := fedora)
 	$(MAKE) general CXXFLAGS=$(CXXFLAGS) OS=$(OS)
 	
-general:
-	@@echo CXXFLAGS = $(CXXFLAGS)	
-		
+general:		
 	@if [ ! -d "$(CURDIR)/ext/glog/make" ]; then \
 		svn co http://google-glog.googlecode.com/svn/trunk/ ext/glog/trunk; \
 		mkdir ./ext/glog/make; \
@@ -38,19 +36,24 @@ general:
 		$(MAKE) -C $(CURDIR)/ext/sparsehash/make install; \
 	fi;
 
-	svn co http://pugixml.googlecode.com/svn/tags/latest/ ext/pugixml/trunk
-	cd ./ext/pugixml/trunk/scripts; cmake CMakeLists.txt	
+	@if [ ! -d "$(CURDIR)/ext/pugixml/trunk/scripts" ]; then \
+		svn co http://pugixml.googlecode.com/svn/tags/latest/ ext/pugixml/trunk; \
+		cd ./ext/pugixml/trunk/scripts; cmake CMakeLists.txt; \
+		$(MAKE) -C $(CURDIR)/ext/pugixml/trunk/scripts; \
+		cd ./ext/pugixml/trunk/scripts; cmake CMakeLists.txt -DBUILD_SHARED_LIBS=true; \
+		$(MAKE) -C $(CURDIR)/ext/pugixml/trunk/scripts; \
+	fi;
 
-	@for f in $(shell find src -type f -name *.cpp); do \
+	@for f in $(shell find src -type f -name '*.cpp'); do \
 		if [ ! -d "$(CURDIR)/bin/$$f" ]; then \
 			mkdir -p $(CURDIR)/bin/$$f; \
 		fi; \
-		$(CXX) $(INCS) -o "$(CURDIR)/bin/$$f.o" "$(CURDIR)/$$f"; \
+		$(CXX) $(CXXFLAGS) $(INCS) -o "$(CURDIR)/bin/$$f.o" "$(CURDIR)/$$f"; \
 	done;
+	$(MAKE) files
 
-	$(eval OBJS:=)
-	$(eval FILES := $(foreach dir,$(shell find $(CURDIR)/bin -type f -name *.o),$(dir)))
-	
+files:
+	$(eval FILES := $(foreach dir,$(shell find $(CURDIR)/bin -type f -name *.o),$(dir)))	
 	cd $(CURDIR); ar -r "$(LIB)" $(FILES)
 
 
