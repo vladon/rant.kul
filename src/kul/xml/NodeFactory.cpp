@@ -28,7 +28,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 					for(pugi::xml_attribute a : n.attributes()){						
 						bool attFound = false;
 						for(NodeAttributeValidator nav : pair.second.getAtVals()){
-							for(std::pair<std::string, std::vector<std::string> > attVals : nav.getAllowedValues()){
+							for(std::pair<std::string, std::vector<std::string> > attVals : nav.allowedValues()){
 								if(attVals.first.compare(std::string(a.name())) == 0){ attFound = true; break;}
 							}
 							if(attFound) break;
@@ -84,7 +84,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 }
 
 void kul::xml::NodeFactory::validateAttributes(const std::vector<const Node*>& nodes, const NodeAttributeValidator& v){
-	for(std::pair<std::string, std::vector<std::string> > valPair  : v.getAllowedValues()){
+	for(std::pair<std::string, std::vector<std::string> > valPair  : v.allowedValues()){
 		if(!valPair.second.empty()){
 			for(const Node* n : nodes){
 				bool f = false;
@@ -94,7 +94,7 @@ void kul::xml::NodeFactory::validateAttributes(const std::vector<const Node*>& n
 							if(s.compare(attPair.second) == 0){ f = true; break; }
 						if(f) break;
 					}
-				if(!f) throw Exception(__FILE__, __LINE__, "Attribute \"" + valPair.first + "\" on node \"" + n->name() + "\" is not one of the expected values!");
+				if(!f && v.isMandatory()) throw Exception(__FILE__, __LINE__, "Attribute \"" + valPair.first + "\" on node \"" + n->name() + "\" is not one of the expected values!");
 			}
 		}
 		for(const Node* n : nodes)

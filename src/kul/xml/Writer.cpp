@@ -19,7 +19,7 @@ class NodeWriterService{
  			
  			for(const kul::xml::NodeAttributeValidator& nav : v.getAtVals()){ 				
 				std::vector<std::pair<std::string, std::string> > attPairs;
-				for(const std::pair<std::string, std::vector<std::string > >& atts : nav.getAllowedValues())	
+				for(const std::pair<std::string, std::vector<std::string > >& atts : nav.allowedValues())	
 					if(atts.second.size() == 0)
 						attPairs.push_back(std::pair<std::string, std::string>(atts.first, atts.first));						
 					else if(atts.second.size() == 1)
@@ -31,7 +31,7 @@ class NodeWriterService{
 							kul::ext::goo_gle::StringToVectorTGMap<std::string> valMap;
 							valMap.insert(std::pair<std::string, std::vector<std::string> >(atts.first, values));
 							for(const kul::xml::NodeAttributeValidator& nav1 : v.getAtVals())
-								for(const std::pair<std::string, std::vector<std::string > >& atts1 : nav1.getAllowedValues()){
+								for(const std::pair<std::string, std::vector<std::string > >& atts1 : nav1.allowedValues()){
 									if(atts.first.compare(atts1.first) == 0 && atts1.second.size() > 1)
 										continue;
 									valMap.insert(atts1);											
