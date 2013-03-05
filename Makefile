@@ -1,6 +1,10 @@
+
 OS =
 CXX = g++ -std=c++0x -O3 -g0 -Wall -c -fmessage-length=0
-INCS = -I$(CURDIR)/inc -I$(CURDIR)/ext/pugixml/trunk/src -I$(CURDIR)/ext/glog/make/include -I$(CURDIR)/ext/sparsehash/make/include
+INCS = 	-I$(CURDIR)/inc \
+		-I$(CURDIR)/ext/pugixml/trunk/src \
+		-I$(CURDIR)/ext/glog/make/include \
+		-I$(CURDIR)/ext/sparsehash/make/include
 LIB = bin/libkul.a
 
 debian:
