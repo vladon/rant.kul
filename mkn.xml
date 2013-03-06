@@ -23,46 +23,61 @@
 	<!-- used when no profile is specified. supplied default values to profiles if required -->	
 	<build type="lib" mode="static"> 
 		<artifacts>
-			<!-- one artifact mandatory for exe -->
 			<artifact name="libkul.a">cpp</artifact> 
 		</artifacts>
 		<env>
-			<vars>
-				<!-- modes = append/prepend/replace name IS CASE SENSITIVE!-->
-				<!--var name="PATH" mode="replace"></var-->   
-			</vars>
+			<vars><!--var name="PATH" mode="replace"></var--></vars>
 		</env>		
 		<files>
 			<file type="cpp">
 				<args>
-					<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
+					<arg>-std=c++0x</arg><arg>-fPIC</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
 					<arg>-Wall</arg><arg>-c </arg><arg>-fmessage-length=0</arg>
+					<arg>-O0</arg><arg>-g3</arg>
 				</args>
 			</file>
 		</files>
 	</build>
 	<profiles>
-		<!-- Name can anything, must be unique, is mandatory -->
-		<profile name="release">
-			<build type="lib" mode="static">
+		<profile name="linux">
+			<includes>
+				<include>./inc</include>
+				<include>./tst</include>
+				<include>/home/philix/sand/repo/cpp/p/pugixml/1.2/src</include>
+				<include>/home/philix/sand/repo/cpp/g/google/glog/make/include</include>
+				<include>/home/philix/sand/repo/cpp/g/google/sparse/hash/make/src</include>
+			</includes>
+			<libraries>
+				<library>rt</library>		
+				<library>pugixml</library>
+				<library>glog</library>	
+				<library>pthread</library>	
+			</libraries>
+			<library-paths>		
+				<library-path>/home/philix/sand/lib/cpp/p/pugixml/1.2/linux/08.01.2013</library-path>
+				<library-path>/home/philix/sand/lib/cpp/g/google/glog/trunk/linux/12.01.2012</library-path>
+			</library-paths>
+			<!-- used when no profile is specified. supplied default values to profiles if required -->	
+			<build type="lib" mode="static"> 
+				<artifacts>
+					<artifact name="libkul.a">cpp</artifact> 
+				</artifacts>
+				<env>
+					<vars><!--var name="PATH" mode="replace"></var--></vars>
+				</env>		
 				<files>
 					<file type="cpp">
 						<args>
-							<arg>-O3</arg><arg>-g0</arg>
+							<arg>-std=c++0x</arg><arg>-fPIC</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
+							<arg>-Wall</arg><arg>-c </arg><arg>-fmessage-length=0</arg>
 						</args>
 					</file>
 				</files>
 			</build>
 		</profile>
-		<profile name="debug">
+		<profile name="release" parent="linux"> 
 			<build type="lib" mode="static">
-				<files>
-					<file type="cpp">
-						<args>
-							<arg>-O0</arg><arg>-g3</arg>
-						</args>
-					</file>
-				</files>
+				<files><file type="cpp"><args><arg>-O3</arg><arg>-g0</arg></args></file></files>
 			</build>
 		</profile>
 	</profiles>
