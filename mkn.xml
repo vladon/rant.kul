@@ -22,16 +22,15 @@
 	</library-paths>
 	<!-- used when no profile is specified. supplied default values to profiles if required -->	
 	<build type="lib" mode="static"> 
-		<artifacts>
-			<artifact name="libkul.a">cpp</artifact> 
-		</artifacts>
+		<artifact name="libkul.a">cpp</artifact> 
+
 		<env>
 			<vars><!--var name="PATH" mode="replace"></var--></vars>
 		</env>		
 		<files>
 			<file type="cpp">
 				<args>
-					<arg>-std=c++0x</arg><arg>-fPIC</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
+					<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
 					<arg>-Wall</arg><arg>-c </arg><arg>-fmessage-length=0</arg>
 					<arg>-O0</arg><arg>-g3</arg>
 				</args>
@@ -59,16 +58,14 @@
 			</library-paths>
 			<!-- used when no profile is specified. supplied default values to profiles if required -->	
 			<build type="lib" mode="static"> 
-				<artifacts>
-					<artifact name="libkul.a">cpp</artifact> 
-				</artifacts>
+				<artifact name="libkul.a">cpp</artifact> 
 				<env>
 					<vars><!--var name="PATH" mode="replace"></var--></vars>
 				</env>		
 				<files>
 					<file type="cpp">
 						<args>
-							<arg>-std=c++0x</arg><arg>-fPIC</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
+							<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
 							<arg>-Wall</arg><arg>-c </arg><arg>-fmessage-length=0</arg>
 						</args>
 					</file>

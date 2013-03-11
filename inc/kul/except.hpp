@@ -1,12 +1,12 @@
 /*
- * exception.hpp
+ * except.hpp
  *
  *  Created on: Feb 15, 2013
  *      Author: philip
  */
 
-#ifndef _EXCEPTION_HPP_
-#define _EXCEPTION_HPP_
+#ifndef _EXCEPT_HPP_
+#define _EXCEPT_HPP_
 
 #include <stdexcept>
 
@@ -31,4 +31,4 @@ class Exception : public std::runtime_error{
 
 
 };
-#endif /* _EXCEPTION_HPP_ */
+#endif /* _EXCEPT_HPP_ */

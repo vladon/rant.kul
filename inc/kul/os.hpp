@@ -24,12 +24,12 @@ class OSException : public kul::Exception{
 class OS{
 
 	public:
-		static int execReturn(const std::string cmd);
-		static int execNoPrintReturn(const std::string cmd);
+		static int 	execReturn(const std::string cmd);
+		static int 	execNoPrintReturn(const std::string cmd);
 		static void exec(const std::string cmd, const char* args[]);
 
 		static const char* 	getEnvVar(const char* c);
-		static void					setEnvVar(const char* var, const char* val);
+		static void			setEnvVar(const char* var, const char* val);
 
 		static bool isFile(const std::string s);
 		static bool delFile(const std::string s);
@@ -43,19 +43,20 @@ class OS{
 		static std::vector<std::string> dirs(std::string s = pwd(), bool incHidden = false) throw(OSException);
 		static std::vector<std::string> files(std::string s = pwd(), bool recursive = false) throw(OSException);
 
-		static const bool dirSet(const std::string& nwd); // set the cwd / USE WITH CAUTION!
-		static const bool dirDel(const std::string& dir); // deletes if exists
-		static const std::string dirExp(const std::string& nwd, const std::string& dir) throw (OSException); // Expand relative directories
-		static const std::string dirSep();
-		static const std::string dirJoin(const std::string a, const std::string b);
-		static const std::string dirDotDot(const std::string s);
-		static const std::string pathSep();
+		static const bool 			dirSet(const std::string& nwd); // set the cwd / USE WITH CAUTION!
+		static const bool 			dirDel(const std::string& dir); // deletes if exists
+		static const std::string 	dirExp(const std::string& nwd, const std::string& dir) throw (OSException); // Expand relative directories
+		static const std::string 	dirSep();
+		static const std::string 	dirJoin(const std::string a, const std::string b);
+		static const std::string 	dirDotDot(const std::string s);
+		static const std::string 	pathSep();
 
 		static std::string pwd();
 
 		static std::string userDir();
 		static std::string userAppDir(std::string app);
 };
+
 
 };
 #endif /* _OS_HPP_ */

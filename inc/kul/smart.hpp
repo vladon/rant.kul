@@ -22,9 +22,9 @@ template <class T> class Iterator{
 		int pos;
 	public:
 		Iterator(T* t, int pos) : t(t), pos(pos){}
-		Iterator& 	operator++() 									 					{ ++pos; return *this;}
-		bool 			operator!=		(const Iterator& i)		const 	{ return pos != i.pos;}
-		T&				operator*() 											const 	{ return t[pos];}
+		Iterator& 		operator++() 				 				{ ++pos; return *this;}
+		bool 			operator!=		(const Iterator& i)	const 	{ return pos != i.pos;}
+		T&				operator*() 						const 	{ return t[pos];}
 };
 
 template <class T> class ArrayHelper;
@@ -33,8 +33,8 @@ template <class T> class Array{
 	private:
 		T* ts;
 		int cap, siz;
-		Array& swap(const Array& a)	{ T* ots = ts; T* nts = new T[a.siz]; 			std::copy(&a.ts[0]	, &a.ts[a.siz], nts); 						ts = nts; delete[] ots; 	siz=a.siz; cap=a.cap; return *this;}
-		void add(T* p){ if(siz == cap)	{ T* ots = ts; T* nts = new T[cap + 10]; 	std::copy(&ts[0]		, &ts[siz]		, nts); cap += 10; 	ts = nts; delete[] ots;} T& r = *p;  ts[siz++] = r; delete p;}
+		Array& swap(const Array& a)		{ T* ots = ts; T* nts = new T[a.siz]; 		std::copy(&a.ts[0]	, &a.ts[a.siz]	, nts); 			ts = nts; delete[] ots; siz=a.siz; cap=a.cap; return *this;}
+		void add(T* p){ if(siz == cap)	{ T* ots = ts; T* nts = new T[cap + 10]; 	std::copy(&ts[0]	, &ts[siz]		, nts); cap += 10; 	ts = nts; delete[] ots;} T& r = *p;  ts[siz++] = r; delete p;}
 	public:
 		Array() : ts(new T[1]), cap(1), siz(0)					{}
 		Array(const Array& a) : ts(0), cap(0), siz(0)			{ swap(a); }
