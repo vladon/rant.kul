@@ -8,10 +8,6 @@
 #ifndef _KUL_PROC_HPP_
 #define _KUL_PROC_HPP_
 
-#include <chrono>
-#include <time.h>
-typedef std::chrono::high_resolution_clock Clock;
-typedef std::chrono::system_clock::time_point timePoint;
 #include <iostream>
 
 #include "kul/except.hpp"
@@ -88,23 +84,28 @@ class Process : public AbstractExecCall{
 };
 
 class CPUMonitoredProcess : public Process{
+	/*
+	#include <chrono>
+	#include <time.h>
+	typedef std::chrono::high_resolution_clock Clock;
+	typedef std::chrono::system_clock::time_point timePoint;
 	private:
 		timePoint sTime;
 		timePoint eTime;
 		clockid_t clockid;
-		struct timespec ts;
+		struct timespec ts;*/
 	protected:
-		CPUMonitoredProcess(const char* cmd) 					: Process(cmd)		, clockid(){}
-		CPUMonitoredProcess(const char* path, const char* cmd) 	: Process(path, cmd), clockid(){}
+		CPUMonitoredProcess(const char* cmd) 					: Process(cmd)		{}//, clockid(){}
+		CPUMonitoredProcess(const char* path, const char* cmd) 	: Process(path, cmd){}//, clockid(){}
 
-		void preStart()    { sTime = Clock::now(); }
-		void finish()      { eTime = Clock::now(); }
-		void tick(){ // really only needs to be done once before the process exits.
+		virtual void preStart() = 0;//    { sTime = Clock::now(); }
+		virtual void finish() = 0;//      { eTime = Clock::now(); }
+		virtual void tick() = 0;/*{ // really only needs to be done once before the process exits.
 			if (clock_getcpuclockid(pid(), &clockid) != 0)
 				throw ExitException(__FILE__, __LINE__, "getting clock_getcpuclockid");
 			if (clock_gettime(clockid, &ts) == -1)
 				throw ExitException(__FILE__, __LINE__, "getting clock_gettime");
-		}
+		}*/
 	public:
 		virtual ~CPUMonitoredProcess(){}
 		static CPUMonitoredProcess* create(const char*cmd);
@@ -115,9 +116,9 @@ class CPUMonitoredProcess : public Process{
 			setStarted(true);
 			this->run();
 		}
-		const timePoint& 	startTime()	{ return sTime;}
+		/*const timePoint& 	startTime()	{ return sTime;}
 		const timePoint& 	endTime()	{ return eTime;}
-		const long int& 	cpuTime()	{ return ts.tv_nsec; }
+		const long int& 	cpuTime()	{ return ts.tv_nsec; }*/
 };
 
 

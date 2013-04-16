@@ -38,13 +38,13 @@ class test{ public: test(){
 	std::shared_ptr<kul::proc::CPUMonitoredProcess> p(kul::proc::CPUMonitoredProcess::create("echo"));
 	(*p).addArg("Hello").addArg("World").start();
 
-    LOG(INFO) << std::chrono::duration_cast<std::chrono::nanoseconds>(p->endTime() - p->startTime()).count();
-    LOG(INFO) << "p->startTime(): " << p->startTime().time_since_epoch().count();
+    //LOG(INFO) << std::chrono::duration_cast<std::chrono::nanoseconds>(p->endTime() - p->startTime()).count();
+    //LOG(INFO) << "p->startTime(): " << p->startTime().time_since_epoch().count();
 
-    LOG(INFO) << "p->endTime(): " << p->endTime().time_since_epoch().count();
+    //LOG(INFO) << "p->endTime(): " << p->endTime().time_since_epoch().count();
 
-    LOG(INFO) << "run time endTime - startTime (microseconds): " << (p->endTime() - p->startTime()).count();
-    LOG(INFO) << "cpuTime of m: " << p->cpuTime();
+    //LOG(INFO) << "run time endTime - startTime (microseconds): " << (p->endTime() - p->startTime()).count();
+    //LOG(INFO) << "cpuTime of m: " << p->cpuTime();
 }};
 
 
