@@ -8,7 +8,7 @@
 		<include>./tst</include>
 		<include>./ext/pugixml/trunk/src</include>
 		<include>./ext/glog/make/include</include>
-		<include>./ext/glog/make/src</include>
+		<include>./ext/sparsehash/make/include</include>
 	</includes>
 	<libraries>
 		<library>pugixml</library>
@@ -43,7 +43,7 @@
 				<include>./tst</include>
 				<include>./ext/pugixml/trunk/src</include>
 				<include>./ext/glog/make/include</include>
-				<include>./ext/glog/make/src</include>
+				<include>./ext/sparsehash/make/include</include>
 			</includes>
 			<libraries>	
 				<library>pugixml</library>
