@@ -11,7 +11,6 @@
 		<include>/home/philix/sand/repo/cpp/g/google/sparse/hash/make/src</include>
 	</includes>
 	<libraries>
-		<library>rt</library>		
 		<library>pugixml</library>
 		<library>glog</library>	
 		<library>pthread</library>	
@@ -46,8 +45,7 @@
 				<include>/home/philix/sand/repo/cpp/g/google/glog/make/include</include>
 				<include>/home/philix/sand/repo/cpp/g/google/sparse/hash/make/src</include>
 			</includes>
-			<libraries>
-				<library>rt</library>		
+			<libraries>	
 				<library>pugixml</library>
 				<library>glog</library>	
 				<library>pthread</library>	
