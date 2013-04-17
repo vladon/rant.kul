@@ -1,5 +1,4 @@
 
-OS =
 CXX = g++ -std=c++0x -O3 -g0 -Wall -c -fmessage-length=0
 INCS = 	-I$(CURDIR)/inc \
 		-I$(CURDIR)/ext/pugixml/trunk/src \
@@ -7,17 +6,10 @@ INCS = 	-I$(CURDIR)/inc \
 		-I$(CURDIR)/ext/sparsehash/make/include
 LIB = bin/libkul.a
 
-debian:
+all:
 	@@echo "Making for debian"
 	$(eval CXXFLAGS := $(CXXFLAGS))
-	$(eval OS := debian)
-	$(MAKE) general CXXFLAGS=$(CXXFLAGS) OS=$(OS)	
-	
-fedora:
-	@@echo "Macking for fedora"
-	$(eval CXXFLAGS := $(CXXFLAGS))
-	$(eval OS := fedora)
-	$(MAKE) general CXXFLAGS=$(CXXFLAGS) OS=$(OS)
+	$(MAKE) general CXXFLAGS=$(CXXFLAGS)
 	
 general:		
 	@if [ ! -d "$(CURDIR)/ext/glog/make" ]; then \
@@ -55,7 +47,6 @@ general:
 files:
 	$(eval FILES := $(foreach dir,$(shell find $(CURDIR)/bin -type f -name *.o),$(dir)))	
 	cd $(CURDIR); ar -r "$(LIB)" $(FILES)
-
 
 clean:
 	rm -rf ./ext/glog/make
