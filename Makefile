@@ -7,11 +7,7 @@ INCS = 	-I$(CURDIR)/inc \
 LIB = bin/libkul.a
 
 all:
-	@@echo "Making for debian"
-	$(eval CXXFLAGS := $(CXXFLAGS))
-	$(MAKE) general CXXFLAGS=$(CXXFLAGS)
-	
-general:		
+	@@echo "Making libkul.a"
 	@if [ ! -d "$(CURDIR)/ext/glog/make" ]; then \
 		svn co http://google-glog.googlecode.com/svn/trunk/ ext/glog/trunk; \
 		mkdir ./ext/glog/make; \
