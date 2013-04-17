@@ -17,7 +17,7 @@
 	</libraries>
 	<library-paths>		
 		<library-path>./ext/pugixml/trunk/scripts</library-path>
-		<library-path>./ext/glog/make</library-path>
+		<library-path>./ext/glog/make/lib</library-path>
 	</library-paths>
 	<!-- used when no profile is specified. supplied default values to profiles if required -->	
 	<build type="lib" mode="static"> 
@@ -52,7 +52,7 @@
 			</libraries>
 			<library-paths>		
 				<library-path>./ext/pugixml/trunk/scripts</library-path>
-				<library-path>./ext/glog/make</library-path>
+				<library-path>./ext/glog/make/lib</library-path>
 			</library-paths>
 			<!-- used when no profile is specified. supplied default values to profiles if required -->	
 			<build type="lib" mode="static"> 
