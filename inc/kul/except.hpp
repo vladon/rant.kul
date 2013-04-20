@@ -24,7 +24,7 @@ class Exception : public std::runtime_error{
 		Exception(const char*file, const int line, std::string s) : std::runtime_error(s), f(file), l(line){}
 		Exception(const Exception& e) : std::runtime_error(e.what()), f(e.f),  l(e.l){}
 		const char* what() const noexcept{ return std::runtime_error::what();}
-		const std::string debug() const {return std::string(std::string(f) + " : " + kul::st_d::string::toString(l) + " : " + std::string(std::runtime_error::what()));}
+		const std::string debug() const {return std::string(std::string(f) + " : " + kul::st_d::String::toString(l) + " : " + std::string(std::runtime_error::what()));}
 		const char* file() const { return f;}
 		const int& line() const { return l;}
 };

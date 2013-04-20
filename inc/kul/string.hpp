@@ -17,7 +17,7 @@
 
 namespace kul { namespace st_d{
 
-class string{
+class String{
 	public:
 		static std::string toString(const int& i){
 			std::stringstream out;

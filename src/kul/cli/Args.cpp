@@ -45,7 +45,7 @@ void kul::cli::Args::process(int argc, char* argv[]){
 		c = argv[i];
 		t = c;
 
-		kul::st_d::string::replaceAll(t, "----", "---");
+		kul::st_d::String::replaceAll(t, "----", "---");
 		if(t.find("---") != std::string::npos) throw Exception(__FILE__, __LINE__, "Illegal argument " + c);
 		if(c.compare("---") == 0)	throw Exception(__FILE__, __LINE__, "Illegal argument ---");
 		if(c.compare("--") == 0)	throw Exception(__FILE__, __LINE__, "Illegal argument --");
