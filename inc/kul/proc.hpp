@@ -10,6 +10,8 @@
 
 #include <iostream>
 
+#include <unistd.h>
+
 #include "kul/except.hpp"
 
 namespace kul { namespace proc {
@@ -19,19 +21,20 @@ class Exception : public kul::Exception{
 		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
 };
 
-class ExitException : public kul::Exception{
+class ExitException : public Exception{
 	public:
-		ExitException(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+		ExitException(const char*f, const int l, std::string s) : Exception(f, l, s){}
 };
 
 class AbstractExecCall{
 	protected:
 		virtual ~AbstractExecCall(){}
-		virtual void 		run()		= 0; // starts the process
+		virtual void 		run()		throw (kul::proc::Exception) = 0; // starts the process
 		virtual void 		preStart()  = 0;
 		virtual void 		tick()		= 0;
 		virtual void 		finish()	= 0;
 		virtual const int& 	pid()		= 0;
+		virtual const char* directory()	= 0;
 		virtual void out(const std::string& s){
 			std::cout << s << std::endl;
 		}
@@ -39,7 +42,7 @@ class AbstractExecCall{
 			std::cerr<< s << std::endl;
 		}
 	public:
-		virtual void start() = 0; // allows for setup before calling run - must call run manually.
+		virtual void start() throw (kul::proc::Exception)= 0; // allows for setup before calling run - must call run manually.
 
 };
 
@@ -47,14 +50,16 @@ class Process : public AbstractExecCall{
 	private:
 		bool s;
 		const char* path;
+		const char* dir;
 		std::vector<const char*> argv;
 		std::vector<std::pair<const char*, const char*> > evs;
 
 	protected:
-		Process(const char*cmd) : AbstractExecCall(), s(0), path(0){ argv.push_back(cmd); }
-		Process(const char*path, const char*cmd) : AbstractExecCall(), s(0), path(path){ argv.push_back(cmd); }
+		Process(const char*cmd) : AbstractExecCall(), s(0), path(0), dir(0){ argv.push_back(cmd); }
+		Process(const char*path, const char*cmd) : AbstractExecCall(), s(0), path(path), dir(0){ argv.push_back(cmd); }
 
 		const bool& 		started() 			{ return s; }
+		const char* 		directory()			{ return dir; }
 		void 				setStarted(bool s) 	{ this->s = s; }
 		virtual void 		preStart() 			= 0;
 		virtual void 		finish()			= 0;
@@ -75,6 +80,7 @@ class Process : public AbstractExecCall{
 		static Process* create(const char*path, const char*cmd);
 
 		Process& addArg(const char* arg) { argv.push_back(arg); return *this; }
+		Process& setDir(const char* dir) { this->dir = dir; return *this; }
 		Process& addEnvVar(const char* n, const char* v) { evs.push_back(std::pair<const char*, const char*>(n, v)); return *this;}
 		virtual void start() throw(kul::proc::Exception){
 			if(started()) throw kul::proc::Exception(__FILE__, __LINE__, "Process is already started");

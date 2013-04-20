@@ -2,7 +2,7 @@
 	<project>
 		<name>kul</name>		
 		<version>0.0.1</version>
-	</project>	
+	</project>
 	<includes>
 		<include>./inc</include>
 		<include>./tst</include>
@@ -20,9 +20,7 @@
 		<library-path>./ext/glog/make/lib</library-path>
 	</library-paths>
 	<!-- used when no profile is specified. supplied default values to profiles if required -->	
-	<build type="lib" mode="static"> 
-		<artifact name="libkul.a">cpp</artifact> 
-
+	<build type="lib" mode="static" lang="cpp"> 
 		<env>
 			<vars><!--var name="PATH" mode="replace"></var--></vars>
 		</env>		
@@ -55,8 +53,7 @@
 				<library-path>./ext/glog/make/lib</library-path>
 			</library-paths>
 			<!-- used when no profile is specified. supplied default values to profiles if required -->	
-			<build type="lib" mode="static"> 
-				<artifact name="libkul.a">cpp</artifact> 
+			<build type="lib" mode="static" lang="cpp"> 
 				<env>
 					<vars><!--var name="PATH" mode="replace"></var--></vars>
 				</env>		
