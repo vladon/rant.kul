@@ -10,8 +10,6 @@
 
 #include <iostream>
 
-#include <unistd.h>
-
 #include "kul/except.hpp"
 
 namespace kul { namespace proc {
@@ -29,7 +27,7 @@ class ExitException : public Exception{
 class AbstractExecCall{
 	protected:
 		virtual ~AbstractExecCall(){}
-		virtual void 		run()		throw (kul::proc::Exception) = 0; // starts the process
+	virtual void 		run()		throw (kul::proc::Exception) = 0; // starts the process
 		virtual void 		preStart()  = 0;
 		virtual void 		tick()		= 0;
 		virtual void 		finish()	= 0;
@@ -49,35 +47,29 @@ class AbstractExecCall{
 class Process : public AbstractExecCall{
 	private:
 		bool s;
-		const char* path;
+		const char* p;
 		const char* dir;
 		std::vector<const char*> argv;
 		std::vector<std::pair<const char*, const char*> > evs;
 
 	protected:
-		Process(const char*cmd) : AbstractExecCall(), s(0), path(0), dir(0){ argv.push_back(cmd); }
-		Process(const char*path, const char*cmd) : AbstractExecCall(), s(0), path(path), dir(0){ argv.push_back(cmd); }
+		Process(const char*cmd) : AbstractExecCall(), s(0), p(0), dir(0){ argv.push_back(cmd); }
+		Process(const char*p, const char*cmd) : AbstractExecCall(), s(0), p(p), dir(0){ argv.push_back(cmd); }
 
 		const bool& 		started() 			{ return s; }
 		const char* 		directory()			{ return dir; }
+		const char* 		path()				{ return p; }
 		void 				setStarted(bool s) 	{ this->s = s; }
 		virtual void 		preStart() 			= 0;
 		virtual void 		finish()			= 0;
-		virtual const int 	child(){
-			for(std::pair<const char*, const char*>  ev : evs)
-				setenv(ev.first, ev.second, 1);
-			std::string s(argv[0]);
-			if(path) s = path + std::string("/") + std::string(argv[0]);
-			addArg(NULL);
-			char** args = new char*[argv.size()]; // does need deleting - process exists after method
-			int i = 0;
-			for(const char* c : argv){ args[i] = const_cast<char*>(c); i++; }
-			return execvp(s.c_str(), args);
-		}
+		virtual const int 	child()				= 0;
+
+		const std::vector<const char*>& 							arguments()				{ return argv; };
+		const std::vector<std::pair<const char*, const char*> >& 	environmentVariables()	{ return evs; }
 	public:
 		virtual ~Process(){}
 		static Process* create(const char*cmd);
-		static Process* create(const char*path, const char*cmd);
+		static Process* create(const char*p, const char*cmd);
 
 		Process& addArg(const char* arg) { argv.push_back(arg); return *this; }
 		Process& setDir(const char* dir) { this->dir = dir; return *this; }

@@ -61,6 +61,7 @@ class Compilers{
 			GCCompiler* 	gcc	= new GCCompiler();
 			WINCompiler* 	win	= new WINCompiler();
 			compilers.insert(std::pair<std::string, Compiler*>("gcc", gcc));
+			compilers.insert(std::pair<std::string, Compiler*>("g++", gcc));
 			compilers.insert(std::pair<std::string, Compiler*>("clang", gcc));
 			compilers.insert(std::pair<std::string, Compiler*>("cl", win));
 			compilers.insert(std::pair<std::string, Compiler*>("cl.exe", win));
