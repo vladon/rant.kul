@@ -27,9 +27,8 @@ class ExitException : public Exception{
 class AbstractExecCall{
 	protected:
 		virtual ~AbstractExecCall(){}
-	virtual void 		run()		throw (kul::proc::Exception) = 0; // starts the process
+		virtual void 		run()		throw (kul::proc::Exception) = 0; // starts the process
 		virtual void 		preStart()  = 0;
-		virtual void 		tick()		= 0;
 		virtual void 		finish()	= 0;
 		virtual const int& 	pid()		= 0;
 		virtual const char* directory()	= 0;
@@ -37,7 +36,7 @@ class AbstractExecCall{
 			std::cout << s << std::endl;
 		}
 		virtual void err(const std::string& s){
-			std::cerr<< s << std::endl;
+			std::cerr << s << std::endl;
 		}
 	public:
 		virtual void start() throw (kul::proc::Exception)= 0; // allows for setup before calling run - must call run manually.
@@ -59,10 +58,10 @@ class Process : public AbstractExecCall{
 		const bool& 		started() 			{ return s; }
 		const char* 		directory()			{ return dir; }
 		const char* 		path()				{ return p; }
-		void 				setStarted(bool s) 	{ this->s = s; }
+		void 				setStarted() 		{ this->s = true; }
 		virtual void 		preStart() 			= 0;
 		virtual void 		finish()			= 0;
-		virtual const int 	child()				= 0;
+		
 
 		const std::vector<const char*>& 							arguments()				{ return argv; };
 		const std::vector<std::pair<const char*, const char*> >& 	environmentVariables()	{ return evs; }
@@ -76,7 +75,7 @@ class Process : public AbstractExecCall{
 		Process& addEnvVar(const char* n, const char* v) { evs.push_back(std::pair<const char*, const char*>(n, v)); return *this;}
 		virtual void start() throw(kul::proc::Exception){
 			if(started()) throw kul::proc::Exception(__FILE__, __LINE__, "Process is already started");
-			s = !s;
+			setStarted();
 			this->run();
 		}
 };
@@ -98,7 +97,7 @@ class CPUMonitoredProcess : public Process{
 
 		virtual void preStart() = 0;//    { sTime = Clock::now(); }
 		virtual void finish() = 0;//      { eTime = Clock::now(); }
-		virtual void tick() = 0;/*{ // really only needs to be done once before the process exits.
+		/*virtual void tick() = 0;/*{ // really only needs to be done once before the process exits.
 			if (clock_getcpuclockid(pid(), &clockid) != 0)
 				throw ExitException(__FILE__, __LINE__, "getting clock_getcpuclockid");
 			if (clock_gettime(clockid, &ts) == -1)
@@ -111,7 +110,7 @@ class CPUMonitoredProcess : public Process{
 
 		void start() throw(kul::proc::Exception){
 			if(started()) throw kul::proc::Exception(__FILE__, __LINE__, "Process is already started");
-			setStarted(true);
+			setStarted();
 			this->run();
 		}
 		/*const timePoint& 	startTime()	{ return sTime;}
