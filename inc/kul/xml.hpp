@@ -83,11 +83,11 @@ class Node{
 			n(n){}
 		const Node& 					operator[](const std::string& s) const throw (Exception);
 		const Node&				 		operator()(const std::string& c, const std::string& a, const std::string& v) const throw (Exception);
-		const Node*						parent() 		const{ return *prev; }
+		const Node*						parent() 		const { return *prev; }
 		const std::string		 		txt() 			const throw (Exception);
 		const std::string		 		att(const std::string& s) const throw (Exception);
 		const std::vector<const Node*>&	children()		const { return *this->kinder.get(); }
-		const StringToStringHashMap&	attributes()	const	 { return atts; }
+		const StringToStringHashMap&	attributes()	const { return atts; }
 		const std::string&				name() 			const { return this->n; }
 };
 
@@ -110,7 +110,7 @@ class NodeUser{
 		std::shared_ptr<const Node> rootNode;
 		const std::string f;
 		const void 						reset(const Node* node)	{ rootNode.reset(node);}
-		const void						reset() 				{ return rootNode.reset(); }
+		const void						reset() 				{ rootNode.reset(); }
 
 	public:
 		NodeUser(std::string f) : rootNode(0), f(f) {}

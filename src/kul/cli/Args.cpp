@@ -79,7 +79,7 @@ void kul::cli::Args::process(int argc, char* argv[]){
 				vals[arg->dashdash()] = c.substr(c.find("=") + 1);
 				valExpected = 0;
 			}else if(c.length() > 1){
-				for(uint i = 0; i < c.length(); i++){
+				for(unsigned int i = 0; i < c.length(); i++){
 					char ch = c[i];
 					arg = const_cast<Arg*>(&dashes(&ch));
 					if(arg->valueExpected())

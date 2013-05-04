@@ -51,6 +51,8 @@ class OS{
 		static const std::string 	dirDotDot(const std::string s);
 		static const std::string 	pathSep();
 
+		static const std::string	localPath(const std::string& s);
+
 		static std::string pwd();
 
 		static std::string userDir();
