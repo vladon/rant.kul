@@ -97,7 +97,7 @@ class CPUMonitoredProcess : public Process{
 
 		virtual void preStart() = 0;//    { sTime = Clock::now(); }
 		virtual void finish() = 0;//      { eTime = Clock::now(); }
-		/*virtual void tick() = 0;/*{ // really only needs to be done once before the process exits.
+		/*virtual void tick() = 0;{ // really only needs to be done once before the process exits.
 			if (clock_getcpuclockid(pid(), &clockid) != 0)
 				throw ExitException(__FILE__, __LINE__, "getting clock_getcpuclockid");
 			if (clock_gettime(clockid, &ts) == -1)
