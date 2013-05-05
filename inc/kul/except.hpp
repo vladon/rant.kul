@@ -22,12 +22,14 @@ class Exception : public std::runtime_error{
 	public:
 #if defined(_WIN32) || defined(_WIN64)	// delete when M$ supports noexcept
 		~Exception() /*noexcept*/{} 	// delete
+		const char* what() const /*noexcept*/{ return std::runtime_error::what();} // delete when M$ supports noexcept
 #else									// delete when M$ supports noexcept
 		~Exception() noexcept{}
+		const char* what() const noexcept{ return std::runtime_error::what();}
 #endif									// delete when M$ supports noexcept
 		Exception(const char*file, const int line, std::string s) : std::runtime_error(s), f(file), l(line){}
 		Exception(const Exception& e) : std::runtime_error(e.what()), f(e.f),  l(e.l){}
-		const char* what() const /*noexcept*/{ return std::runtime_error::what();}
+
 		const std::string debug() const {return std::string(std::string(f) + " : " + kul::st_d::String::toString(l) + " : " + std::string(std::runtime_error::what()));}
 		const char* file() const { return f;}
 		const int& line() const { return l;}
