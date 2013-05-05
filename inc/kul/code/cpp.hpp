@@ -44,11 +44,13 @@ class Compiler{
 		virtual const std::string buildSharedLibrary(
 			const std::string& linker, 	
 			const std::vector<std::string>& objects, 	
-			const std::string& out) const = 0;
+			const std::string& outDir,
+			const std::string& outFile) const = 0;
 		virtual const std::string buildStaticLibrary(
 			const std::string& archiver, 	
 			const std::vector<std::string>& objects, 	
-			const std::string& out) const = 0;
+			const std::string& outDir,
+			const std::string& outFile) const = 0;
 		virtual const std::string compileSource	(
 			const std::string& compiler,	
 			const std::vector<std::string>& args, 		
@@ -90,8 +92,8 @@ class GCCompiler : public Compiler{
 			if(OS::execReturn(cmd) != 0) exit(-1);
 			return exe; 
 		}
-		const std::string buildSharedLibrary(const std::string& linker, const std::vector<std::string>& objects, const std::string& out) const { 
-			const std::string lib("lib" + out + ".so");			
+		const std::string buildSharedLibrary(const std::string& linker, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
+			const std::string lib(kul::OS::dirJoin(outDir, "lib" + outFile) + ".so");			
 			std::string cmd = linker + " -shared -o " + " \"" + lib + "\" ";;
 			for(const std::string& o : objects)
 				cmd += " \"" + o + "\" ";
@@ -102,8 +104,8 @@ class GCCompiler : public Compiler{
 			if(OS::execReturn(cmd) != 0) exit(1);
 			return lib; 
 		}
-		const std::string buildStaticLibrary(const std::string& archiver, const std::vector<std::string>& objects, const std::string& out) const { 
-			const std::string lib("lib" + out + ".a"); 
+		const std::string buildStaticLibrary(const std::string& archiver, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
+			const std::string lib(kul::OS::dirJoin(outDir, "lib" + outFile) + ".a"); 
 			std::string cmd = archiver + " \"" + lib + "\" ";
 			for(const std::string& o : objects)
 				cmd += " \"" + o + "\" ";
@@ -180,12 +182,12 @@ link.exe
 			if(OS::execReturn(cmd) != 0) exit(-1);
 			return exe; 
 		}
-		const std::string buildSharedLibrary(const std::string& linker, const std::vector<std::string>& objects, const std::string& out) const { 
-			const std::string lib(out + ".dll"); 
+		const std::string buildSharedLibrary(const std::string& linker, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
+			const std::string lib(kul::OS::dirJoin(outDir, outFile) + ".dll"); 
 			return lib;
 		}
-		const std::string buildStaticLibrary(const std::string& archiver, const std::vector<std::string>& objects, const std::string& out) const { 
-			const std::string lib(out + ".lib"); 
+		const std::string buildStaticLibrary(const std::string& archiver, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
+			const std::string lib(kul::OS::dirJoin(outDir, outFile) + ".lib"); 
 			std::string cmd = archiver + " /OUT:\"" + lib + "\" /NOLOGO /LTCG ";
 			for(const std::string& o : objects)
 				cmd += " \"" + o + "\" ";
