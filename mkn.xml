@@ -68,7 +68,7 @@
 			</build>
 		</profile>
 		<profile name="release" parent="linux"> 
-			<build type="lib" mode="static">
+			<build type="lib" mode="static" lang="cpp"> 
 				<files><file type="cpp"><args><arg>-O3</arg><arg>-g0</arg></args></file></files>
 			</build>
 		</profile>
