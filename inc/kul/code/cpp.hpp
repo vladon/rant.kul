@@ -127,7 +127,7 @@ class GCCompiler : public Compiler{
 				cmd += s + " ";
 
 			if(!OS::isDir(OS::dirDotDot(out))) OS::mkDir(OS::dirDotDot(out));
-			cmd += " -o \"" + obj + "\" \"" + in + "\"";			
+			cmd += " -o \"" + obj + "\" -c \"" + in + "\"";			
 			LOG(INFO) << cmd;
 			if(OS::execReturn(cmd) != 0) exit(-1);
 			return obj;
@@ -209,7 +209,7 @@ link.exe
 				cmd += s + " ";
 
 			if(!OS::isDir(OS::dirDotDot(OS::localPath(out)))) OS::mkDir(OS::dirDotDot(OS::localPath(out)));
-			cmd += " -c \"/Fo" + obj + "\" \"" + in + "\"";			
+			cmd += " -c \"/Fo" + obj + "\" \"" + in + "\"";
 			LOG(INFO) << cmd;
 			if(OS::execReturn(cmd) != 0) exit(-1);
 			return obj;
