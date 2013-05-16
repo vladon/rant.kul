@@ -47,6 +47,7 @@ class Compiler{
 				LOG(INFO) << s;
 				p->addArg(s.c_str());
 			}
+			// this is not finished, does not consider args with " " - move to cli
 			return p;
 		}
 	public:
@@ -228,10 +229,6 @@ link.exe
 			if(!OS::isDir(OS::dirDotDot(OS::localPath(out)))) OS::mkDir(OS::dirDotDot(OS::localPath(out)));
 			cmd += " -c \"/Fo" + obj + "\" \"" + in + "\"";
 			LOG(INFO) << cmd;
-
-			
-			//std::shared_ptr<kul::proc::Process> proc(this->setupCompilationProcess(cmd));
-			//proc->start();
 
 			if(OS::execReturn(cmd) != 0) exit(-1);
 			return obj;

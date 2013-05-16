@@ -68,7 +68,7 @@
 			</build>
 		</profile>
 		<profile name="release" parent="linux"> 
-			<build type="lib" mode="static">
+			<build type="lib" mode="static" lang="cpp"> 
 				<files><file type="cpp"><args><arg>-O3</arg><arg>-g0</arg></args></file></files>
 			</build>
 		</profile>
@@ -83,7 +83,7 @@
 				<include>./../win/master/ext/msinttypes-r26</include>
 				<include>E:\sand\repo\cpp\b\boost\makewin\include\boost-1_53</include>
 				<include>E:\sand\repo\cpp\b\boost\makewin\include\boost-1_53\boost\tr1</include>
-				<include>C:\apps\MVS2012\VC\include</include> <!-- MAKE LAST INCLUDE! -->				
+				<include>C:\apps\MVS2012\VC\include</include> <!-- MAKE LAST INCLUDE! -->	
 			</includes>
 			<libraries>	
 				<library>pugixml.lib</library>
