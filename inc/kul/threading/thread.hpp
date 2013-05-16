@@ -90,6 +90,7 @@ class AMutex{
 
 	public:
 		AMutex() : l(0){}
+		virtual ~AMutex(){}
 		const bool& locked(){ return l;}
 		friend class ScopeLock;
 };
@@ -98,14 +99,13 @@ class ScopeLock : public ALock{
 	private:
 		AMutex& m;
 	public:
-		ScopeLock(AMutex& m) : m(m){			
+		ScopeLock(AMutex& m) : m(m){
 			m.addLock(*this);
-			if(m.size() > 1)
-				while(m.locked() && m.size() > 1 && !(this == m.front())){}			
+			while(m.locked() && this != m.front()){}
 			m.lock();
 		}
-		~ScopeLock(){			
-			m.popLock();			
+		~ScopeLock(){
+			m.popLock();
 			m.unlock(); 
 		}
 };
