@@ -47,7 +47,7 @@ class String{
 		static std::vector<std::string> split(const std::string& s, const std::string& delim="\n"){
 			std::string l = s;
 			std::vector<std::string> ss;
-			uint pos = 0;
+			unsigned int pos = 0;
 			while((pos = s.find(delim, pos + 1)) != std::string::npos){
 				ss.push_back(l.substr(0, pos));
 				l = l.substr(pos);

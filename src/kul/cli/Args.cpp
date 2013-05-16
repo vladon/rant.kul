@@ -62,14 +62,21 @@ void kul::cli::Args::process(int argc, char* argv[]){
 
 		if(c.find("--") == 0){
 			valExpectedFor = c;
-			c = c.substr(c.find("--"));
+			c = c.substr(c.find("--") + 2);
+			if(c.find("=") != std::string::npos)
+				c = c.substr(0, c.find("="));			
+			
 			arg = const_cast<Arg*>(&doubleDashes(c.c_str()));
 			valExpected = arg->valueExpected();
-			if(c.find("=") == std::string::npos)
+			if(valExpectedFor.find("=") == std::string::npos)
 				continue;
-			c = c.substr(c.find("="));
+			LOG(INFO) << valExpectedFor.substr(valExpectedFor.find("=") + 1);
+			if(valExpected)
+				vals[arg->dashdash()] = valExpectedFor.substr(valExpectedFor.find("=") + 1);
+			else
+				c = c.substr(c.find("="));
 		}
-		if(c.find("-") == 0){
+		else if(c.find("-") == 0){
 			valExpectedFor = c;
 			c = c.substr(c.find("-") + 1);
 			if(c.find("=") != std::string::npos){
@@ -79,7 +86,7 @@ void kul::cli::Args::process(int argc, char* argv[]){
 				vals[arg->dashdash()] = c.substr(c.find("=") + 1);
 				valExpected = 0;
 			}else if(c.length() > 1){
-				for(uint i = 0; i < c.length(); i++){
+				for(unsigned int i = 0; i < c.length(); i++){
 					char ch = c[i];
 					arg = const_cast<Arg*>(&dashes(&ch));
 					if(arg->valueExpected())

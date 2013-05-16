@@ -15,9 +15,25 @@
 #include "kul/proc.hpp"
 #include "kul/alloc.hpp"
 #include "kul/smart.hpp"
-#include "kul/ext/google.hpp"
+#include "kul/threading.hpp"
+
 
 namespace kul {
+class TestThreadObject{
+	private:
+		int i;
+	public:
+		TestThreadObject() : i(0){}
+		void operator()(){
+			i++;
+			LOG(INFO) << "THREAD RUNNING";
+		}
+		void operator()() const{			
+			LOG(INFO) << "CONST THREAD RUNNING";
+		}
+		void print(){ LOG(INFO) << "i = " << i;}
+};
+
 class test{ public: test(){
 	kul::smart::Array<int> a;
 	a.add()(new int(1)) (new int(2)) (new int(3));
@@ -34,8 +50,9 @@ class test{ public: test(){
 	for(std::string s : OS::files(OS::pwd(), true)){
 		LOG(INFO) << s;
 	}
-	
+	LOG(INFO);
 	std::shared_ptr<kul::proc::CPUMonitoredProcess> p(kul::proc::CPUMonitoredProcess::create("echo"));
+	LOG(INFO);
 	(*p).addArg("Hello").addArg("World").start();
 
     //LOG(INFO) << std::chrono::duration_cast<std::chrono::nanoseconds>(p->endTime() - p->startTime()).count();
@@ -45,8 +62,38 @@ class test{ public: test(){
 
     //LOG(INFO) << "run time endTime - startTime (microseconds): " << (p->endTime() - p->startTime()).count();
     //LOG(INFO) << "cpuTime of m: " << p->cpuTime();
+
+	TestThreadObject tto1;
+	kul::threading::Ref<TestThreadObject> ref(tto1);
+    kul::threading::Thread th(ref);
+    th.run();
+    th.detach();
+    th.interrupt();
+    tto1.print();
+
+	TestThreadObject tto2;
+    kul::threading::CRef<TestThreadObject> cref(tto2);
+    kul::threading::Thread th2(cref);
+    th2.run();
+    th2.detach();
+    th2.interrupt();
+    tto2.print();
+
+	TestThreadObject tto3;
+    kul::threading::Thread th1(tto3);
+    th1.run();
+    th1.detach();
+    th1.interrupt();
+    tto3.print();
+
+    kul::threading::Mutex mutex;
+    {
+    	kul::threading::ScopeLock lock(mutex);
+    }
+    kul::threading::ScopeLock lock(mutex);
 }};
 
 
 };
 #endif /* _KUL_TEST_HPP_ */
+	

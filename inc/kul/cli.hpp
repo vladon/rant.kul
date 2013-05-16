@@ -37,7 +37,7 @@ class Cmd{
 		const char* command() const { return c;}
 };
 
-enum ArgType{ FLAG = 0, STRING};
+enum ArgType{ FLAG = 0, STRING, INT};
 
 class Arg : public Cmd{
 	private:

@@ -12,8 +12,6 @@
 
 #include "glog/logging.h"
 
-#include "kul/alloc.hpp"
-
 namespace kul { namespace smart{
 
 template <class T> class Iterator{

@@ -72,6 +72,43 @@
 				<files><file type="cpp"><args><arg>-O3</arg><arg>-g0</arg></args></file></files>
 			</build>
 		</profile>
+		<profile name="windows">
+			<includes>
+				<include>./inc</include>
+				<include>./tst</include>
+				<include>./ext/pugixml/trunk/src</include>
+				<include>./ext/glog/make/include</include>
+				<include>./ext/sparsehash/make/trunk/src</include>
+				<include>./ext/sparsehash/make/win/src</include>
+				<include>./../win/master/ext/msinttypes-r26</include>
+				<include>E:\sand\repo\cpp\b\boost\makewin\include\boost-1_53</include>
+				<include>E:\sand\repo\cpp\b\boost\makewin\include\boost-1_53\boost\tr1</include>
+				<include>C:\apps\MVS2012\VC\include</include> <!-- MAKE LAST INCLUDE! -->				
+			</includes>
+			<libraries>	
+				<library>pugixml.lib</library>
+				<library>libglog.lib</library>					
+			</libraries>
+			<library-paths>		
+				<library-path>./ext/pugixml/trunk/scripts</library-path>
+				<library-path>./ext/glog/make/lib</library-path>
+			</library-paths>
+			<!-- used when no profile is specified. supplied default values to profiles if required -->	
+			<build type="lib" mode="static" lang="cpp"> 
+				<env>
+					<vars><!--var name="PATH" mode="replace"></var--></vars>
+				</env>		
+				<files>
+					<file type="cpp">
+						<archiver>lib</archiver>
+						<assembler>as</assembler>
+						<compiler>cl</compiler>
+						<linker>cl</linker>
+						<args><arg>/EHsc</arg></args>
+					</file>
+				</files>
+			</build>
+		</profile>
 	</profiles>
 </maiken>
 
