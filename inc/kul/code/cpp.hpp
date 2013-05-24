@@ -271,6 +271,7 @@ class Compilers{
 				for(const std::string& s :kul::st_d::String::split(compiler, ' ')){
 					if(Compilers::compilers.count(s) > 0)
 						return (*Compilers::compilers.find(s)).second;
+
 					if(kul::OS::localPath(s).find(kul::OS::dirSep()) != std::string::npos)
 						if(Compilers::compilers.count(s.substr(s.rfind(kul::OS::dirSep()) + 1)) > 0)
 							return (*Compilers::compilers.find(s.substr(s.rfind(kul::OS::dirSep()) + 1))).second;

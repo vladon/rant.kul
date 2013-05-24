@@ -69,6 +69,7 @@ class test{ public: test(){
 	kul::threading::Ref<TestThreadObject> ref(tto1);
     kul::threading::Thread th(ref);
     th.run();
+    th.join();
     th.detach();
     th.interrupt();
     tto1.print();
@@ -77,6 +78,7 @@ class test{ public: test(){
     kul::threading::CRef<TestThreadObject> cref(tto2);
     kul::threading::Thread th2(cref);
     th2.run();
+    th2.join();
     th2.detach();
     th2.interrupt();
     tto2.print();
@@ -84,6 +86,7 @@ class test{ public: test(){
 	TestThreadObject tto3;
     kul::threading::Thread th1(tto3);
     th1.run();
+    th1.join();
     th1.detach();
     th1.interrupt();
     tto3.print();
