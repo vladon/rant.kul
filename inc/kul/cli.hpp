@@ -10,12 +10,12 @@
 
 #include "glog/logging.h"
 
-#include "kul/ext/google.hpp"
-
 #include <string>
 #include <vector>
 
+#include "kul/os.hpp"
 #include "kul/except.hpp"
+#include "kul/ext/google.hpp"
 
 namespace kul{  namespace cli {
 
@@ -29,12 +29,49 @@ class ArgNotFoundException : public Exception{
 		ArgNotFoundException(const char*f, const int l, std::string s) : Exception(f, l, s){}
 };
 
+class ArgParsingException : public Exception{
+	public:
+		ArgParsingException(const char*f, const int l, std::string s) : Exception(f, l, s){}
+};
+
+class CmdLine{
+	public:
+		static std::vector<std::string> asArgs(const std::string& cmd) throw(ArgParsingException);
+};
+
 class Cmd{
 	private:
 		const char* c;
 	public:
 		Cmd(const char* c) : c(c){}
 		const char* command() const { return c;}
+};
+
+enum EnvVarMode{ APPE = 0, PREP, REPL};
+
+class EnvVar{
+	private:
+		const std::string n;
+		const std::string v;
+		const EnvVarMode m;
+	public:
+		EnvVar(const std::string n, const std::string v, const EnvVarMode m) : n(n), v(v), m(m){}
+		const char* 		name() 		const { return n.c_str(); }
+		const char* 		value() 	const { return v.c_str(); }
+		const EnvVarMode 	mode() 		const { return m; }
+		const std::string 	toString() 	const {
+			std::string var(value());
+			const char* ev = OS::getEnvVar(name());	
+			if(strcmp(ev, "") != 0){
+				if 		(mode() == EnvVarMode::PREP)			
+					var = std::string(value()) + std::string(kul::OS::pathSep()) + std::string(ev);			
+				else if (mode() == EnvVarMode::APPE)				
+					var = std::string(ev) + std::string(kul::OS::pathSep()) + std::string(value());							
+				else if (mode() == EnvVarMode::REPL)
+					var = std::string(value());
+			}
+			return var;
+		}
 };
 
 enum ArgType{ FLAG = 0, STRING, INT};

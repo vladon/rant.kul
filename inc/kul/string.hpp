@@ -8,6 +8,8 @@
 #ifndef _STRING_HPP_
 #define _STRING_HPP_
 
+#include "glog/logging.h"
+
 #include "kul/ext/google.hpp"
 
 #include <string>
@@ -31,8 +33,17 @@ class String{
 		static void replaceAll(std::string& s, const char* f, const char* r){
 
 			while(s.find(f) != std::string::npos){
-				replaceFirst(s, f, r);
+				replaceFirst(s, f, r);				
 			}
+		}
+		static void replaceAll(std::string& s, const std::string& f, const std::string& r){
+
+			while(s.find(f) != std::string::npos){
+				LOG(INFO) << s;
+				s = s.substr(0, s.find(f)) + r + s.substr(s.find(f) + f.size() + 1);
+				LOG(INFO) << s;
+			}
+
 		}
 		static std::vector<std::string> split(const std::string& s, const char& delim='\n'){
 			std::vector<std::string> ss;

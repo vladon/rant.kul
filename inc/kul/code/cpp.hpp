@@ -11,6 +11,7 @@
 #include "glog/logging.h"
 
 #include "kul/os.hpp"
+#include "kul/cli.hpp"
 #include "kul/proc.hpp"
 #include "kul/string.hpp"
 #include "kul/except.hpp"
@@ -35,42 +36,31 @@ class Compiler{
 	protected:
 		Compiler(const int& v) : version(v){}
 		const int version;
-		kul::proc::Process* setupCompilationProcess(const std::string cmd) const{
-			kul::proc::Process* p;
-			std::string n = cmd.substr(cmd.find(" "));
-			for(const std::string& s : kul::st_d::String::split(cmd, ' ')){
-				LOG(INFO) << s;
-				p = kul::proc::Process::create(s.c_str());
-				break;
-			}
-			for(const std::string& s : kul::st_d::String::split(n, ' ')){
-				LOG(INFO) << s;
-				p->addArg(s.c_str());
-			}
-			// this is not finished, does not consider args with " " - move to cli
-			return p;
-		}
 	public:
 		virtual ~Compiler(){}
 		virtual const std::string buildExecutable(
 			const std::string& linker, 	
+			const std::vector<kul::cli::EnvVar>& evs,
 			const std::vector<std::string>& objects, 	
 			const std::vector<std::string>& libs,
 			const kul::ext::goo_gle::StringHashSet& libPaths,
 			const std::string& out, 
 			const Mode& mode) const = 0;
 		virtual const std::string buildSharedLibrary(
-			const std::string& linker, 	
+			const std::string& linker, 
+			const std::vector<kul::cli::EnvVar>& evs,
 			const std::vector<std::string>& objects, 	
 			const std::string& outDir,
 			const std::string& outFile) const = 0;
 		virtual const std::string buildStaticLibrary(
 			const std::string& archiver, 	
+			const std::vector<kul::cli::EnvVar>& evs,
 			const std::vector<std::string>& objects, 	
 			const std::string& outDir,
 			const std::string& outFile) const = 0;
 		virtual const std::string compileSource	(
 			const std::string& compiler,	
+			const std::vector<kul::cli::EnvVar>& evs,
 			const std::vector<std::string>& args, 		
 			const kul::ext::goo_gle::StringHashSet& incs, 
 			const std::string& in, 
@@ -84,6 +74,7 @@ class GCCompiler : public Compiler{
 		GCCompiler(const int& v = 0) : Compiler(v){}
 		const std::string buildExecutable(
 			const std::string& linker, 	
+			const std::vector<kul::cli::EnvVar>& evs,
 			const std::vector<std::string>& objects, 	
 			const std::vector<std::string>& libs,
 			const kul::ext::goo_gle::StringHashSet& libPaths,
@@ -110,31 +101,27 @@ class GCCompiler : public Compiler{
 			if(OS::execReturn(cmd) != 0) exit(-1);
 			return exe; 
 		}
-		const std::string buildSharedLibrary(const std::string& linker, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
+		const std::string buildSharedLibrary(const std::string& linker, const std::vector<kul::cli::EnvVar>& evs, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
 			const std::string lib(kul::OS::dirJoin(outDir, "lib" + outFile) + ".so");			
 			std::string cmd = linker + " -shared -o " + " \"" + lib + "\" ";;
 			for(const std::string& o : objects)
 				cmd += " \"" + o + "\" ";
-			//if(stat && data().count(LIBRARIES) > 0)
-			//	for(const std::string& lib : (*data().find(LIBRARIES)).second)
-			//		cmd += "-l\"" + lib + "\" ";
+
 			LOG(INFO) << cmd;
 			if(OS::execReturn(cmd) != 0) exit(1);
 			return lib; 
 		}
-		const std::string buildStaticLibrary(const std::string& archiver, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
+		const std::string buildStaticLibrary(const std::string& archiver, const std::vector<kul::cli::EnvVar>& evs, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
 			const std::string lib(kul::OS::dirJoin(outDir, "lib" + outFile) + ".a"); 
 			std::string cmd = archiver + " \"" + lib + "\" ";
 			for(const std::string& o : objects)
 				cmd += " \"" + o + "\" ";
-			//if(stat && data().count(LIBRARIES) > 0)
-			//	for(const std::string& lib : (*data().find(LIBRARIES)).second)
-			//		cmd += "-l\"" + lib + "\" ";
+
 			LOG(INFO) << cmd;
 			if(OS::execReturn(cmd) != 0) exit(1);
 			return lib; 
 		}
-		const std::string compileSource(const std::string& compiler, const std::vector<std::string>& args, const kul::ext::goo_gle::StringHashSet& incs, const std::string& in, const std::string& out) const {
+		const std::string compileSource(const std::string& compiler, const std::vector<kul::cli::EnvVar>& evs, const std::vector<std::string>& args, const kul::ext::goo_gle::StringHashSet& incs, const std::string& in, const std::string& out) const {
 			using namespace kul;
 			std::string cmd = compiler + " ";
 			std::string obj = out + ".o";
@@ -157,6 +144,7 @@ class WINCompiler : public Compiler{
 		WINCompiler(const int& v = 0) : Compiler(v){}
 		const std::string buildExecutable(
 			const std::string& linker, 	
+			const std::vector<kul::cli::EnvVar>& evs,
 			const std::vector<std::string>& objects, 	
 			const std::vector<std::string>& libs,
 			const kul::ext::goo_gle::StringHashSet& libPaths,
@@ -200,23 +188,21 @@ link.exe
 			if(OS::execReturn(cmd) != 0) exit(-1);
 			return exe; 
 		}
-		const std::string buildSharedLibrary(const std::string& linker, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
+		const std::string buildSharedLibrary(const std::string& linker, const std::vector<kul::cli::EnvVar>& evs, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
 			const std::string lib(kul::OS::dirJoin(outDir, outFile) + ".dll"); 
 			return lib;
 		}
-		const std::string buildStaticLibrary(const std::string& archiver, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
+		const std::string buildStaticLibrary(const std::string& archiver, const std::vector<kul::cli::EnvVar>& evs, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
 			const std::string lib(kul::OS::dirJoin(outDir, outFile) + ".lib"); 
 			std::string cmd = archiver + " /OUT:\"" + lib + "\" /NOLOGO /LTCG ";
 			for(const std::string& o : objects)
 				cmd += " \"" + o + "\" ";
-			//if(stat && data().count(LIBRARIES) > 0)
-			//	for(const std::string& lib : (*data().find(LIBRARIES)).second)
-			//		cmd += "-l\"" + lib + "\" ";
+
 			LOG(INFO) << cmd;
 			if(OS::execReturn(cmd) != 0) exit(1);
 			return lib;
 		}
-		const std::string compileSource(const std::string& compiler, const std::vector<std::string>& args, const kul::ext::goo_gle::StringHashSet& incs, const std::string& in, const std::string& out) const {
+		const std::string compileSource(const std::string& compiler, const std::vector<kul::cli::EnvVar>& evs, const std::vector<std::string>& args, const kul::ext::goo_gle::StringHashSet& incs, const std::string& in, const std::string& out) const {
 			using namespace kul;
 			std::string cmd = compiler + " ";
 			std::string obj = out + ".obj";
@@ -227,10 +213,34 @@ link.exe
 				cmd += s + " ";
 
 			if(!OS::isDir(OS::dirDotDot(OS::localPath(out)))) OS::mkDir(OS::dirDotDot(OS::localPath(out)));
-			cmd += " -c \"/Fo" + obj + "\" \"" + in + "\"";
+			cmd += " -c \"/Fo" + obj + "\" \"" + in + "\"";			
 			LOG(INFO) << cmd;
 
-			if(OS::execReturn(cmd) != 0) exit(-1);
+			std::shared_ptr<kul::proc::Process> p(kul::proc::Process::create(compiler.c_str()));
+			std::vector<std::string> bits = kul::cli::CmdLine::asArgs(cmd);			
+			bits.erase(bits.begin());
+			
+			for(const std::string& s : bits)
+				p->addArg(s.c_str());
+			std::vector<std::pair<std::string, std::string> > envVars;			
+			for(const kul::cli::EnvVar ev : evs)				
+				envVars.push_back(std::pair<std::string, std::string>(std::string(ev.name()), ev.toString().c_str()));			
+			for(std::pair<std::string, std::string>& envVar : envVars)
+				p->addEnvVar(envVar.first.c_str(), envVar.second.c_str());
+			try{
+				p->start();
+			}
+			catch(const kul::proc::ExitException& e){ 
+				LOG(INFO) << e.debug()<< " : " << typeid(e).name();
+				exit(1);
+			}
+			catch(const kul::proc::Exception& e){ 
+				LOG(INFO) << e.debug()<< " : " << typeid(e).name();
+				exit(1);
+			}
+			
+
+			//if(OS::execReturn(cmd) != 0) exit(1);
 			return obj;
 		}
 };
@@ -253,15 +263,23 @@ class Compilers{
 		static Compilers* INSTANCE(){ if(instance == 0) instance = new Compilers(); return instance;}
 		const Compiler* get(const std::string& compiler) throw(CompilerNotFoundException){
 			std::string needle = compiler;
-			if(needle.find(" ") > 0)
+
+			if(Compilers::compilers.count(compiler) > 0)
+				return (*Compilers::compilers.find(compiler)).second;
+
+			if(needle.find(" ") != std::string::npos)
 				for(const std::string& s :kul::st_d::String::split(compiler, ' ')){
 					if(Compilers::compilers.count(s) > 0)
 						return (*Compilers::compilers.find(s)).second;
-					if(kul::OS::localPath(s).find(kul::OS::pathSep()))
-						LOG(INFO) << s.substr(s.rfind(kul::OS::pathSep()));
+					if(kul::OS::localPath(s).find(kul::OS::dirSep()) != std::string::npos)
+						if(Compilers::compilers.count(s.substr(s.rfind(kul::OS::dirSep()) + 1)) > 0)
+							return (*Compilers::compilers.find(s.substr(s.rfind(kul::OS::dirSep()) + 1))).second;
 				}
-			if(kul::OS::localPath(compiler).find(kul::OS::pathSep()))
-				LOG(INFO) << compiler.substr(compiler.rfind(kul::OS::pathSep()));
+			
+			if(kul::OS::localPath(compiler).find(kul::OS::dirSep()) != std::string::npos)
+				if(Compilers::compilers.count(compiler.substr(compiler.rfind(kul::OS::dirSep()) + 1)) > 0)
+					return (*Compilers::compilers.find(compiler.substr(compiler.rfind(kul::OS::dirSep()) + 1))).second;
+			
 			throw CompilerNotFoundException(__FILE__, __LINE__, "Compiler for " + compiler + " is not implemented");
 		}
 };
