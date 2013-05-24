@@ -50,10 +50,12 @@ class test{ public: test(){
 	for(std::string s : OS::files(OS::pwd(), true)){
 		LOG(INFO) << s;
 	}
-	LOG(INFO);
+
 	std::shared_ptr<kul::proc::CPUMonitoredProcess> p(kul::proc::CPUMonitoredProcess::create("echo"));
-	LOG(INFO);
 	(*p).addArg("Hello").addArg("World").start();
+
+	for(const std::string& arg : kul::cli::CmdLine::asArgs("/path/to \"words in quotes\" words\\ not\\ in\\ quotes end"))
+		LOG(INFO) << "ARG: " << arg;
 
     //LOG(INFO) << std::chrono::duration_cast<std::chrono::nanoseconds>(p->endTime() - p->startTime()).count();
     //LOG(INFO) << "p->startTime(): " << p->startTime().time_since_epoch().count();

@@ -9,8 +9,8 @@
 
 #include <string.h>
 
-#include "kul/string.hpp"
 #include "kul/cli.hpp"
+#include "kul/string.hpp"
 
 
 void kul::cli::Args::process(int argc, char* argv[]){
