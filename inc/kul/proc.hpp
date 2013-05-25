@@ -49,7 +49,7 @@ class Process : public AbstractExecCall{
 		const char* p;
 		const char* dir;
 		std::vector<const char*> argv;
-		std::vector<const std::pair<const char*, const char*> > evs;
+		std::vector<std::pair<const char*, const char*> > evs;
 
 	protected:
 		Process(const char*cmd) : AbstractExecCall(), s(0), p(0), dir(0){ argv.push_back(cmd); }
@@ -63,7 +63,7 @@ class Process : public AbstractExecCall{
 		virtual void 		finish()			= 0;		
 
 		const std::vector<const char*>& 								arguments()				const { return argv; };
-		const std::vector<const std::pair<const char*, const char*> >& 	environmentVariables()	const { return evs; }
+		const std::vector<std::pair<const char*, const char*> >& 	environmentVariables()	const { return evs; }
 	public:
 		virtual ~Process(){}
 		static Process* create(const char*cmd);
