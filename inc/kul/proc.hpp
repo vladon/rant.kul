@@ -27,11 +27,11 @@ class ExitException : public Exception{
 class AbstractExecCall{
 	protected:
 		virtual ~AbstractExecCall(){}
-		virtual void 		run()		throw (kul::proc::Exception) = 0; // starts the process
-		virtual void 		preStart()  = 0;
-		virtual void 		finish()	= 0;
-		virtual const int& 	pid()		= 0;
-		virtual const char* directory()	= 0;
+		virtual void 				run()		throw (kul::proc::Exception) = 0; // starts the process
+		virtual void 				preStart()  = 0;
+		virtual void 				finish()	= 0;
+		virtual const int& 			pid()		= 0;
+		virtual const std::string& 	directory()	= 0;
 		virtual void out(const std::string& s){
 			std::cout << s << std::endl;
 		}
@@ -46,32 +46,32 @@ class AbstractExecCall{
 class Process : public AbstractExecCall{
 	private:
 		bool s;
-		const char* p;
-		const char* dir;
-		std::vector<const char*> argv;
-		std::vector<std::pair<const char*, const char*> > evs;
+		std::string d;
+		const std::string p;
+		std::vector<const std::string> argv;
+		std::vector<std::pair<const std::string, const std::string> > evs;
 
 	protected:
-		Process(const char*cmd) : AbstractExecCall(), s(0), p(0), dir(0){ argv.push_back(cmd); }
-		Process(const char*p, const char*cmd) : AbstractExecCall(), s(0), p(p), dir(0){ argv.push_back(cmd); }
+		Process(const std::string& cmd) : AbstractExecCall(), s(0), p(), d(){ argv.push_back(cmd); }
+		Process(const std::string& p, const std::string& cmd) : AbstractExecCall(), s(0), p(p), d(){ argv.push_back(cmd); }
 
-		const bool& 		started() 			{ return s; }
-		const char* 		directory()			{ return dir; }
-		const char* 		path()				{ return p; }
-		void 				setStarted() 		{ this->s = true; }
-		virtual void 		preStart() 			= 0;
-		virtual void 		finish()			= 0;		
+		const bool& 		started() 		{ return s; }
+		const std::string&	directory()		{ return d; }
+		const std::string&	path()			{ return p; }
+		void 				setStarted() 	{ this->s = true; }
+		virtual void 		preStart() 		= 0;
+		virtual void 		finish()		= 0;
 
-		const std::vector<const char*>& 								arguments()				const { return argv; };
-		const std::vector<std::pair<const char*, const char*> >& 	environmentVariables()	const { return evs; }
+		const std::vector<const std::string>& 									arguments()				const { return argv; };
+		const std::vector<std::pair<const std::string, const std::string> >& 	environmentVariables()	const { return evs; }
 	public:
 		virtual ~Process(){}
-		static Process* create(const char*cmd);
-		static Process* create(const char*p, const char*cmd);
+		static Process* create(const std::string& cmd);
+		static Process* create(const std::string& p, const std::string& cmd);
 
-		Process& addArg(const char* arg) { argv.push_back(arg); return *this; }
-		Process& setDir(const char* dir) { this->dir = dir; return *this; }
-		Process& addEnvVar(const char* n, const char* v) { evs.push_back(std::pair<const char*, const char*>(n, v)); return *this;}
+		Process& addArg(const std::string& arg) { argv.push_back(arg); return *this; }
+		Process& setDir(const std::string& dir) { this->d = dir; return *this; }
+		Process& addEnvVar(const std::string& n, const std::string& v) { evs.push_back(std::pair<const std::string, const std::string>(n, v)); return *this;}
 		virtual void start() throw(kul::proc::Exception){
 			if(started()) throw kul::proc::Exception(__FILE__, __LINE__, "Process is already started");
 			setStarted();
@@ -91,8 +91,8 @@ class CPUMonitoredProcess : public Process{
 		clockid_t clockid;
 		struct timespec ts;*/
 	protected:
-		CPUMonitoredProcess(const char* cmd) 					: Process(cmd)		{}//, clockid(){}
-		CPUMonitoredProcess(const char* path, const char* cmd) 	: Process(path, cmd){}//, clockid(){}
+		CPUMonitoredProcess(const std::string& cmd) 						: Process(cmd)		{}//, clockid(){}
+		CPUMonitoredProcess(const std::string& path, const std::string cmd) : Process(path, cmd){}//, clockid(){}
 
 		virtual void preStart() = 0;//    { sTime = Clock::now(); }
 		virtual void finish() = 0;//      { eTime = Clock::now(); }
@@ -104,8 +104,8 @@ class CPUMonitoredProcess : public Process{
 		}*/
 	public:
 		virtual ~CPUMonitoredProcess(){}
-		static CPUMonitoredProcess* create(const char*cmd);
-		static CPUMonitoredProcess* create(const char*path, const char*cmd);
+		static CPUMonitoredProcess* create(const std::string& cmd);
+		static CPUMonitoredProcess* create(const std::string& path, const std::string& cmd);
 
 		void start() throw(kul::proc::Exception){
 			if(started()) throw kul::proc::Exception(__FILE__, __LINE__, "Process is already started");
