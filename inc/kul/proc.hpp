@@ -91,8 +91,8 @@ class CPUMonitoredProcess : public Process{
 		clockid_t clockid;
 		struct timespec ts;*/
 	protected:
-		CPUMonitoredProcess(const std::string& cmd) 						: Process(cmd)		{}//, clockid(){}
-		CPUMonitoredProcess(const std::string& path, const std::string cmd) : Process(path, cmd){}//, clockid(){}
+		CPUMonitoredProcess(const std::string& cmd) 							: Process(cmd)		{}//, clockid(){}
+		CPUMonitoredProcess(const std::string& path, const std::string& cmd)	: Process(path, cmd){}//, clockid(){}
 
 		virtual void preStart() = 0;//    { sTime = Clock::now(); }
 		virtual void finish() = 0;//      { eTime = Clock::now(); }
