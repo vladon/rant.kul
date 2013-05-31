@@ -48,12 +48,12 @@ class Process : public AbstractExecCall{
 		bool s;
 		std::string d;
 		const std::string p;
-		std::vector<const std::string> argv;
+		std::vector<std::string> argv;
 		std::vector<std::pair<const std::string, const std::string> > evs;
 
 	protected:
-		Process(const std::string& cmd) : AbstractExecCall(), s(0), p(), d(){ argv.push_back(cmd); }
-		Process(const std::string& p, const std::string& cmd) : AbstractExecCall(), s(0), p(p), d(){ argv.push_back(cmd); }
+		Process(const std::string& cmd) : AbstractExecCall(), s(0), d(), p(){ argv.push_back(cmd); }
+		Process(const std::string& p, const std::string& cmd) : AbstractExecCall(), s(0), d(), p(p){ argv.push_back(cmd); }
 
 		const bool& 		started() 		{ return s; }
 		const std::string&	directory()		{ return d; }
@@ -62,7 +62,7 @@ class Process : public AbstractExecCall{
 		virtual void 		preStart() 		= 0;
 		virtual void 		finish()		= 0;
 
-		const std::vector<const std::string>& 									arguments()				const { return argv; };
+		const std::vector<std::string>&		 									arguments()				const { return argv; };
 		const std::vector<std::pair<const std::string, const std::string> >& 	environmentVariables()	const { return evs; }
 	public:
 		virtual ~Process(){}

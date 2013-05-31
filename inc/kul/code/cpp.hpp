@@ -43,7 +43,7 @@ class Compiler{
 			std::string cmd = c;
 			std::string path;
 			if(c.find(" ") != std::string::npos)
-				for(const std::string& s : kul::st_d::String::split(c, " ")){
+				for(const std::string& s : kul::st_d::String::split(c, ' ')){
 					cmd = s;
 					break;	
 				}
@@ -51,14 +51,14 @@ class Compiler{
 				path = cmd.substr(0, cmd.rfind(kul::OS::dirSep()));
 				cmd = cmd.substr(cmd.rfind(kul::OS::dirSep()) + 1);
 			}
-
+			
 			kul::proc::Process* p;
 			if(path.empty()) 	p = kul::proc::Process::create(cmd);
 			else 				p = kul::proc::Process::create(path, cmd);
 
 			bits.erase(bits.begin());			
 			for(const std::string& s : bits)
-				p->addArg(s.c_str());			
+				p->addArg(s);			
 			for(const kul::cli::EnvVar& ev : evs)
 				p->addEnvVar(ev.name(), ev.toString());
 
@@ -120,11 +120,11 @@ class GCCompiler : public Compiler{
 			else if(mode == Mode::STAT)
 				cmd += " -static ";		
 
-			cmd += " -o \"" + exe + "\" ";
+			cmd += " -o " + exe;
 			for(const std::string& o : objects)
-				cmd += " \"" + o + "\" ";
+				cmd += " " + o;
 			for(const std::string& lib : libs)
-				cmd += "-l" + lib + " ";
+				cmd += " -l" + lib + " ";
 			LOG(INFO) << cmd;
 
 			std::shared_ptr<kul::proc::Process> p(setupProcess(linker, cmd, evs));
@@ -140,9 +140,9 @@ class GCCompiler : public Compiler{
 		}
 		const std::string buildSharedLibrary(const std::string& linker, const std::vector<kul::cli::EnvVar>& evs, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
 			const std::string lib(kul::OS::dirJoin(outDir, "lib" + outFile) + ".so");			
-			std::string cmd = linker + " -shared -o " + " \"" + lib + "\" ";;
+			std::string cmd = linker + " -shared -o " + lib;
 			for(const std::string& o : objects)
-				cmd += " \"" + o + "\" ";
+				cmd += " " + o;
 			LOG(INFO) << cmd;
 
 			std::shared_ptr<kul::proc::Process> p(setupProcess(linker, cmd, evs));
@@ -158,9 +158,9 @@ class GCCompiler : public Compiler{
 		}
 		const std::string buildStaticLibrary(const std::string& archiver, const std::vector<kul::cli::EnvVar>& evs, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
 			const std::string lib(kul::OS::dirJoin(outDir, "lib" + outFile) + ".a"); 
-			std::string cmd = archiver + " \"" + lib + "\" ";
+			std::string cmd = archiver + " " + lib + " ";
 			for(const std::string& o : objects)
-				cmd += " \"" + o + "\" ";
+				cmd += " " + o;
 			LOG(INFO) << cmd;
 
 			std::shared_ptr<kul::proc::Process> p(setupProcess(archiver, cmd, evs));
@@ -185,7 +185,7 @@ class GCCompiler : public Compiler{
 				cmd += s + " ";
 
 			if(!OS::isDir(OS::dirDotDot(out))) OS::mkDir(OS::dirDotDot(out));
-			cmd += " -o \"" + obj + "\" -c \"" + in + "\"";			
+			cmd += " -o " + obj + " -c " + in;
 			LOG(INFO) << cmd;
 
 			std::shared_ptr<kul::proc::Process> p(setupProcess(compiler, cmd, evs));

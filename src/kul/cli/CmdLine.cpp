@@ -61,8 +61,8 @@ std::vector<std::string> kul::cli::CmdLine::asArgs(const std::string& cmd) throw
 				}
 				break;
 		}
-			
 		arg += c;
 	}
+	if(arg.size() > 0) args.push_back(arg);
 	return args;
 }

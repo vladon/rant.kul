@@ -28,7 +28,7 @@
 			<file type="cpp">
 				<args>
 					<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
-					<arg>-Wall</arg><arg>-c </arg><arg>-fmessage-length=0</arg>
+					<arg>-Wall</arg><arg>-fmessage-length=0</arg>
 					<arg>-O0</arg><arg>-g3</arg>
 				</args>
 			</file>
@@ -61,7 +61,7 @@
 					<file type="cpp">
 						<args>
 							<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
-							<arg>-Wall</arg><arg>-c </arg><arg>-fmessage-length=0</arg>
+							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
 						</args>
 					</file>
 				</files>

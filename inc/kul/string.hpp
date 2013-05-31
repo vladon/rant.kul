@@ -50,7 +50,8 @@ class String{
 			unsigned int pos = 0;
 			while((pos = s.find(delim, pos + 1)) != std::string::npos){
 				ss.push_back(l.substr(0, pos));
-				l = l.substr(pos);
+				LOG(INFO) << l;
+				l = l.substr(pos + 1);
 			}
 			ss.push_back(l);
 			return ss;

@@ -52,7 +52,14 @@ class test{ public: test(){
 	}
 
 	std::shared_ptr<kul::proc::CPUMonitoredProcess> p(kul::proc::CPUMonitoredProcess::create("echo"));
-	(*p).addArg("Hello").addArg("World").start();
+	try{
+		(*p).addArg("Hello").addArg("World").start();
+	}catch(const kul::proc::Exception& e){ 
+		LOG(INFO) << e.debug()<< " : " << typeid(e).name();
+		exit(1);
+	}
+
+	
 
 	for(const std::string& arg : kul::cli::CmdLine::asArgs("/path/to \"words in quotes\" words\\ not\\ in\\ quotes end"))
 		LOG(INFO) << "ARG: " << arg;
