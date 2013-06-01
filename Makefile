@@ -24,8 +24,13 @@ all:
 		$(MAKE) -C $(CURDIR)/ext/sparsehash/make install; \
 	fi;
 
-	@if [ ! -d "$(CURDIR)/ext/pugixml/trunk/scripts" ]; then \
+	@if [ ! -d "$(CURDIR)/ext/pugixml/trunk" ]; then \
 		svn co http://pugixml.googlecode.com/svn/tags/latest/ ext/pugixml/trunk; \
+		cd ./ext/pugixml/trunk/scripts; cmake CMakeLists.txt; \
+		$(MAKE) -C $(CURDIR)/ext/pugixml/trunk/scripts; \
+	fi;
+	@if [ ! -d "$(CURDIR)/ext/pugixml/trunk/scripts" ]; then \
+		cd ./ext/pugixml/trunk; svn up; \
 		cd ./ext/pugixml/trunk/scripts; cmake CMakeLists.txt; \
 		$(MAKE) -C $(CURDIR)/ext/pugixml/trunk/scripts; \
 	fi;
@@ -48,4 +53,4 @@ clean:
 clean-all: clean
 	rm -rf ./ext/glog/make
 	rm -rf ./ext/sparsehash/make
-	rm -rf ./ext/pugixml/trunk/scripts/libpugixml.a
+	rm -rf ./ext/pugixml/trunk/scripts
