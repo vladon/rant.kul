@@ -28,8 +28,6 @@ all:
 		svn co http://pugixml.googlecode.com/svn/tags/latest/ ext/pugixml/trunk; \
 		cd ./ext/pugixml/trunk/scripts; cmake CMakeLists.txt; \
 		$(MAKE) -C $(CURDIR)/ext/pugixml/trunk/scripts; \
-		cd ./ext/pugixml/trunk/scripts; cmake CMakeLists.txt -DBUILD_SHARED_LIBS=true; \
-		$(MAKE) -C $(CURDIR)/ext/pugixml/trunk/scripts; \
 	fi;
 
 	@for f in $(shell find src -type f -name '*.cpp'); do \
@@ -45,7 +43,9 @@ files:
 	cd $(CURDIR); ar -r "$(LIB)" $(FILES)
 
 clean:
+	rm -rf bin
+
+clean-all: clean
 	rm -rf ./ext/glog/make
 	rm -rf ./ext/sparsehash/make
-	rm -rf ./ext/pugixml/trunk/scripts
-	rm -rf bin
+	rm -rf ./ext/pugixml/trunk/scripts/libpugixml.a

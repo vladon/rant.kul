@@ -72,7 +72,7 @@
 				<files><file type="cpp"><args><arg>-O3</arg><arg>-g0</arg></args></file></files>
 			</build>
 		</profile>
-		<profile name="windows">
+		<profile name="winc">
 			<includes>
 				<include>./inc</include>
 				<include>./tst</include>
@@ -89,21 +89,52 @@
 				<library>pugixml.lib</library>
 				<library>libglog.lib</library>					
 			</libraries>
-			<library-paths>		
-				<library-path>./ext/pugixml/trunk/scripts</library-path>
-				<library-path>./ext/glog/make/lib</library-path>
-			</library-paths>
 			<!-- used when no profile is specified. supplied default values to profiles if required -->	
-			<build type="lib" mode="static" lang="cpp"> 
-				<env>
-					<vars><!--var name="PATH" mode="replace"></var--></vars>
-				</env>		
+			<build type="lib" mode="static" lang="cpp">
 				<files>
 					<file type="cpp">
 						<archiver>lib</archiver>
 						<assembler>as</assembler>
 						<compiler>cl</compiler>
-						<linker>cl</linker>
+						<linker>link</linker>
+						<args><arg>/EHsc</arg></args>
+					</file>
+				</files>
+			</build>
+		</profile>
+
+		<profile name="win" parent="winc">
+			<library-paths>		
+				<library-path>./ext/pugixml/trunk/lib</library-path>
+				<library-path>./ext/glog/make/lib</library-path>
+			</library-paths>
+			<build type="lib" mode="static" lang="cpp">	
+				<env>					
+					<vars>
+						<var name="PATH" mode="prepend">C:\apps\MVS2012\VC\bin</var>						
+					</vars>
+				</env>	
+				<files>
+					<file type="cpp">
+						<args><arg>/EHsc</arg></args>
+					</file>
+				</files>
+			</build>
+		</profile>
+
+		<profile name="win64" parent="winc">
+			<library-paths>		
+				<library-path>./ext/pugixml/trunk/lib64</library-path>
+				<library-path>./ext/glog/make/lib64</library-path>
+			</library-paths>
+			<build type="lib" mode="static" lang="cpp"> 
+				<env>					
+					<vars>
+						<var name="PATH" mode="prepend">C:\apps\MVS2012\VC\bin\x86_amd64</var>						
+					</vars>
+				</env>		
+				<files>
+					<file type="cpp">
 						<args><arg>/EHsc</arg></args>
 					</file>
 				</files>
