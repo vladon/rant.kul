@@ -37,7 +37,7 @@ class Compiler{
 		Compiler(const int& v) : version(v){}
 		const int version;
 		kul::proc::Process* setupProcess(const std::string& c, const std::string& cmdline, const std::vector<kul::cli::EnvVar>& evs) const {
-
+			
 			std::vector<std::string> bits = kul::cli::CmdLine::asArgs(cmdline);
 
 			std::string cmd = c;
@@ -67,32 +67,28 @@ class Compiler{
 	public:
 		virtual ~Compiler(){}
 		virtual const std::string buildExecutable(
-			const std::string& linker, 	
-			const std::vector<kul::cli::EnvVar>& evs,
+			const std::string& linker,
 			const std::vector<std::string>& objects, 	
 			const std::vector<std::string>& libs,
 			const kul::ext::goo_gle::StringHashSet& libPaths,
 			const std::string& out, 
-			const Mode& mode) const = 0;
+			const Mode& mode) 			const throw (kul::Exception) = 0;
 		virtual const std::string buildSharedLibrary(
 			const std::string& linker, 
-			const std::vector<kul::cli::EnvVar>& evs,
 			const std::vector<std::string>& objects, 	
 			const std::string& outDir,
-			const std::string& outFile) const = 0;
+			const std::string& outFile) const throw (kul::Exception) = 0;
 		virtual const std::string buildStaticLibrary(
-			const std::string& archiver, 	
-			const std::vector<kul::cli::EnvVar>& evs,
+			const std::string& archiver,
 			const std::vector<std::string>& objects, 	
 			const std::string& outDir,
-			const std::string& outFile) const = 0;
+			const std::string& outFile) const throw (kul::Exception) = 0;
 		virtual const std::string compileSource	(
-			const std::string& compiler,	
-			const std::vector<kul::cli::EnvVar>& evs,
+			const std::string& compiler,
 			const std::vector<std::string>& args, 		
 			const kul::ext::goo_gle::StringHashSet& incs, 
 			const std::string& in, 
-			const std::string& out) const = 0;
+			const std::string& out) 	const throw (kul::Exception) = 0;
 		
 };
 
@@ -102,7 +98,6 @@ class GCCompiler : public Compiler{
 		GCCompiler(const int& v = 0) : Compiler(v){}
 		const std::string buildExecutable(
 			const std::string& linker, 	
-			const std::vector<kul::cli::EnvVar>& evs,
 			const std::vector<std::string>& objects, 	
 			const std::vector<std::string>& libs,
 			const kul::ext::goo_gle::StringHashSet& libPaths,
@@ -126,55 +121,53 @@ class GCCompiler : public Compiler{
 			for(const std::string& lib : libs)
 				cmd += " -l" + lib + " ";
 			LOG(INFO) << cmd;
-
-			std::shared_ptr<kul::proc::Process> p(setupProcess(linker, cmd, evs));
-			try{
-				p->start();
-			}
-			catch(const kul::proc::Exception& e){ 
-				LOG(INFO) << e.debug()<< " : " << typeid(e).name();
-				exit(1);
-			}
+			
+			if(kul::OS::execReturn(cmd) != 0)
+				throw Exception(__FILE__, __LINE__, "Failed to build executable");
 
 			return exe; 
 		}
-		const std::string buildSharedLibrary(const std::string& linker, const std::vector<kul::cli::EnvVar>& evs, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
+		const std::string buildSharedLibrary(
+			const std::string& linker, 
+			const std::vector<std::string>& objects, 
+			const std::string& outDir, 
+			const std::string& outFile) const throw (kul::Exception){ 
+
 			const std::string lib(kul::OS::dirJoin(outDir, "lib" + outFile) + ".so");			
 			std::string cmd = linker + " -shared -o " + lib;
 			for(const std::string& o : objects)
 				cmd += " " + o;
 			LOG(INFO) << cmd;
 
-			std::shared_ptr<kul::proc::Process> p(setupProcess(linker, cmd, evs));
-			try{
-				p->start();
-			}
-			catch(const kul::proc::Exception& e){ 
-				LOG(INFO) << e.debug()<< " : " << typeid(e).name();
-				exit(1);
-			}
+			if(kul::OS::execReturn(cmd) != 0)
+				throw Exception(__FILE__, __LINE__, "Failed to build shared lib");
 
 			return lib; 
 		}
-		const std::string buildStaticLibrary(const std::string& archiver, const std::vector<kul::cli::EnvVar>& evs, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
+		const std::string buildStaticLibrary(
+			const std::string& archiver, 
+			const std::vector<std::string>& objects, 
+			const std::string& outDir, 
+			const std::string& outFile) const throw (kul::Exception){ 
+
 			const std::string lib(kul::OS::dirJoin(outDir, "lib" + outFile) + ".a"); 
 			std::string cmd = archiver + " " + lib + " ";
 			for(const std::string& o : objects)
 				cmd += " " + o;
 			LOG(INFO) << cmd;
 
-			std::shared_ptr<kul::proc::Process> p(setupProcess(archiver, cmd, evs));
-			try{
-				p->start();
-			}
-			catch(const kul::proc::Exception& e){ 
-				LOG(INFO) << e.debug()<< " : " << typeid(e).name();
-				exit(1);
-			}
+			if(kul::OS::execReturn(cmd) != 0)
+				throw Exception(__FILE__, __LINE__, "Failed to build static lib");
 
 			return lib; 
 		}
-		const std::string compileSource(const std::string& compiler, const std::vector<kul::cli::EnvVar>& evs, const std::vector<std::string>& args, const kul::ext::goo_gle::StringHashSet& incs, const std::string& in, const std::string& out) const {
+		const std::string compileSource(
+			const std::string& compiler, 
+			const std::vector<std::string>& args, 
+			const kul::ext::goo_gle::StringHashSet& incs, 
+			const std::string& in, 
+			const std::string& out) const throw (kul::Exception){ 
+
 			using namespace kul;
 			std::string cmd = compiler + " ";
 			std::string obj = out + ".o";
@@ -188,15 +181,9 @@ class GCCompiler : public Compiler{
 			cmd += " -o " + obj + " -c " + in;
 			LOG(INFO) << cmd;
 
-			std::shared_ptr<kul::proc::Process> p(setupProcess(compiler, cmd, evs));
-			try{
-				p->start();
-			}
-			catch(const kul::proc::Exception& e){ 
-				LOG(INFO) << e.debug()<< " : " << typeid(e).name();
-				exit(1);
-			}
-
+			if(kul::OS::execReturn(cmd) != 0)
+				throw Exception(__FILE__, __LINE__, "Failed to compile source");
+			
 			return obj;
 		}
 };
@@ -205,13 +192,12 @@ class WINCompiler : public Compiler{
 	public:
 		WINCompiler(const int& v = 0) : Compiler(v){}
 		const std::string buildExecutable(
-			const std::string& linker, 	
-			const std::vector<kul::cli::EnvVar>& evs,
-			const std::vector<std::string>& objects, 	
+			const std::string& linker, 
+			const std::vector<std::string>& objects,
 			const std::vector<std::string>& libs,
 			const kul::ext::goo_gle::StringHashSet& libPaths,
 			const std::string& out, 
-			const Mode& mode) const {
+			const Mode& mode) const throw (kul::Exception){ 
 
 			std::string exe = out + ".exe"; 
 			std::string cmd = linker + " /NOLOGO /LTCG ";
@@ -231,40 +217,45 @@ class WINCompiler : public Compiler{
 				cmd += " " + lib + " ";
 			LOG(INFO) << cmd;
 
-			std::shared_ptr<kul::proc::Process> p(setupProcess(linker, cmd, evs));
-			try{
-				p->start();
-			}
-			catch(const kul::proc::Exception& e){ 
-				LOG(INFO) << e.debug()<< " : " << typeid(e).name();
-				exit(1);
-			}
+			LOG(INFO) << kul::OS::getEnvVar("PATH");
+			if(kul::OS::execReturn(cmd) != 0)
+				throw Exception(__FILE__, __LINE__, "Failed to build executable");
 
 			return exe; 
 		}
-		const std::string buildSharedLibrary(const std::string& linker, const std::vector<kul::cli::EnvVar>& evs, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
+		const std::string buildSharedLibrary(
+			const std::string& linker, 
+			const std::vector<std::string>& objects, 
+			const std::string& outDir, 
+			const std::string& outFile) const throw (kul::Exception){ 
+
 			const std::string lib(kul::OS::dirJoin(outDir, outFile) + ".dll"); 
 			return lib;
 		}
-		const std::string buildStaticLibrary(const std::string& archiver, const std::vector<kul::cli::EnvVar>& evs, const std::vector<std::string>& objects, const std::string& outDir, const std::string& outFile) const { 
+		const std::string buildStaticLibrary(
+			const std::string& archiver, 
+			const std::vector<std::string>& objects, 
+			const std::string& outDir, 
+			const std::string& outFile) const throw (kul::Exception){ 
+
 			const std::string lib(kul::OS::dirJoin(outDir, outFile) + ".lib"); 
 			std::string cmd = archiver + " /OUT:\"" + lib + "\" /NOLOGO /LTCG ";
 			for(const std::string& o : objects)
 				cmd += " \"" + o + "\" ";
 			LOG(INFO) << cmd;
-			
-			std::shared_ptr<kul::proc::Process> p(setupProcess(archiver, cmd, evs));
-			try{
-				p->start();
-			}
-			catch(const kul::proc::Exception& e){ 
-				LOG(INFO) << e.debug()<< " : " << typeid(e).name();
-				exit(1);
-			}
+
+			if(kul::OS::execReturn(cmd) != 0)
+				throw Exception(__FILE__, __LINE__, "Failed to build static lib");
 
 			return lib;
 		}
-		const std::string compileSource(const std::string& compiler, const std::vector<kul::cli::EnvVar>& evs, const std::vector<std::string>& args, const kul::ext::goo_gle::StringHashSet& incs, const std::string& in, const std::string& out) const {
+		const std::string compileSource(
+			const std::string& compiler, 
+			const std::vector<std::string>& args, 
+			const kul::ext::goo_gle::StringHashSet& incs, 
+			const std::string& in, 
+			const std::string& out) const throw (kul::Exception){ 
+
 			using namespace kul;
 			std::string cmd = compiler + " ";
 			std::string obj = out + ".obj";
@@ -277,15 +268,10 @@ class WINCompiler : public Compiler{
 			if(!OS::isDir(OS::dirDotDot(OS::localPath(out)))) OS::mkDir(OS::dirDotDot(OS::localPath(out)));
 			cmd += " -c \"/Fo" + obj + "\" \"" + in + "\"";			
 			LOG(INFO) << cmd;
-
-			std::shared_ptr<kul::proc::Process> p(setupProcess(compiler, cmd, evs));
-			try{
-				p->start();
-			}
-			catch(const kul::proc::Exception& e){ 
-				LOG(INFO) << e.debug()<< " : " << typeid(e).name();
-				exit(1);
-			}
+			
+			if(kul::OS::execReturn(cmd) != 0)
+				throw Exception(__FILE__, __LINE__, "Failed to compile source");
+			
 			return obj;
 		}
 };

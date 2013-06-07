@@ -42,9 +42,11 @@ class CmdLine{
 class Cmd{
 	private:
 		const char* c;
+		const char* h;
 	public:
-		Cmd(const char* c) : c(c){}
-		const char* command() const { return c;}
+		Cmd(const char* c, const char* h = "") : c(c), h(h){}
+		const char* command() 	const { return c;}
+		const char* help() 		const { return h;}
 };
 
 enum EnvVarMode{ APPE = 0, PREP, REPL};
@@ -81,8 +83,8 @@ class Arg : public Cmd{
 		const char* d;
 		ArgType t;
 	public:		
-		Arg(const char* d, const char* dd, ArgType t) : Cmd(dd), d(d), t(t){}
-		Arg(const char* d, const char* dd) : Cmd(dd), d(d), t(ArgType::FLAG){}
+		Arg(const char* d, const char* dd, ArgType t, const char* h = "") : Cmd(dd, h), d(d), t(t){}
+		Arg(const char* d, const char* dd, const char* h = "") : Cmd(dd, h), d(d), t(ArgType::FLAG){}
 		const char* dash() const { return d;}
 		const char* dashdash() const { return command();}
 		const bool valueExpected() const { return t != ArgType::FLAG;}
@@ -115,7 +117,15 @@ class Args{
 		const kul::ext::goo_gle::StringToStringHashMap& values() 	const { return vals; }
 };
 
+class AWritable{
+	public:
+		virtual const char* msg() const = 0;
+};
 
+class AWriter{
+	protected:
+		virtual void error(const AWritable& a) const = 0;
+};
 
 
 };};

@@ -38,9 +38,8 @@ void kul::cli::Args::process(int argc, char* argv[]){
 
 	Arg* arg = 0;
 	bool valExpected = false;
-	std::string valExpectedFor = "";
-	std::string c= "";
-	std::string t = "";
+	std::string valExpectedFor, c, t;
+
 	for(int i = 1; i < argc; i++){
 		c = argv[i];
 		t = c;
@@ -61,20 +60,20 @@ void kul::cli::Args::process(int argc, char* argv[]){
 		}
 
 		if(c.find("--") == 0){
-			valExpectedFor = c;
 			c = c.substr(c.find("--") + 2);
-			if(c.find("=") != std::string::npos)
-				c = c.substr(0, c.find("="));			
-			
-			arg = const_cast<Arg*>(&doubleDashes(c.c_str()));
-			valExpected = arg->valueExpected();
-			if(valExpectedFor.find("=") == std::string::npos)
+			valExpectedFor = c;
+			if(c.find("=") == std::string::npos){
+				arg = const_cast<Arg*>(&doubleDashes(c.c_str()));
+				valExpected = arg->valueExpected();
 				continue;
-			LOG(INFO) << valExpectedFor.substr(valExpectedFor.find("=") + 1);
-			if(valExpected)
-				vals[arg->dashdash()] = valExpectedFor.substr(valExpectedFor.find("=") + 1);
-			else
-				c = c.substr(c.find("="));
+			}
+			valExpectedFor = c.substr(0, c.find("="));
+			arg = const_cast<Arg*>(&doubleDashes(valExpectedFor.c_str()));
+			valExpected = arg->valueExpected();
+			if(!valExpected) throw Exception(__FILE__, __LINE__, "Found = when no value is expected for arg " + valExpectedFor);
+
+			c = c.substr(c.find("=") + 1);			
+			vals[arg->dashdash()] = c;			
 		}
 		else if(c.find("-") == 0){
 			valExpectedFor = c;
