@@ -127,7 +127,7 @@ class AThreader{
 		virtual void act() = 0;		
 		void setFinished(){ f = true;}
 		const bool finished() const { return f;}
-		void join(){ while(!f){ Sleep(1); } }
+		virtual void join() = 0;
 		virtual void detach() = 0;
 		virtual void interrupt() throw(kul::threading::InterruptionException) = 0;
 		virtual void run() throw(kul::threading::Exception) = 0;
@@ -243,7 +243,7 @@ template <class PRED>
 class ThreadPool{
 	private:
 		bool d, s;
-		int m, pM;
+		unsigned int m, pM;
 		PRED* p;
 		std::shared_ptr<APooledThreader> pT;
 		std::vector<kul::osi::threading::AThreader*> ts;
@@ -265,7 +265,7 @@ class ThreadPool{
 			
 			if(p){
 				while(true){
-					int f = 0;
+					unsigned int f = 0;
 					for(const kul::osi::threading::AThreader* at : ts){
 						if(at->finished()) f++;						
 						if(at->exceptionPointer() != std::exception_ptr()){
@@ -293,7 +293,7 @@ class ThreadPool{
 				}
 			}
 			while(true){
-				int f = 0;
+				unsigned int f = 0;
 				for(const kul::osi::threading::AThreader* at : ts)
 					if(at->finished()) f++;
 				if(f == ts.size()) return;

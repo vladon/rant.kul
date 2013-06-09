@@ -102,7 +102,7 @@ class GCCompiler : public Compiler{
 			const std::vector<std::string>& libs,
 			const kul::ext::goo_gle::StringHashSet& libPaths,
 			const std::string& out, 
-			const Mode& mode) const {
+			const Mode& mode) const throw (kul::Exception) {
 
 			std::string exe = out;
 			std::string cmd = linker + " ";
