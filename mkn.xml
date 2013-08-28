@@ -19,7 +19,7 @@
 		<library-path>./ext/pugixml/trunk/scripts</library-path>
 		<library-path>./ext/glog/make/lib</library-path>
 	</library-paths>
-	<!-- used when no profile is specified. supplied default values to profiles if required -->	
+	<!-- used when no profile is specified -->	
 	<build type="lib" mode="static" lang="cpp"> 
 		<env>
 			<vars><!--var name="PATH" mode="replace"></var--></vars>

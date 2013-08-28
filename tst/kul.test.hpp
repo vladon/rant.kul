@@ -22,13 +22,15 @@ namespace kul {
 class TestThreadObject{
 	private:
 		int i;
+		kul::threading::Mutex mutex;
 	public:
 		TestThreadObject() : i(0){}
-		void operator()(){
-			i++;
-			LOG(INFO) << "THREAD RUNNING";
+		void operator()(){			
+		   	LOG(INFO) << "THREAD RUNNING";
+		    kul::threading::ScopeLock lock(mutex);
+			i++;			
 		}
-		void operator()() const{			
+		void operator()() const{
 			LOG(INFO) << "CONST THREAD RUNNING";
 		}
 		void print(){ LOG(INFO) << "i = " << i;}
@@ -103,6 +105,14 @@ class test{ public: test(){
     	kul::threading::ScopeLock lock(mutex);
     }
     kul::threading::ScopeLock lock(mutex);
+
+    LOG(INFO) << "CANONBALL";
+    TestThreadObject tto4;
+    kul::threading::Ref<TestThreadObject> ref2(tto4);
+	kul::threading::ThreadPool<std::queue<int> > tp(ref2);
+	tp.setMax(8);
+	tp.runAndJoinAll();
+	tto4.print();
 }};
 
 

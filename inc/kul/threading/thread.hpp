@@ -70,46 +70,6 @@ class CRef{
 		const T& get() const{ return t;}
 };
 
-class ScopeLock;
-
-class ALock{
-	public:
-		virtual ~ALock(){}
-};
-
-class AMutex{
-	private:
-		bool l;
-		std::queue<const ALock*> locks;
-		void lock() 	{ l = 1;}
-		void unlock() 	{ l = 0;}
-		virtual void mute() const = 0;
-		void addLock(const ALock& lock) { locks.push(&lock);}
-		void popLock() { locks.pop();}
-		const ALock* front() { return locks.front();}
-		const int size() { return locks.size();}
-
-	public:
-		AMutex() : l(0){}
-		virtual ~AMutex(){}
-		const bool& locked(){ return l;}
-		friend class ScopeLock;
-};
-
-class ScopeLock : public ALock{
-	private:
-		AMutex& m;
-	public:
-		ScopeLock(AMutex& m) : m(m){
-			m.addLock(*this);
-			while(m.locked() && this != m.front()){}
-			m.lock();
-		}
-		~ScopeLock(){
-			m.popLock();
-			m.unlock(); 
-		}
-};
 
 class Thread;
 template <class PRED> class ThreadPool;
@@ -147,6 +107,53 @@ class ThreaderService{
 		template <class T> static kul::osi::threading::AThreader* getThreader(const T& t);
 		template <class T> static kul::osi::threading::AThreader* getRefThreader(const Ref<T>& ref);
 		template <class T> static kul::osi::threading::AThreader* getCRefThreader(const CRef<T>& ref);
+};
+
+class ScopeLock;
+
+class ALock{
+	public:
+		virtual ~ALock(){}
+};
+
+class AMutex{
+	private:
+		bool l;
+		std::queue<const ALock*> locks;
+		virtual void mute() const = 0;
+		void addLock(const ALock& lock) { locks.push(&lock);}
+		void popLock() { locks.pop();}
+		const ALock* front() { return locks.front();}
+		const int size() { return locks.size();}
+
+	public:
+		AMutex() : l(0){}
+		virtual ~AMutex(){}
+		const bool& locked(){ return l;}
+		friend class ScopeLock;
+};
+
+class ScopeLock : public ALock{
+	private:
+		AMutex& m;
+	public:
+		ScopeLock(AMutex& m) : m(m){
+			m.addLock(*this);
+
+			while(this != m.front()){ /*ThreaderService::sleep(1); */}
+			/*
+			LOG(INFO) << this;
+			std::queue<const ALock*> locks = m.locks;
+			while(locks.size() > 0){
+				LOG(INFO) << locks.front();
+				locks.pop();
+			}
+			LOG(INFO) << (this != m.front());
+			*/
+		}
+		~ScopeLock(){
+			m.popLock();
+		}
 };
 
 class Thread : public AThread{
