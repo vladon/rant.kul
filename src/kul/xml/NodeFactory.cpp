@@ -87,14 +87,15 @@ void kul::xml::NodeFactory::validateAttributes(const std::vector<const Node*>& n
 	for(std::pair<std::string, std::vector<std::string> > valPair  : v.allowedValues()){
 		if(!valPair.second.empty()){
 			for(const Node* n : nodes){
-				bool f = false;
+				bool f = true;
 				for(const std::pair<std::string, std::string>& attPair  : n->attributes())
 					if(valPair.first.compare(attPair.first) == 0){
+						f = false;
 						for(std::string s : valPair.second)
 							if(s.compare(attPair.second) == 0){ f = true; break; }
 						if(f) break;
 					}
-				if(!f && v.isMandatory()) throw Exception(__FILE__, __LINE__, "Attribute \"" + valPair.first + "\" on node \"" + n->name() + "\" is not one of the expected values!");
+				if(!f && v.isChecked()) throw Exception(__FILE__, __LINE__, "Attribute \"" + valPair.first + "\" on node \"" + n->name() + "\" is not one of the expected values!");
 			}
 		}
 		for(const Node* n : nodes)

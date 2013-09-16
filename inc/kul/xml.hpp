@@ -164,11 +164,14 @@ class NodeValidator{
 class NodeAttributeValidator{
 	private:
 		const StringToVectorTGMap<std::string> avs;
+		const bool checked;
 		const bool unique;
 		const bool mandatory;
 	public:
-		NodeAttributeValidator(const StringToVectorTGMap<std::string> a, const bool u, const bool m) : avs(a),unique(u), mandatory(m){}
-		NodeAttributeValidator(const NodeAttributeValidator& n) : avs(n.allowedValues()),unique(n.isUnique()), mandatory(n.isMandatory()){}
+		NodeAttributeValidator(const StringToVectorTGMap<std::string> a, const bool c, const bool u, const bool m) : avs(a), checked(c), unique(u), mandatory(m){}
+		NodeAttributeValidator(const StringToVectorTGMap<std::string> a, const bool u, const bool m) : avs(a), checked(0), unique(u), mandatory(m){}
+		NodeAttributeValidator(const NodeAttributeValidator& n) : avs(n.allowedValues()), checked(n.isChecked()), unique(n.isUnique()), mandatory(n.isMandatory()){}
+		const bool 								isChecked() 		const { return checked; }
 		const bool 								isUnique() 			const { return unique; }
 		const bool 								isMandatory() 		const { return mandatory; }
 		const StringToVectorTGMap<std::string>& allowedValues() 	const { return avs;}
