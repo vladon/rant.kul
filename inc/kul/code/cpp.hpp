@@ -66,6 +66,8 @@ class Compiler{
 		}
 	public:
 		virtual ~Compiler(){}
+		virtual const std::string getSharedLib(const std::string& lib) const = 0;
+		virtual const std::string getStaticLib(const std::string& lib) const = 0;
 		virtual const std::string buildExecutable(
 			const std::string& linker,
 			const std::vector<std::string>& objects, 	
@@ -96,6 +98,12 @@ class Compiler{
 class GCCompiler : public Compiler{
 	public:
 		GCCompiler(const int& v = 0) : Compiler(v){}
+		const std::string getSharedLib(const std::string& lib) const {
+			return "lib" + lib + ".so";
+		}
+		const std::string getStaticLib(const std::string& lib) const {
+			return "lib" + lib + ".a";
+		}
 		const std::string buildExecutable(
 			const std::string& linker, 	
 			const std::vector<std::string>& objects, 	
@@ -191,6 +199,12 @@ class GCCompiler : public Compiler{
 class WINCompiler : public Compiler{
 	public:
 		WINCompiler(const int& v = 0) : Compiler(v){}
+		const std::string getSharedLib(const std::string& lib) const {
+			return lib + ".lib";
+		}
+		const std::string getStaticLib(const std::string& lib) const {
+			return lib + ".dll";
+		}
 		const std::string buildExecutable(
 			const std::string& linker, 
 			const std::vector<std::string>& objects,

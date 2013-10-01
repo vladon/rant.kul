@@ -12,6 +12,7 @@
  
 #include "kul/os.hpp"
 #include "kul/proc.hpp"
+#include "kul/string.hpp"
 
 namespace kul{ namespace scm{
 
@@ -41,7 +42,7 @@ class Git : public Scm{
 			std::shared_ptr<kul::proc::Process> p(kul::proc::Process::create("git"));
 			if(!OS::isDir(l)) OS::mkDir(l);
 			(*p).setDir(l.c_str()).addArg("clone").addArg(r.c_str());
-			if(v.compare("") != 0) (*p).addArg("-b").addArg(v.c_str());
+			if(v.compare("master") != 0 && v.compare("") != 0) (*p).addArg("-b").addArg(v.c_str());
 			try{
 				(*p).addArg(".").start();
 			}catch(const kul::proc::ExitException& e){

@@ -26,13 +26,12 @@ class String{
 			out << i;
 			return out.str();
 		}
-		static void replaceFirst(std::string& s, const std::string& f, const std::string& r){
-			s = s.substr(0, s.find(f)) + r + s.substr(s.find(f) + f.size() + 1);
+		static void replace(std::string& s, const std::string& f, const std::string& r){
+			s = s.substr(0, s.find(f)) + r + s.substr(s.find(f) + 1);
 		}
 		static void replaceAll(std::string& s, const std::string& f, const std::string& r){
-			while(s.find(f) != std::string::npos){
-				s = s.substr(0, s.find(f)) + r + s.substr(s.find(f) + f.size() + 1);
-			}
+			while(s.find(f) != std::string::npos)
+				replace(s, f, r);
 		}
 		static std::vector<std::string> split(const std::string& s, const char& delim='\n'){
 			std::vector<std::string> ss;
@@ -55,6 +54,13 @@ class String{
 			}
 			ss.push_back(l);
 			return ss;
+		}
+		static bool compareIgnoreCase(const std::string& a, const std::string& b){
+			    std::string aCpy(a);
+			    std::string bCpy(b);
+			    std::transform(aCpy.begin(), aCpy.end(), aCpy.begin(), ::tolower);
+			    std::transform(bCpy.begin(), bCpy.end(), bCpy.begin(), ::tolower);
+			    return (aCpy == bCpy);
 		}
 };
 
