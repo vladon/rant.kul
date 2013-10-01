@@ -1,7 +1,7 @@
 <maiken>
 	<project>
 		<name>kul</name>		
-		<version>0.0.1</version>
+		<version>master</version>
 	</project>
 	<includes>
 		<include>./inc</include>
