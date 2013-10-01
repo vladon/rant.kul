@@ -7,7 +7,28 @@ INCS = 	-I$(CURDIR)/inc \
 LIB = bin/libkul.a
 
 all:
+	$(MAKE) libs
+	$(MAKE) kul
+
+this:
+	$(MAKE) prechecks
+	$(MAKE) libs
+
+prechecks:
+	@if [ -z "$$($(WHICH) cmake)" ]; then echo "cmake NOT FOUND - EXITING"; exit 1; fi 	#needed to build pugixml
+	@if [ -z "$$($(WHICH) svn)" ]; then echo "svn NOT FOUND - EXITING"; exit 1; fi 		#needed to to get pugixml
+
+kul:
 	@@echo "Making libkul.a"
+	@for f in $(shell find src -type f -name '*.cpp'); do \
+		if [ ! -d "$(CURDIR)/bin/$$f" ]; then \
+			mkdir -p $(CURDIR)/bin/$$f; \
+		fi; \
+		$(CXX) $(CXXFLAGS) $(INCS) -o "$(CURDIR)/bin/$$f.o" "$(CURDIR)/$$f"; \
+	done;
+	$(MAKE) files
+	
+libs:
 	@if [ ! -d "$(CURDIR)/ext/glog/make" ]; then \
 		svn co http://google-glog.googlecode.com/svn/trunk/ ext/glog/trunk; \
 		mkdir ./ext/glog/make; \
@@ -15,7 +36,6 @@ all:
 		$(MAKE) -C $(CURDIR)/ext/glog/make; \
 		$(MAKE) -C $(CURDIR)/ext/glog/make install; \
 	fi;
-	
 	@if [ ! -d "$(CURDIR)/ext/sparsehash/make" ]; then \
 		svn co http://sparsehash.googlecode.com/svn/trunk/ ext/sparsehash/trunk; \
 		mkdir ./ext/sparsehash/make; \
@@ -35,13 +55,7 @@ all:
 		$(MAKE) -C $(CURDIR)/ext/pugixml/trunk/scripts; \
 	fi;
 
-	@for f in $(shell find src -type f -name '*.cpp'); do \
-		if [ ! -d "$(CURDIR)/bin/$$f" ]; then \
-			mkdir -p $(CURDIR)/bin/$$f; \
-		fi; \
-		$(CXX) $(CXXFLAGS) $(INCS) -o "$(CURDIR)/bin/$$f.o" "$(CURDIR)/$$f"; \
-	done;
-	$(MAKE) files
+
 
 files:
 	$(eval FILES := $(foreach dir,$(shell find $(CURDIR)/bin -type f -name *.o),$(dir)))	
