@@ -10,14 +10,6 @@ all:
 	$(MAKE) libs
 	$(MAKE) kul
 
-this:
-	$(MAKE) prechecks
-	$(MAKE) libs
-
-prechecks:
-	@if [ -z "$$($(WHICH) cmake)" ]; then echo "cmake NOT FOUND - EXITING"; exit 1; fi 	#needed to build pugixml
-	@if [ -z "$$($(WHICH) svn)" ]; then echo "svn NOT FOUND - EXITING"; exit 1; fi 		#needed to to get pugixml
-
 kul:
 	@@echo "Making libkul.a"
 	@for f in $(shell find src -type f -name '*.cpp'); do \
