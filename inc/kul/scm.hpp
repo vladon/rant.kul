@@ -38,10 +38,11 @@ class Scm{
 class Git : public Scm{
 	public:
 		void co(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception){
-			LOG(INFO) << "GIT CO";
+			
 			std::shared_ptr<kul::proc::Process> p(kul::proc::Process::create("git"));
 			if(!OS::isDir(l)) OS::mkDir(l);
-			(*p).setDir(l.c_str()).addArg("clone").addArg(r.c_str());
+			(*p).setDir(l.c_str());
+			(*p).addArg("clone").addArg(r.c_str());
 			if(v.compare("master") != 0 && v.compare("") != 0) (*p).addArg("-b").addArg(v.c_str());
 			try{
 				(*p).addArg(".").start();
@@ -52,10 +53,21 @@ class Git : public Scm{
 			
 		};
 		void up(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception){
-			LOG(INFO) << "GIT UP";
+			
 			if(!kul::OS::isDir(l)) co(l, r);
-			else{}
-		};
+			else{
+				std::shared_ptr<kul::proc::Process> p(kul::proc::Process::create("git"));				
+				(*p).setDir(l.c_str());
+				(*p).addArg("pull");
+				if(v.compare("") != 0) (*p).addArg("-u").addArg("origin").addArg(v.c_str());
+				try{
+					(*p).start();
+				}catch(const kul::proc::ExitException& e){
+					OS::dirDel(l);
+					throw Exception(__FILE__, __LINE__, "SCM ERROR - Check remote dependency location / version");
+				}
+			}
+		};d
 };
 
 class Svn : public Scm{
