@@ -49,9 +49,9 @@ class Git : public Scm{
 			}catch(const kul::proc::ExitException& e){
 				OS::dirDel(l);
 				throw Exception(__FILE__, __LINE__, "SCM ERROR - Check remote dependency location / version");
-			}
-			
-		};
+			}			
+		}
+		
 		void up(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception){
 			
 			if(!kul::OS::isDir(l)) co(l, r);
@@ -67,7 +67,7 @@ class Git : public Scm{
 					throw Exception(__FILE__, __LINE__, "SCM ERROR - Check remote dependency location / version");
 				}
 			}
-		};d
+		}
 };
 
 class Svn : public Scm{
