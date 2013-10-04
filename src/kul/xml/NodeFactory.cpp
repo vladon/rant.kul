@@ -142,11 +142,12 @@ void kul::xml::NodeFactory::validateAttributes(const Node& node, const NodeValid
 }
 
 const kul::xml::Node* kul::xml::NodeFactory::create(const char*f, const char* root, const NodeValidator& v){
-	pugi::xml_document doc;
-	LOG(INFO) << f;
+	pugi::xml_document doc;	
 	pugi::xml_parse_result result = doc.load_file(f);
 	if(!result){
-		LOG(ERROR) << result.description();
+		//TODO GET LINE # OF ERROR IN FILE
+		if(result.status == pugi::xml_parse_status::status_end_element_mismatch)	
+			throw Exception(__FILE__, __LINE__, "PUGIXML Exception: " + std::string(result.description()) + " at " + (f + result.offset));
 		throw Exception(__FILE__, __LINE__, "PUGIXML Exception: " + std::string(result.description()));
 	}
 	if(doc.child(root).empty())
