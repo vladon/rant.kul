@@ -44,8 +44,27 @@ class HashSet : google::sparse_hash_set<T, HashFcn, EqualKey>{
 		const_iterator 				end() 											const   { return Hash::end(); }
 		size_type 					size() 											const   { return Hash::size(); }
 };
-
 typedef HashSet<std::string, std::tr1::hash<std::string>, StdStringComparator> StringHashSet;
+
+template <class K, class V, class HashFcn, class EqualKey, class Alloc = libc_allocator_with_realloc<std::pair<K, V> > >
+class HashMap : google::sparse_hash_map<K, V, HashFcn, EqualKey>{
+	public:
+		typedef typename google::sparse_hash_map<K, V, HashFcn, EqualKey> map;
+		typedef typename map::size_type size_type;
+		typedef typename map::key_type key_type;
+		typedef typename map::iterator iterator;
+		typedef typename map::const_iterator const_iterator;
+		std::pair<iterator, bool> 	insert(const std::pair<K, V>& obj)			{ return map::insert(obj); }
+		std::pair<iterator, bool> 	insert(const K k, V v)						{ return insert(std::pair<K, V>(k, v)); }
+		V&							operator[](const key_type& key)				{ return map::operator[](key); }
+		size_type 					count(const key_type& key) 			const 	{ return map::count(key); }
+		iterator 					begin()               						{ return map::begin(); }
+		iterator 					end()       								{ return map::end(); }
+		iterator 					find(const key_type& key)      				{ return map::find(key); }
+		const_iterator 				begin() 							const   { return map::begin(); }
+		const_iterator 				end() 								const   { return map::end(); }
+		const_iterator 				find(const key_type& key) 			const 	{ return map::find(key); }
+};
 
 template <class T, class HashFcn = std::tr1::hash<std::string>, class EqualKey = StdStringComparator, class Alloc = libc_allocator_with_realloc<std::pair<const std::string, T> > >
 class StringToTGMap : google::sparse_hash_map<std::string, T, HashFcn, EqualKey>{

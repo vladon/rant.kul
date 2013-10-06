@@ -33,6 +33,12 @@ class String{
 			while(s.find(f) != std::string::npos)
 				replace(s, f, r);
 		}
+		static void trim(std::string& s){
+			std::stringstream trimmer;
+			trimmer << s;
+			s.clear();
+			trimmer >> s;
+		}
 		static std::vector<std::string> split(const std::string& s, const char& delim='\n'){
 			std::vector<std::string> ss;
 			std::string l;
@@ -54,7 +60,7 @@ class String{
 			}
 			ss.push_back(l);
 			return ss;
-		}
+		}		
 		static bool compareIgnoreCase(const std::string& a, const std::string& b){
 			    std::string aCpy(a);
 			    std::string bCpy(b);
