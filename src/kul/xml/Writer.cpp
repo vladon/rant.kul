@@ -88,7 +88,6 @@ void kul::xml::NodeFactory::writeToFile(const char*n, const NodeValidator& v, ku
 			for(std::pair<std::string, std::string>  pairs : vecPairs)
 				a += " " + pairs.first+"=\"" + pairs.second + "\"";
 			NodeWriterService::addAttributes(s, a);	
-			LOG(INFO) << "a: " << a;
 			
 			writer.write(s.c_str(), !v.isText());
 			for(const std::pair<std::string, NodeValidator>& pair  : v.getChildren()){

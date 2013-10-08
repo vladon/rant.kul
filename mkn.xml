@@ -105,10 +105,6 @@
 		</profile>
 
 		<profile name="win" parent="winc">
-			<library-paths>		
-				<library-path>./ext/pugixml/trunk/lib</library-path>
-				<library-path>./ext/glog/make/lib</library-path>
-			</library-paths>
 			<build type="lib" mode="static" lang="cpp">	
 				<env>					
 					<vars>
