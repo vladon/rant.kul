@@ -2,7 +2,7 @@
  * test.hpp
  *
  *  Created on: 24 Jan 2013
- *      Author: philix
+ *	  Author: philix
  */
 
 #ifndef _KUL_TEST_HPP_
@@ -22,12 +22,12 @@ namespace kul {
 class TestThreadObject{
 	private:
 		int i;
-		kul::threading::Mutex mutex;
+		kul::Mutex mutex;
 	public:
 		TestThreadObject() : i(0){}
 		void operator()(){			
 		   	LOG(INFO) << "THREAD RUNNING";
-		    kul::threading::ScopeLock lock(mutex);
+			kul::ScopeLock lock(mutex);
 			i++;			
 		}
 		void operator()() const{
@@ -66,50 +66,50 @@ class test{ public: test(){
 	for(const std::string& arg : kul::cli::CmdLine::asArgs("/path/to \"words in quotes\" words\\ not\\ in\\ quotes end"))
 		LOG(INFO) << "ARG: " << arg;
 
-    //LOG(INFO) << std::chrono::duration_cast<std::chrono::nanoseconds>(p->endTime() - p->startTime()).count();
-    //LOG(INFO) << "p->startTime(): " << p->startTime().time_since_epoch().count();
+	//LOG(INFO) << std::chrono::duration_cast<std::chrono::nanoseconds>(p->endTime() - p->startTime()).count();
+	//LOG(INFO) << "p->startTime(): " << p->startTime().time_since_epoch().count();
 
-    //LOG(INFO) << "p->endTime(): " << p->endTime().time_since_epoch().count();
+	//LOG(INFO) << "p->endTime(): " << p->endTime().time_since_epoch().count();
 
-    //LOG(INFO) << "run time endTime - startTime (microseconds): " << (p->endTime() - p->startTime()).count();
-    //LOG(INFO) << "cpuTime of m: " << p->cpuTime();
+	//LOG(INFO) << "run time endTime - startTime (microseconds): " << (p->endTime() - p->startTime()).count();
+	//LOG(INFO) << "cpuTime of m: " << p->cpuTime();
 
 	TestThreadObject tto1;
-	kul::threading::Ref<TestThreadObject> ref(tto1);
-    kul::threading::Thread th(ref);
-    th.run();
-    th.join();
-    th.detach();
-    th.interrupt();
-    tto1.print();
+	kul::Ref<TestThreadObject> ref(tto1);
+	kul::Thread th(ref);
+	th.run();
+	th.join();
+	th.detach();
+	th.interrupt();
+	tto1.print();
 
 	TestThreadObject tto2;
-    kul::threading::CRef<TestThreadObject> cref(tto2);
-    kul::threading::Thread th2(cref);
-    th2.run();
-    th2.join();
-    th2.detach();
-    th2.interrupt();
-    tto2.print();
+	kul::CRef<TestThreadObject> cref(tto2);
+	kul::Thread th2(cref);
+	th2.run();
+	th2.join();
+	th2.detach();
+	th2.interrupt();
+	tto2.print();
 
 	TestThreadObject tto3;
-    kul::threading::Thread th1(tto3);
-    th1.run();
-    th1.join();
-    th1.detach();
-    th1.interrupt();
-    tto3.print();
+	kul::Thread th1(tto3);
+	th1.run();
+	th1.join();
+	th1.detach();
+	th1.interrupt();
+	tto3.print();
+	
+	kul::Mutex mutex;
+	{
+		kul::ScopeLock lock(mutex);
+	}
+	kul::ScopeLock lock(mutex);
 
-    kul::threading::Mutex mutex;
-    {
-    	kul::threading::ScopeLock lock(mutex);
-    }
-    kul::threading::ScopeLock lock(mutex);
-
-    LOG(INFO) << "CANONBALL";
-    TestThreadObject tto4;
-    kul::threading::Ref<TestThreadObject> ref2(tto4);
-	kul::threading::ThreadPool<std::queue<int> > tp(ref2);
+	LOG(INFO) << "CANONBALL";
+	TestThreadObject tto4;
+	kul::Ref<TestThreadObject> ref2(tto4);
+	kul::ThreadPool<std::queue<int> > tp(ref2);
 	tp.setMax(8);
 	tp.runAndJoinAll();
 	tto4.print();

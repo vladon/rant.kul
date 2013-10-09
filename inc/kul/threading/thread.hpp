@@ -33,6 +33,7 @@ class AThread{
 		virtual void run()			throw(kul::threading::Exception) 				= 0;
 		virtual void join()															= 0;
 		virtual void detach()														= 0;
+		virtual void sleep(const long& millis)										= 0;
 		virtual bool finished()														= 0;
 		virtual void interrupt()	throw(kul::threading::InterruptionException) 	= 0;
 	public:		
@@ -50,6 +51,8 @@ class Function{
 	void* f;
 	public:
 		Function(void* f){}
+};
+
 };
 
 template <class T>
@@ -70,11 +73,9 @@ class CRef{
 		const T& get() const{ return t;}
 };
 
-
 class Thread;
 template <class PRED> class ThreadPool;
 
-};
 namespace osi{ namespace threading{
 class AThreader{	
 	private:	
@@ -83,19 +84,20 @@ class AThreader{
 		AThreader() : f(0){}
 		std::exception_ptr eP;
 
-		virtual unsigned long threadID() const = 0;
-		virtual void act() = 0;		
-		void setFinished(){ f = true;}
-		const bool finished() const { return f;}
-		virtual void join() = 0;
-		virtual void detach() = 0;
-		virtual void interrupt() throw(kul::threading::InterruptionException) = 0;
-		virtual void run() throw(kul::threading::Exception) = 0;
-		const std::exception_ptr& exceptionPointer() const { return eP; }		
+		virtual unsigned long threadID() 							const 		= 0;
+		virtual void act() 														= 0;		
+		virtual void join() 													= 0;
+		virtual void detach() 													= 0;
+		virtual void interrupt() throw(kul::threading::InterruptionException) 	= 0;
+		virtual void run() throw(kul::threading::Exception) 					= 0;
+		void setFinished()									{ f = true;}
+		const bool finished() 						const 	{ return f;}
+		const std::exception_ptr& exceptionPointer()const	{ return eP; }		
+
 	public:
 		virtual ~AThreader(){}
-		friend class kul::threading::Thread;
-		template <class PRED> friend class kul::threading::ThreadPool;
+		friend class kul::Thread;
+		template <class PRED> friend class kul::ThreadPool;
 };
 };};
 
@@ -108,7 +110,7 @@ class ThreaderService{
 		template <class T> static kul::osi::threading::AThreader* getRefThreader(const Ref<T>& ref);
 		template <class T> static kul::osi::threading::AThreader* getCRefThreader(const CRef<T>& ref);
 };
-
+};
 class ScopeLock;
 
 class ALock{
@@ -121,10 +123,10 @@ class AMutex{
 		bool l;
 		std::queue<const ALock*> locks;
 		virtual void mute() const = 0;
-		void addLock(const ALock& lock) { locks.push(&lock);}
-		void popLock() { locks.pop();}
-		const ALock* front() { return locks.front();}
-		const int size() { return locks.size();}
+		void addLock(const ALock& lock)	{ locks.push(&lock);}
+		void popLock()					{ locks.pop();}
+		const ALock* front()			{ return locks.front();}
+		const int size()				{ return locks.size();}
 
 	public:
 		AMutex() : l(0){}
@@ -138,25 +140,27 @@ class ScopeLock : public ALock{
 		AMutex& m;
 	public:
 		ScopeLock(AMutex& m) : m(m){
-			m.addLock(*this);
-
-			while(this != m.front()){ /*ThreaderService::sleep(1); */}
+			m.addLock(*this);			
 			/*
-			LOG(INFO) << this;
 			std::queue<const ALock*> locks = m.locks;
+			LOG(INFO) << "MUTEX " << &m;
 			while(locks.size() > 0){
-				LOG(INFO) << locks.front();
+				LOG(INFO) << "LOCK " << locks.front();
 				locks.pop();
-			}
-			LOG(INFO) << (this != m.front());
+			}			
 			*/
+			//LOG(INFO) << "ATTEMPTING LOCK " << this;
+			while(this != m.front()){ /*ThreaderService::sleep(1); */
+				threading::ThreaderService::sleep(111);
+			}
+			
 		}
 		~ScopeLock(){
-			m.popLock();
+			m.popLock();			
 		}
 };
 
-class Thread : public AThread{
+class Thread : public threading::AThread{
 	private:
 		bool s;
 		std::shared_ptr<kul::osi::threading::AThreader> th;
@@ -164,9 +168,9 @@ class Thread : public AThread{
 		void setStarted()	{ s = true; }
 		bool started()		{ return s; }
 	public:
-		template <class T> Thread(T t) 					: th(ThreaderService::getThreader(t))		, s(0){ }
-		template <class T> Thread(const Ref<T>& ref) 	: th(ThreaderService::getRefThreader(ref))	, s(0){ }
-		template <class T> Thread(const CRef<T>& ref) 	: th(ThreaderService::getCRefThreader(ref))	, s(0){ }
+		template <class T> Thread(T t) 					: s(0), th(threading::ThreaderService::getThreader(t))			{ }
+		template <class T> Thread(const Ref<T>& ref) 	: s(0), th(threading::ThreaderService::getRefThreader(ref))	{ }
+		template <class T> Thread(const CRef<T>& ref) 	: s(0), th(threading::ThreaderService::getCRefThreader(ref))	{ }
 		unsigned long threadID() const { return th->threadID(); }
 		void run() throw(kul::threading::Exception){ 
 			if(started()) throw kul::threading::Exception(__FILE__, __LINE__, "Thread is already started - THROWING");			
@@ -176,14 +180,20 @@ class Thread : public AThread{
 		void join(){ 			
 			th->join();
 		}
+		void sleep(const long& millis){
+			threading::ThreaderService::sleep(millis);
+		}
 		void detach(){ 			
 			th->detach();
 		}		
 		bool finished(){ 
 			return th->finished();
 		}		
-		void interrupt() throw(kul::threading::InterruptionException)	{ 
+		void interrupt() throw(kul::threading::InterruptionException){
 			th->interrupt();
+		}
+		~Thread(){
+			//LOG(INFO) << "KILLING THREAD\t\t"  << this;
 		}
 };
 
@@ -197,7 +207,7 @@ class ThreadGroup{
 		void runAll(){
 			for(Thread& t: threads){
 				t.run();
-				ThreaderService::oSleep(1000);
+				threading::ThreaderService::oSleep(1);
 			}
 		}
 		void joinAll(){
@@ -207,12 +217,12 @@ class ThreadGroup{
 				for(Thread& t: threads) 
 					if(!t.finished()){ f = false; break; }
 				if(f) break;
-				ThreaderService::sleep(1000);
+				threading::ThreaderService::sleep(1);
 			}
 		}
 };
 
-
+namespace threading{
 class APooledThreader{
 	public:
 		virtual ~APooledThreader(){}
@@ -245,6 +255,7 @@ class PooledCRefThreader : public APooledThreader{
 		kul::osi::threading::AThreader* getThreader() const { return ThreaderService::getCRefThreader(r);}
 		template <class PRED> friend class ThreadPool;
 };
+};
 
 template <class PRED>
 class ThreadPool{
@@ -252,16 +263,16 @@ class ThreadPool{
 		bool d, s;
 		unsigned int m, pM;
 		PRED* p;
-		std::shared_ptr<APooledThreader> pT;
+		std::shared_ptr<threading::APooledThreader> pT;
 		std::vector<kul::osi::threading::AThreader*> ts;
 		std::vector<std::exception_ptr> ePs;
 	protected:
 		void setStarted()	{ s = true; }
 		bool started()		{ return s; }
 	public:
-		template <class T> ThreadPool(T t) 					: d(0), s(0), m(1), p(0), pT(new PooledThreader<T>(t))		{}
-		template <class T> ThreadPool(const Ref<T>& ref) 	: d(0), s(0), m(1), p(0), pT(new PooledRefThreader<T>(ref))	{}
-		template <class T> ThreadPool(const CRef<T>& ref) 	: d(0), s(0), m(1), p(0), pT(new PooledCRefThreader<T>(ref))	{}
+		template <class T> ThreadPool(T t) 					: d(0), s(0), m(1), p(0), pT(new threading::PooledThreader<T>(t))		{}
+		template <class T> ThreadPool(const Ref<T>& ref) 	: d(0), s(0), m(1), p(0), pT(new threading::PooledRefThreader<T>(ref))	{}
+		template <class T> ThreadPool(const CRef<T>& ref) 	: d(0), s(0), m(1), p(0), pT(new threading::PooledCRefThreader<T>(ref))	{}
 		~ThreadPool(){ for(const kul::osi::threading::AThreader* at : ts) delete at; }
 		void setMax(const int& max) { m = max;}
 		void setPredicate(PRED& predicate) { p = &predicate; pM = p->size();}
@@ -287,16 +298,16 @@ class ThreadPool{
 						kul::osi::threading::AThreader* at = pT->getThreader();
 						ts.push_back(at);
 						at->run();
-						ThreaderService::oSleep(1000);
+						threading::ThreaderService::oSleep(1);
 					}
-					ThreaderService::sleep(1000);
+					threading::ThreaderService::sleep(1);
 				}
 			}else{
 				for(unsigned int i = 0 ; i < m; i++){
 					kul::osi::threading::AThreader* at = pT->getThreader();
 					ts.push_back(at);
 					at->run();
-					ThreaderService::oSleep(1000);
+					threading::ThreaderService::oSleep(1);
 				}
 			}
 			while(true){
@@ -304,7 +315,7 @@ class ThreadPool{
 				for(const kul::osi::threading::AThreader* at : ts)
 					if(at->finished()) f++;
 				if(f == ts.size()) return;
-				ThreaderService::sleep(1000);
+				threading::ThreaderService::sleep(1);
 			}
 		}
 		void detach(){ d = true;}		
@@ -315,7 +326,7 @@ class ThreadPool{
 
 
 
-};};
+};
 #endif /* _KUL_THREADING_THREAD_HPP_ */
 
 

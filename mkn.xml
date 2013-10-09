@@ -36,7 +36,7 @@
 		</files>
 	</build>
 	<profiles>
-		<profile name="linux">
+		<profile name="linr">
 			<includes>
 				<include>./inc</include>
 				<include>./tst</include>
@@ -52,27 +52,66 @@
 			<library-paths>		
 				<library-path>./ext/pugixml/trunk/scripts</library-path>
 				<library-path>./ext/glog/make/lib</library-path>
-			</library-paths>
-			<!-- used when no profile is specified. supplied default values to profiles if required -->	
+			</library-paths>			
 			<build type="lib" mode="static" lang="cpp"> 
-				<env>
-					<vars><!--var name="PATH" mode="replace"></var--></vars>
-				</env>		
 				<files>
 					<file type="cpp">
 						<args>
 							<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
 							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
+							<arg>-O3</arg><arg>-g0</arg>
 						</args>
 					</file>
 				</files>
 			</build>
 		</profile>
-		<profile name="release" parent="linux"> 
-			<build type="lib" mode="static" lang="cpp"> 
-				<files><file type="cpp"><args><arg>-O3</arg><arg>-g0</arg></args></file></files>
+
+		<profile name="lin64"> 
+			<includes>
+				<include>./inc</include>
+				<include>./tst</include>
+				<include>./ext/pugixml/trunk/src</include>
+				<include>./ext/glog/make/include</include>
+				<include>./ext/sparsehash/make/include</include>
+			</includes>
+			<libraries>	
+				<library>pugixml</library>
+				<library>glog</library>	
+				<library>pthread</library>	
+			</libraries>
+			<library-paths>		
+				<library-path>./ext/pugixml/trunk/scripts</library-path>
+				<library-path>./ext/glog/make/lib</library-path>
+			</library-paths>			
+			<build type="lib" mode="static" lang="cpp">
+				<files>
+					<file type="cpp">
+						<archiver>ar -r</archiver>
+						<assembler>as</assembler>
+						<compiler>ccache g++ -m64</compiler>
+						<linker>ccache g++ -m64</linker>
+						<args>						
+							<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
+							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
+							<arg>-O0</arg><arg>-g3</arg>
+						</args>
+					</file>
+				</files>
 			</build>
 		</profile>
+
+		<profile name="lin64r" parent="lin64"> 
+			<build type="lib" mode="static" lang="cpp">
+				<files>
+					<file type="cpp">
+						<args>
+							<arg>-O3</arg><arg>-g0</arg>
+						</args>
+					</file>
+				</files>
+			</build>
+		</profile>
+
 		<profile name="winc">
 			<includes>
 				<include>./inc</include>

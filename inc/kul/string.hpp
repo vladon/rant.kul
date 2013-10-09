@@ -33,11 +33,17 @@ class String{
 			while(s.find(f) != std::string::npos)
 				replace(s, f, r);
 		}
-		static void trim(std::string& s){
-			std::stringstream trimmer;
-			trimmer << s;
-			s.clear();
-			trimmer >> s;
+		static void leftTrim(std::string& s, const char& delim=' '){
+			while(s.find(delim) == 0)
+				s = s.substr(1);
+		}
+		static void rightTrim(std::string& s, const char& delim=' '){
+			while(s.find(delim) == s.size())
+				s = s.substr(0, s.size() - 1);
+		}
+		static void trim(std::string& s, const char& delim=' '){
+			leftTrim(s, delim);
+			rightTrim(s, delim);
 		}
 		static std::vector<std::string> split(const std::string& s, const char& delim='\n'){
 			std::vector<std::string> ss;
@@ -55,7 +61,6 @@ class String{
 			unsigned int pos = 0;
 			while((pos = s.find(delim, pos + 1)) != std::string::npos){
 				ss.push_back(l.substr(0, pos));
-				LOG(INFO) << l;
 				l = l.substr(pos + 1);
 			}
 			ss.push_back(l);
@@ -68,6 +73,54 @@ class String{
 			    std::transform(bCpy.begin(), bCpy.end(), bCpy.begin(), ::tolower);
 			    return (aCpy == bCpy);
 		}
+};
+
+class WString{
+	public:
+		static std::string toString(const std::wstring& ws){
+			return std::string(ws.begin(), ws.end());
+		}
+		static void replace(std::wstring& s, const std::wstring& f, const std::wstring& r){
+			s = s.substr(0, s.find(f)) + r + s.substr(s.find(f) + 1);
+		}
+		static void replaceAll(std::wstring& s, const std::wstring& f, const std::wstring& r){
+			while(s.find(f) < s.size())
+				replace(s, f, r);
+		}
+		static void leftTrim(std::wstring& s, const wchar_t& delim=' '){
+			while(s.find(delim) == 0)
+				s = s.substr(1);
+		}
+		static void rightTrim(std::wstring& s, const wchar_t& delim=' '){
+			while(s.find(delim) == s.size())
+				s = s.substr(0, s.size() - 1);
+		}
+		static void trim(std::wstring& s, const wchar_t& delim=' '){
+			leftTrim(s, delim);
+			rightTrim(s, delim);
+		}
+		static std::vector<std::wstring> split(const std::wstring& s, const wchar_t& delim='\n'){
+			std::vector<std::wstring> ss;
+			std::wstring l = s;
+			unsigned int pos = 0;
+			while((pos = s.find(delim, pos + 1)) < l.size()){
+				ss.push_back(l.substr(0, pos));
+				l = l.substr(pos + 1);
+			}
+			ss.push_back(l);
+			return ss;
+		}
+		static std::vector<std::wstring> split(const std::wstring& s, const std::wstring& delim){
+			std::vector<std::wstring> ss;
+			std::wstring l = s;			
+			unsigned int pos = 0;
+			while((pos = s.find(delim, pos + 1)) != std::wstring::npos){
+				ss.push_back(l.substr(0, pos));
+				l = l.substr(pos + 1);
+			}
+			ss.push_back(l);
+			return ss;
+		}		
 };
 
 };};

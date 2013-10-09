@@ -76,7 +76,7 @@ class StringToTGMap : google::sparse_hash_map<std::string, T, HashFcn, EqualKey>
 		typedef typename StringToT::const_iterator const_iterator;
 
 		std::pair<iterator, bool> 	insert(const std::pair<std::string, T>& obj) 			{ return StringToT::insert(obj); }
-		std::pair<iterator, bool> 	insert(std::string s, T t) 								{ return insert(std::pair<std::string, T>(s, t)); }
+		std::pair<iterator, bool> 	insert(const std::string& s, const T& t)				{ return insert(std::pair<std::string, T>(s, t)); }
 		T&							operator[](const key_type& key)							{ return StringToT::operator[](key); }
 		size_type 					count(const key_type& key) 						const   { return StringToT::count(key); }
 		iterator 					begin()               									{ return StringToT::begin(); }
@@ -97,7 +97,7 @@ class StringToVectorTGMap : google::sparse_hash_map<std::string, std::vector<T>,
 		typedef typename StringToVector::iterator iterator;
 		typedef typename StringToVector::const_iterator const_iterator;
 		std::pair<iterator, bool> 	insert(const std::pair<std::string, std::vector<T> >& obj) 			{ return StringToVector::insert(obj); }
-		std::pair<iterator, bool> 	insert(std::string s, std::vector<T> t) 							{ return insert(std::pair<std::string, std::vector<T> >(s, t)); }
+		std::pair<iterator, bool> 	insert(const std::string& s, const std::vector<T>& t)				{ return insert(std::pair<std::string, std::vector<T> >(s, t)); }
 		size_type 					count(const key_type& key) 									const   { return StringToVector::count(key); }
 		iterator 					begin()               												{ return StringToVector::begin(); }
 		iterator 					end()       														{ return StringToVector::end(); }
