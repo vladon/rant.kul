@@ -15,6 +15,7 @@
 
 #include "kul/os.hpp"
 #include "kul/except.hpp"
+#include "kul/string.hpp"
 #include "kul/ext/google.hpp"
 
 namespace kul{  namespace cli {
@@ -63,14 +64,16 @@ class EnvVar{
 		const EnvVarMode 	mode() 		const { return m; }
 		const std::string 	toString() 	const {
 			std::string var(value());
-			const char* ev = OS::getEnvVar(name());	
-			if(strcmp(ev, "") != 0){
-				if 		(mode() == EnvVarMode::PREP)			
-					var = std::string(value()) + std::string(kul::OS::pathSep()) + std::string(ev);			
+			kul::st_d::String::replaceAll(var, ";", kul::OS::pathSep());
+			kul::st_d::String::replaceAll(var, ":", kul::OS::pathSep());
+			kul::st_d::String::replaceAll(var, kul::OS::newLine(), "");
+			kul::st_d::String::trim(var);
+			std::string ev(OS::getEnvVar(name()));			
+			if(ev.compare("") != 0){
+				if 		(mode() == EnvVarMode::PREP)
+					var = var + std::string(kul::OS::pathSep()) + ev;	
 				else if (mode() == EnvVarMode::APPE)				
-					var = std::string(ev) + std::string(kul::OS::pathSep()) + std::string(value());							
-				else if (mode() == EnvVarMode::REPL)
-					var = std::string(value());
+					var = ev + std::string(kul::OS::pathSep()) + var;	
 			}
 			return var;
 		}

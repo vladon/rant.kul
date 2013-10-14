@@ -1,5 +1,7 @@
 
-CXX = g++ -std=c++0x -O3 -g0 -Wall -c -fmessage-length=0
+CXX=g++
+CXXFLAGS=-std=c++0x -O3 -g0 -Wall -c -fmessage-length=0
+CLANGFLAGS=-stdlib=libc++
 INCS = 	-I$(CURDIR)/inc \
 		-I$(CURDIR)/ext/pugixml/trunk/src \
 		-I$(CURDIR)/ext/glog/make/include \
@@ -47,7 +49,35 @@ libs:
 		$(MAKE) -C $(CURDIR)/ext/pugixml/trunk/scripts; \
 	fi;
 
+clang:
+	@@echo "Making glog"
+	@if [ ! -d "$(CURDIR)/ext/glog/llvm" ]; then \
+		svn co http://google-glog.googlecode.com/svn/trunk/ ext/glog/trunk; \
+		mkdir ./ext/glog/llvm; \
+		cd ./ext/glog/llvm; bash ../trunk/configure --prefix=$(CURDIR)/ext/glog/llvm CC=$(CLANG) CXX=$(CLANG) CXXFLAGS=$(CLANGFLAGS); \
+		$(MAKE) -C $(CURDIR)/ext/glog/llvm;\
+		$(MAKE) -C $(CURDIR)/ext/glog/llvm install; \
+	fi;
+	@if [ ! -d "$(CURDIR)/ext/sparsehash/make" ]; then \
+		svn co http://sparsehash.googlecode.com/svn/trunk/ ext/sparsehash/trunk; \
+		mkdir ./ext/sparsehash/make; \
+		cd ./ext/sparsehash/make; bash ../trunk/configure --prefix=$(CURDIR)/ext/sparsehash/make; \
+		$(MAKE) -C $(CURDIR)/ext/sparsehash/make; \
+		$(MAKE) -C $(CURDIR)/ext/sparsehash/make install; \
+	fi;
 
+	CXX=$(CLANG)
+	@@echo "Making pugixml"
+	@if [ ! -d "$(CURDIR)/ext/pugixml/llvm" ]; then \
+		svn co http://pugixml.googlecode.com/svn/tags/latest/ ext/pugixml/llvm; \
+		cd ./ext/pugixml/llvm/scripts; cmake CMakeLists.txt; \
+		$(MAKE) -C $(CURDIR)/ext/pugixml/llvm/scripts; \
+	fi;
+	@if [ ! -d "$(CURDIR)/ext/pugixml/llvm/scripts" ]; then \
+		cd ./ext/pugixml/llvm; svn up; \
+		cd ./ext/pugixml/llvm/scripts; cmake CMakeLists.txt; \
+		$(MAKE) -C $(CURDIR)/ext/pugixml/llvm/scripts; \
+	fi;
 
 files:
 	$(eval FILES := $(foreach dir,$(shell find $(CURDIR)/bin -type f -name *.o),$(dir)))	
@@ -58,5 +88,7 @@ clean:
 
 clean-all: clean
 	rm -rf ./ext/glog/make
+	rm -rf ./ext/glog/llvm
 	rm -rf ./ext/sparsehash/make
 	rm -rf ./ext/pugixml/trunk/scripts
+	rm -rf ./ext/pugixml/llvm/scripts

@@ -58,6 +58,8 @@ class OS{
 
 		static std::string userDir();
 		static std::string userAppDir(const std::string& app);
+
+		static std::string newLine();
 };
 
 

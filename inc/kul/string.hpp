@@ -38,12 +38,14 @@ class String{
 				s = s.substr(1);
 		}
 		static void rightTrim(std::string& s, const char& delim=' '){
-			while(s.find(delim) == s.size())
-				s = s.substr(0, s.size() - 1);
-		}
-		static void trim(std::string& s, const char& delim=' '){
-			leftTrim(s, delim);
-			rightTrim(s, delim);
+			while(s.rfind(delim) == s.size() - 1)
+				s = s.substr(0, s.size() - 2);			
+		}		
+		static void trim(std::string& s){
+			while(s.find(' ') == 0 || s.find('	') == 0)
+				s = s.substr(1);
+			while(s.rfind(' ') == s.size() - 1 || s.rfind('	') == s.size() - 1)
+				s = s.substr(0, s.size() - 2);
 		}
 		static std::vector<std::string> split(const std::string& s, const char& delim='\n'){
 			std::vector<std::string> ss;
@@ -92,12 +94,14 @@ class WString{
 				s = s.substr(1);
 		}
 		static void rightTrim(std::wstring& s, const wchar_t& delim=' '){
-			while(s.find(delim) == s.size())
-				s = s.substr(0, s.size() - 1);
+			while(s.rfind(delim) == s.size())
+				s = s.substr(0, s.size() - 2);
 		}
-		static void trim(std::wstring& s, const wchar_t& delim=' '){
-			leftTrim(s, delim);
-			rightTrim(s, delim);
+		static void trim(std::wstring& s){
+			while(s.find(' ') == 0 || s.find('	') == 0)
+				s = s.substr(1);
+			while(s.rfind(' ') == 0 || s.rfind('	') == 0)
+				s = s.substr(0, s.size() - 2);
 		}
 		static std::vector<std::wstring> split(const std::wstring& s, const wchar_t& delim='\n'){
 			std::vector<std::wstring> ss;

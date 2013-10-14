@@ -235,7 +235,7 @@ class PooledThreader : public APooledThreader{
 		PooledThreader(const T& t) : t(t){}
 	public:
 		kul::osi::threading::AThreader* getThreader() const { return ThreaderService::getThreader(t);}
-		template <class PRED> friend class ThreadPool;
+		template <class PRED> friend class kul::ThreadPool;
 };
 template <class T>
 class PooledRefThreader : public APooledThreader{
@@ -244,7 +244,7 @@ class PooledRefThreader : public APooledThreader{
 		PooledRefThreader(const Ref<T>& ref) : r(ref){}
 	public:
 		kul::osi::threading::AThreader* getThreader() const { return ThreaderService::getRefThreader(r);}
-		template <class PRED> friend class ThreadPool;
+		template <class PRED> friend class kul::ThreadPool;
 };
 template <class T>
 class PooledCRefThreader : public APooledThreader{
@@ -253,7 +253,7 @@ class PooledCRefThreader : public APooledThreader{
 		PooledCRefThreader(const CRef<T>& ref) : r(ref){}
 	public:		
 		kul::osi::threading::AThreader* getThreader() const { return ThreaderService::getCRefThreader(r);}
-		template <class PRED> friend class ThreadPool;
+		template <class PRED> friend class kul::ThreadPool;
 };
 };
 
