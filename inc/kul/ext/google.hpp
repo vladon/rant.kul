@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-namespace kul{ namespace ext{ namespace goo_gle{
+namespace kul{ 
 
 struct StdStringComparator{
 	public:
@@ -128,5 +128,5 @@ class StringToGMapTGMap : google::sparse_hash_map<std::string, StringToTGMap<T>,
 		const_iterator 				find(const key_type& key) 									const 	{ return StringToGMapT::find(key); }
 };
 
-};};};
+};
 #endif /* _GOOGLE_H_ */

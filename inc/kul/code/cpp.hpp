@@ -43,7 +43,7 @@ class Compiler{
 			std::string cmd = c;
 			std::string path;
 			if(c.find(" ") != std::string::npos)
-				for(const std::string& s : kul::st_d::String::split(c, ' ')){
+				for(const std::string& s : kul::String::split(c, ' ')){
 					cmd = s;
 					break;	
 				}
@@ -72,7 +72,7 @@ class Compiler{
 			const std::string& linker,
 			const std::vector<std::string>& objects, 	
 			const std::vector<std::string>& libs,
-			const kul::ext::goo_gle::StringHashSet& libPaths,
+			const kul::StringHashSet& libPaths,
 			const std::string& out, 
 			const Mode& mode) 			const throw (kul::Exception) = 0;
 		virtual const std::string buildSharedLibrary(
@@ -88,7 +88,7 @@ class Compiler{
 		virtual const std::string compileSource	(
 			const std::string& compiler,
 			const std::vector<std::string>& args, 		
-			const kul::ext::goo_gle::StringHashSet& incs, 
+			const kul::StringHashSet& incs, 
 			const std::string& in, 
 			const std::string& out) 	const throw (kul::Exception) = 0;
 		
@@ -108,7 +108,7 @@ class GCCompiler : public Compiler{
 			const std::string& linker, 	
 			const std::vector<std::string>& objects, 	
 			const std::vector<std::string>& libs,
-			const kul::ext::goo_gle::StringHashSet& libPaths,
+			const kul::StringHashSet& libPaths,
 			const std::string& out, 
 			const Mode& mode) const throw (kul::Exception) {
 
@@ -172,7 +172,7 @@ class GCCompiler : public Compiler{
 		const std::string compileSource(
 			const std::string& compiler, 
 			const std::vector<std::string>& args, 
-			const kul::ext::goo_gle::StringHashSet& incs, 
+			const kul::StringHashSet& incs, 
 			const std::string& in, 
 			const std::string& out) const throw (kul::Exception){ 
 
@@ -209,7 +209,7 @@ class WINCompiler : public Compiler{
 			const std::string& linker, 
 			const std::vector<std::string>& objects,
 			const std::vector<std::string>& libs,
-			const kul::ext::goo_gle::StringHashSet& libPaths,
+			const kul::StringHashSet& libPaths,
 			const std::string& out, 
 			const Mode& mode) const throw (kul::Exception){ 
 
@@ -266,7 +266,7 @@ class WINCompiler : public Compiler{
 		const std::string compileSource(
 			const std::string& compiler, 
 			const std::vector<std::string>& args, 
-			const kul::ext::goo_gle::StringHashSet& incs, 
+			const kul::StringHashSet& incs, 
 			const std::string& in, 
 			const std::string& out) const throw (kul::Exception){ 
 
@@ -296,25 +296,26 @@ class Compilers{
 			// add compilers to map
 			GCCompiler* 	gcc	= new GCCompiler();
 			WINCompiler* 	win	= new WINCompiler();
-			compilers.insert(std::pair<std::string, Compiler*>("gcc"		, gcc));			
-			compilers.insert(std::pair<std::string, Compiler*>("g++"		, gcc));			
-			compilers.insert(std::pair<std::string, Compiler*>("nvcc"		, gcc));			
-			compilers.insert(std::pair<std::string, Compiler*>("clang"		, gcc));			
-			compilers.insert(std::pair<std::string, Compiler*>("cl"			, win));			
+			compilers.insert(std::pair<std::string, Compiler*>("gcc"		, gcc));
+			compilers.insert(std::pair<std::string, Compiler*>("g++"		, gcc));
+			compilers.insert(std::pair<std::string, Compiler*>("nvcc"		, gcc));
+			compilers.insert(std::pair<std::string, Compiler*>("clang"		, gcc));
+			compilers.insert(std::pair<std::string, Compiler*>("clang++"	, gcc));
+			compilers.insert(std::pair<std::string, Compiler*>("cl"			, win));
 		}
 		static Compilers* instance;
-		kul::ext::goo_gle::StringToTGMap<Compiler*> compilers;
+		kul::StringToTGMap<Compiler*> compilers;
 	public:
 		static Compilers* INSTANCE(){ if(instance == 0) instance = new Compilers(); return instance;}
 		const Compiler* get(const std::string& compiler) throw(CompilerNotFoundException){
 			std::string needle = compiler;
-			kul::st_d::String::replaceAll(needle, ".exe", "");
+			kul::String::replaceAll(needle, ".exe", "");
 
 			if(Compilers::compilers.count(compiler) > 0)
 				return (*Compilers::compilers.find(compiler)).second;
 
 			if(needle.find(" ") != std::string::npos)
-				for(const std::string& s :kul::st_d::String::split(compiler, ' ')){
+				for(const std::string& s :kul::String::split(compiler, ' ')){
 					if(Compilers::compilers.count(s) > 0)
 						return (*Compilers::compilers.find(s)).second;
 

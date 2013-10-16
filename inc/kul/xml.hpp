@@ -22,8 +22,6 @@
 
 namespace kul{ namespace xml{
 
-using namespace kul::ext::goo_gle;
-
 class Node;
 class NodeValidator;
 class NodeAttributeValidator;
@@ -155,7 +153,7 @@ class NodeValidator{
 
 		const NodeValidator 	operator=(const NodeValidator& n)					const { return *this; }
 		const std::vector<std::pair<std::string, NodeValidator> >&	getChildren() 	const { return this->children; }
-		const std::vector<NodeAttributeValidator> 					getAtVals()		const { return attributeValidators; }
+		const std::vector<NodeAttributeValidator>& 					getAtVals()		const { return attributeValidators; }
 		const int& 													minimum() 		const { return this->min; }
 		const int& 													maximum() 		const { return this->max; }
 		const bool& 												isText() 		const { return this->text; }

@@ -133,16 +133,32 @@
 			</build>
 		</profile>
 
-		<profile name="linllvmc" parent="linc"> 
+		<profile name="linllvmc"> 
+			<includes>
+				<include>./inc</include>
+				<include>./ext/pugixml/llvm/src</include>
+				<include>./ext/glog/llvm/include</include>
+				<include>./ext/sparsehash/make/include</include>
+			</includes>
+			<libraries>	
+				<library>pugixml</library>
+				<library>glog</library>	
+				<library>pthread</library>	
+			</libraries>
+			<library-paths>		
+				<library-path>./ext/pugixml/llvm/scripts</library-path>
+				<library-path>./ext/glog/llvm/lib</library-path>
+			</library-paths>
 			<build type="lib" mode="static" lang="cpp">
 				<files>
 					<file type="cpp">
 						<archiver>ar -r</archiver>
 						<assembler>as</assembler>
-						<compiler>ccache clang -m64</compiler>
-						<linker>ccache clang -m64</linker>
+						<compiler>ccache clang++ -m64</compiler>
+						<linker>ccache clang++ -m64</linker>
 						<args>
-							<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg><arg>-stdlib=libstdc++</arg>
+							<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
+							<arg>-stdlib=libstdc++</arg>
 							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
 						</args>
 					</file>
@@ -150,6 +166,9 @@
 			</build>
 		</profile>
 		<profile name="linllvm" parent="linllvmc"> 
+			<includes>
+				<include>./tst</include>
+			</includes>
 			<build type="lib" mode="static" lang="cpp">
 				<env>
 					<vars>
@@ -173,6 +192,43 @@
 				<files>
 					<file type="cpp">
 						<args><arg>-O3</arg><arg>-g0</arg></args>
+					</file>
+				</files>
+			</build>
+		</profile>
+		<profile name="linrllvmpt">  <!-- requires -pthread in app>(profile>)build>file>linker -->
+			<includes>
+				<include>./inc</include>
+				<include>./ext/pugixml/llvm/src</include>
+				<include>./ext/glog/llvm/include</include>
+				<include>./ext/sparsehash/make/include</include>
+			</includes>
+			<libraries>	
+				<library>pugixml</library>
+				<library>glog</library>
+			</libraries>
+			<library-paths>		
+				<library-path>./ext/pugixml/llvm/scripts</library-path>
+				<library-path>./ext/glog/llvm/lib</library-path>
+			</library-paths>
+			<build type="lib" mode="static" lang="cpp">
+				<env>
+					<vars>
+						<var name="PATH" mode="prepend">/home/philix/sand/repo/cpp/l/llvm/make-debug/Debug+Asserts/bin</var>
+					</vars>
+				</env>	
+				<files>
+					<file type="cpp">
+						<archiver>ar -r</archiver>
+						<assembler>as</assembler>
+						<compiler>ccache clang++ -m64</compiler>
+						<linker>ccache clang++ -m64</linker>
+						<args>
+							<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
+							<arg>-stdlib=libstdc++</arg>
+							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
+							<arg>-O3</arg><arg>-g0</arg>
+						</args>
 					</file>
 				</files>
 			</build>

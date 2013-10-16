@@ -64,10 +64,10 @@ class EnvVar{
 		const EnvVarMode 	mode() 		const { return m; }
 		const std::string 	toString() 	const {
 			std::string var(value());
-			kul::st_d::String::replaceAll(var, ";", kul::OS::pathSep());
-			kul::st_d::String::replaceAll(var, ":", kul::OS::pathSep());
-			kul::st_d::String::replaceAll(var, kul::OS::newLine(), "");
-			kul::st_d::String::trim(var);
+			kul::String::replaceAll(var, ";", kul::OS::pathSep());
+			kul::String::replaceAll(var, ":", kul::OS::pathSep());
+			kul::String::replaceAll(var, kul::OS::newLine(), "");
+			kul::String::trim(var);
 			std::string ev(OS::getEnvVar(name()));			
 			if(ev.compare("") != 0){
 				if 		(mode() == EnvVarMode::PREP)
@@ -98,7 +98,7 @@ class Args{
 	private:
 		const std::vector<Cmd>& cmds;
 		const std::vector<Arg>& args;
-		kul::ext::goo_gle::StringToStringHashMap vals;
+		kul::StringToStringHashMap vals;
 		Args();
 	public:
 		Args(const std::vector<Cmd>& cmds, const std::vector<Arg>& args) : cmds(cmds), args(args){}
@@ -117,7 +117,7 @@ class Args{
 		}
 		const std::vector<Cmd>& commands()	 						const { return cmds;}
 		const std::vector<Arg>& arguments() 						const { return args;}
-		const kul::ext::goo_gle::StringToStringHashMap& values() 	const { return vals; }
+		const kul::StringToStringHashMap& values() 	const { return vals; }
 };
 
 class AWritable{

@@ -92,7 +92,7 @@ class Manager{
 			scms.insert(std::pair<std::string, Scm*>("svn", new Svn()));
 		}
 		static Manager* instance;
-		kul::ext::goo_gle::StringToTGMap<Scm*> scms;
+		kul::StringToTGMap<Scm*> scms;
 	public:
 		static Manager* INSTANCE(){ if(instance == 0) instance = new Manager(); return instance;}
 		const Scm* get(const std::string& s) throw(ScmNotFoundException){

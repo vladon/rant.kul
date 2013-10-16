@@ -1,7 +1,8 @@
 
 CXX=g++
 CXXFLAGS=-std=c++0x -O3 -g0 -Wall -c -fmessage-length=0
-CLANGFLAGS=-stdlib=libc++
+#CLANGFLAGS=-stdlib=libc++
+CLANGFLAGS=
 INCS = 	-I$(CURDIR)/inc \
 		-I$(CURDIR)/ext/pugixml/trunk/src \
 		-I$(CURDIR)/ext/glog/make/include \

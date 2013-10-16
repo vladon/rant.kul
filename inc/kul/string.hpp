@@ -17,7 +17,7 @@
 #include <string.h>
 #include <sstream>
 
-namespace kul { namespace st_d{
+namespace kul { 
 
 class String{
 	public:
@@ -127,5 +127,5 @@ class WString{
 		}		
 };
 
-};};
+};
 #endif /* _KUL_ST_D_STRING_HPP_ */
