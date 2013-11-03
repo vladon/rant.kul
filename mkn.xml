@@ -196,7 +196,8 @@
 				</files>
 			</build>
 		</profile>
-		<profile name="linrllvmpt">  <!-- requires -pthread in app>(profile>)build>file>linker -->
+
+		<profile name="lincllvmpt">  <!-- requires -pthread in app>(profile>)build>file>linker -->
 			<includes>
 				<include>./inc</include>
 				<include>./ext/pugixml/llvm/src</include>
@@ -212,11 +213,6 @@
 				<library-path>./ext/glog/llvm/lib</library-path>
 			</library-paths>
 			<build type="lib" mode="static" lang="cpp">
-				<env>
-					<vars>
-						<var name="PATH" mode="prepend">/home/philix/sand/repo/cpp/l/llvm/make-debug/Debug+Asserts/bin</var>
-					</vars>
-				</env>	
 				<files>
 					<file type="cpp">
 						<archiver>ar -r</archiver>
@@ -227,6 +223,41 @@
 							<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
 							<arg>-stdlib=libstdc++</arg>
 							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
+							<arg>-O3</arg><arg>-g0</arg>
+						</args>
+					</file>
+				</files>
+			</build>
+		</profile>
+		<profile name="linllvmpt" parent="lincllvmpt">
+			<includes>
+				<include>./tst</include>
+			</includes>
+			<build type="lib" mode="static" lang="cpp">
+				<env>
+					<vars>
+						<var name="PATH" mode="prepend">/home/philix/sand/repo/cpp/l/llvm/make-debug/Debug+Asserts/bin</var>
+					</vars>
+				</env>	
+				<files>
+					<file type="cpp">
+						<args>
+							<arg>-O0</arg><arg>-g3</arg>
+						</args>
+					</file>
+				</files>
+			</build>
+		</profile>		
+		<profile name="linrllvmpt" parent="lincllvmpt">
+			<build type="lib" mode="static" lang="cpp">
+				<env>
+					<vars>
+						<var name="PATH" mode="prepend">/home/philix/sand/repo/cpp/l/llvm/make-debug/Debug+Asserts/bin</var>
+					</vars>
+				</env>	
+				<files>
+					<file type="cpp">
+						<args>
 							<arg>-O3</arg><arg>-g0</arg>
 						</args>
 					</file>

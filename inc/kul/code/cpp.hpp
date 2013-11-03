@@ -66,10 +66,13 @@ class Compiler{
 		}
 	public:
 		virtual ~Compiler(){}
+		virtual const std::string cc() const = 0;
+		virtual const std::string cxx() const = 0;
 		virtual const std::string getSharedLib(const std::string& lib) const = 0;
 		virtual const std::string getStaticLib(const std::string& lib) const = 0;
 		virtual const std::string buildExecutable(
 			const std::string& linker,
+			const std::string& linkerEnd,
 			const std::vector<std::string>& objects, 	
 			const std::vector<std::string>& libs,
 			const kul::StringHashSet& libPaths,
@@ -91,6 +94,11 @@ class Compiler{
 			const kul::StringHashSet& incs, 
 			const std::string& in, 
 			const std::string& out) 	const throw (kul::Exception) = 0;
+		virtual void preCompileHeader(
+			const kul::StringHashSet& incs, 
+			const kul::StringHashSet& args, 
+			const std::string& in, 
+			const std::string& out) 	const throw (kul::Exception) = 0;
 		
 };
 
@@ -105,7 +113,8 @@ class GCCompiler : public Compiler{
 			return "lib" + lib + ".a";
 		}
 		const std::string buildExecutable(
-			const std::string& linker, 	
+			const std::string& linker,
+			const std::string& linkerEnd,
 			const std::vector<std::string>& objects, 	
 			const std::vector<std::string>& libs,
 			const kul::StringHashSet& libPaths,
@@ -128,6 +137,7 @@ class GCCompiler : public Compiler{
 				cmd += " " + o;
 			for(const std::string& lib : libs)
 				cmd += " -l" + lib + " ";
+			cmd += linkerEnd;
 			LOG(INFO) << cmd;
 			
 			if(kul::OS::execReturn(cmd) != 0)
@@ -194,11 +204,69 @@ class GCCompiler : public Compiler{
 			
 			return obj;
 		}
+		virtual void preCompileHeader(			
+			const kul::StringHashSet& incs, 
+			const kul::StringHashSet& args, 
+			const std::string& in, 
+			const std::string& out) 	const throw (kul::Exception) {
+
+			using namespace kul;
+			
+			if(in.rfind(".") == std::string::npos)
+				throw Exception(__FILE__, __LINE__, "Unknown header type");
+			
+			std::string cmd;// = compiler + " -x";
+			std::string h = in.substr(in.rfind(".") + 1);
+
+			if(h.compare("h") == 0)
+				cmd = cc() + " -x c-header ";
+			else
+			if(h.compare("hpp") == 0)
+				cmd = cxx() + " -x c++-header ";
+			else
+				throw Exception(__FILE__, __LINE__, "Failed to pre-compile header - uknown file type: " + h);
+			cmd += in + " ";
+			for(const std::string& s : args)
+				cmd += s + " ";
+			for(const std::string& s : incs)
+				cmd += "-I" + s + " ";
+
+			if(!OS::isDir(OS::dirDotDot(out))) OS::mkDir(OS::dirDotDot(out));
+			cmd += " -o " + out;
+			LOG(INFO) << cmd;
+
+			if(kul::OS::execReturn(cmd) != 0)
+				throw Exception(__FILE__, __LINE__, "Failed to pre-compile header");
+		}
+		virtual const std::string cc() const {
+			return "gcc";
+		}
+		virtual const std::string cxx() const {
+			return "g++";
+		}
 };
+
+class ClangCompiler : public GCCompiler{
+	public:
+		ClangCompiler(const int& v = 0) : GCCompiler(v){}
+		virtual const std::string cc() const {
+			return "clang";
+		}
+		virtual const std::string cxx() const {
+			return "clang++";
+		}
+};
+
 
 class WINCompiler : public Compiler{
 	public:
 		WINCompiler(const int& v = 0) : Compiler(v){}
+		virtual const std::string cc() const {
+			return "cl";
+		}
+		virtual const std::string cxx() const {
+			return "cl";
+		}
 		const std::string getSharedLib(const std::string& lib) const {
 			return lib + ".lib";
 		}
@@ -207,6 +275,7 @@ class WINCompiler : public Compiler{
 		}
 		const std::string buildExecutable(
 			const std::string& linker, 
+			const std::string& linkerEnd,
 			const std::vector<std::string>& objects,
 			const std::vector<std::string>& libs,
 			const kul::StringHashSet& libPaths,
@@ -229,6 +298,7 @@ class WINCompiler : public Compiler{
 				cmd += " \"" + o + "\" ";
 			for(const std::string& lib : libs)
 				cmd += " " + lib + " ";
+			cmd += linkerEnd;
 			LOG(INFO) << cmd;
 
 			LOG(INFO) << kul::OS::getEnvVar("PATH");
@@ -288,19 +358,28 @@ class WINCompiler : public Compiler{
 			
 			return obj;
 		}
+		virtual void preCompileHeader(			
+			const kul::StringHashSet& incs, 
+			const kul::StringHashSet& args, 
+			const std::string& in, 
+			const std::string& out) 	const throw (kul::Exception) {
+
+			throw Exception(__FILE__, __LINE__, "Method is not implemented");
+		}
 };
 
 class Compilers{
 	private:
 		Compilers(){
 			// add compilers to map
-			GCCompiler* 	gcc	= new GCCompiler();
-			WINCompiler* 	win	= new WINCompiler();
+			GCCompiler* 	gcc		= new GCCompiler();
+			ClangCompiler* 	clang	= new ClangCompiler();
+			WINCompiler* 	win		= new WINCompiler();
 			compilers.insert(std::pair<std::string, Compiler*>("gcc"		, gcc));
 			compilers.insert(std::pair<std::string, Compiler*>("g++"		, gcc));
 			compilers.insert(std::pair<std::string, Compiler*>("nvcc"		, gcc));
-			compilers.insert(std::pair<std::string, Compiler*>("clang"		, gcc));
-			compilers.insert(std::pair<std::string, Compiler*>("clang++"	, gcc));
+			compilers.insert(std::pair<std::string, Compiler*>("clang"		, clang));
+			compilers.insert(std::pair<std::string, Compiler*>("clang++"	, clang));
 			compilers.insert(std::pair<std::string, Compiler*>("cl"			, win));
 		}
 		static Compilers* instance;

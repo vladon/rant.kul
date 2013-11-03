@@ -38,6 +38,7 @@ class HashSet : google::sparse_hash_set<T, HashFcn, EqualKey>{
 		std::pair<iterator, bool> 	insert(const T obj) 									{ return Hash::insert(obj); }
 		T&							operator[](const key_type& key)							{ return Hash::operator[](key); }
 		size_type 					count(const key_type& key) 						const   { return Hash::count(key); }
+		size_type 					erase(const key_type& key) 								{ return Hash::erase(key); }
 		iterator 					begin()               									{ return Hash::begin(); }
 		iterator 					end()       											{ return Hash::end(); }
 		const_iterator 				begin() 										const   { return Hash::begin(); }
