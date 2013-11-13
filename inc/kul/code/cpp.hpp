@@ -268,10 +268,10 @@ class WINCompiler : public Compiler{
 			return "cl";
 		}
 		const std::string getSharedLib(const std::string& lib) const {
-			return lib + ".lib";
+			return lib + ".dll";
 		}
 		const std::string getStaticLib(const std::string& lib) const {
-			return lib + ".dll";
+			return lib + ".lib";
 		}
 		const std::string buildExecutable(
 			const std::string& linker, 
@@ -296,8 +296,14 @@ class WINCompiler : public Compiler{
 			cmd += " /OUT:\"" + exe + "\" ";
 			for(const std::string& o : objects)
 				cmd += " \"" + o + "\" ";
-			for(const std::string& lib : libs)
-				cmd += " " + lib + " ";
+
+			if(mode == Mode::SHAR)
+				for(const std::string& lib : libs)
+					cmd += " \"" + getSharedLib(lib) + "\" ";
+			else if(mode == Mode::STAT)
+				for(const std::string& lib : libs)
+					cmd += " \"" + getStaticLib(lib) + "\" ";
+
 			cmd += linkerEnd;
 			LOG(INFO) << cmd;
 

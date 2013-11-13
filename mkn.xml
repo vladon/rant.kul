@@ -270,17 +270,17 @@
 				<include>./inc</include>
 				<include>./tst</include>
 				<include>./ext/pugixml/trunk/src</include>
-				<include>./ext/glog/make/include</include>
-				<include>./ext/sparsehash/make/trunk/src</include>
-				<include>./ext/sparsehash/make/win/src</include>
+				<include>./ext/glog/trunk/src/windows</include>
+				<include>./ext/sparsehash/trunk/src</include>
+				<include>./ext/sparsehash/make/src</include>
 				<include>./../win/master/ext/msinttypes-r26</include>
 				<include>E:\sand\repo\cpp\b\boost\makewin\include\boost-1_53</include>
 				<include>E:\sand\repo\cpp\b\boost\makewin\include\boost-1_53\boost\tr1</include>
 				<include>C:\apps\MVS2012\VC\include</include> <!-- MAKE LAST INCLUDE! -->	
 			</includes>
 			<libraries>	
-				<library>pugixml.lib</library>
-				<library>libglog.lib</library>					
+				<library>pugixml</library>
+				<library>libglog</library>
 			</libraries>
 			<!-- used when no profile is specified. supplied default values to profiles if required -->	
 			<build type="lib" mode="static" lang="cpp">

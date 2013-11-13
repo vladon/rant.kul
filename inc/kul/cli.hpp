@@ -64,8 +64,6 @@ class EnvVar{
 		const EnvVarMode 	mode() 		const { return m; }
 		const std::string 	toString() 	const {
 			std::string var(value());
-			kul::String::replaceAll(var, ";", kul::OS::pathSep());
-			kul::String::replaceAll(var, ":", kul::OS::pathSep());
 			kul::String::replaceAll(var, kul::OS::newLine(), "");
 			kul::String::trim(var);
 			std::string ev(OS::getEnvVar(name()));			
