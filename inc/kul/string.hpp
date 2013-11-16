@@ -27,7 +27,7 @@ class String{
 			return out.str();
 		}
 		static void replace(std::string& s, const std::string& f, const std::string& r){
-			s = s.substr(0, s.find(f)) + r + s.substr(s.find(f) + 1);
+			s = s.substr(0, s.find(f)) + r + s.substr(s.find(f) + f.size());
 		}
 		static void replaceAll(std::string& s, const std::string& f, const std::string& r){
 			while(s.find(f) != std::string::npos)
@@ -83,7 +83,7 @@ class WString{
 			return std::string(ws.begin(), ws.end());
 		}
 		static void replace(std::wstring& s, const std::wstring& f, const std::wstring& r){
-			s = s.substr(0, s.find(f)) + r + s.substr(s.find(f) + 1);
+			s = s.substr(0, s.find(f)) + r + s.substr(s.find(f) + f.size());
 		}
 		static void replaceAll(std::wstring& s, const std::wstring& f, const std::wstring& r){
 			while(s.find(f) < s.size())

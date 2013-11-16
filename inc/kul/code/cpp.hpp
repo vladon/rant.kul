@@ -8,15 +8,7 @@
 #ifndef _KUL_CODE_CPP_HPP_
 #define _KUL_CODE_CPP_HPP_
 
-#include "glog/logging.h"
-
-#include "kul/os.hpp"
-#include "kul/cli.hpp"
-#include "kul/proc.hpp"
-#include "kul/string.hpp"
-#include "kul/except.hpp"
-
-#include "kul/ext/google.hpp"
+#include "kul/code/compiler.hpp"
 
 namespace kul{ namespace code{ namespace cpp{ 
 
@@ -25,87 +17,22 @@ class Exception : public kul::Exception{
 		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
 };
 
-class CompilerNotFoundException : public kul::Exception{
-	public:
-		CompilerNotFoundException(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
-};
-
-enum Mode { NONE = 0, STAT, SHAR};
-
-class Compiler{	
+class CCompiler : public Compiler{
 	protected:
-		Compiler(const int& v) : version(v){}
-		const int version;
-		kul::proc::Process* setupProcess(const std::string& c, const std::string& cmdline, const std::vector<kul::cli::EnvVar>& evs) const {
-			
-			std::vector<std::string> bits = kul::cli::CmdLine::asArgs(cmdline);
-
-			std::string cmd = c;
-			std::string path;
-			if(c.find(" ") != std::string::npos)
-				for(const std::string& s : kul::String::split(c, ' ')){
-					cmd = s;
-					break;	
-				}
-			if(kul::OS::localPath(cmd).find(kul::OS::dirSep()) != std::string::npos){
-				path = cmd.substr(0, cmd.rfind(kul::OS::dirSep()));
-				cmd = cmd.substr(cmd.rfind(kul::OS::dirSep()) + 1);
-			}
-			
-			kul::proc::Process* p;
-			if(path.empty()) 	p = kul::proc::Process::create(cmd);
-			else 				p = kul::proc::Process::create(path, cmd);
-
-			bits.erase(bits.begin());			
-			for(const std::string& s : bits)
-				p->addArg(s);			
-			for(const kul::cli::EnvVar& ev : evs)
-				p->addEnvVar(ev.name(), ev.toString());
-
-			return p;
-		}
+		CCompiler(const int& v) : Compiler(v){}
 	public:
-		virtual ~Compiler(){}
-		virtual const std::string cc() const = 0;
+		virtual ~CCompiler(){}
+		virtual const std::string cc() 	const = 0;
 		virtual const std::string cxx() const = 0;
 		virtual const std::string getSharedLib(const std::string& lib) const = 0;
 		virtual const std::string getStaticLib(const std::string& lib) const = 0;
-		virtual const std::string buildExecutable(
-			const std::string& linker,
-			const std::string& linkerEnd,
-			const std::vector<std::string>& objects, 	
-			const std::vector<std::string>& libs,
-			const kul::StringHashSet& libPaths,
-			const std::string& out, 
-			const Mode& mode) 			const throw (kul::Exception) = 0;
-		virtual const std::string buildSharedLibrary(
-			const std::string& linker, 
-			const std::vector<std::string>& objects, 	
-			const std::string& outDir,
-			const std::string& outFile) const throw (kul::Exception) = 0;
-		virtual const std::string buildStaticLibrary(
-			const std::string& archiver,
-			const std::vector<std::string>& objects, 	
-			const std::string& outDir,
-			const std::string& outFile) const throw (kul::Exception) = 0;
-		virtual const std::string compileSource	(
-			const std::string& compiler,
-			const std::vector<std::string>& args, 		
-			const kul::StringHashSet& incs, 
-			const std::string& in, 
-			const std::string& out) 	const throw (kul::Exception) = 0;
-		virtual void preCompileHeader(
-			const kul::StringHashSet& incs, 
-			const kul::StringHashSet& args, 
-			const std::string& in, 
-			const std::string& out) 	const throw (kul::Exception) = 0;
-		
+		bool sourceIsBin() const{ return false; }
 };
 
 // Supports all known gcc versions - i.e. known to me
-class GCCompiler : public Compiler{
+class GCCompiler : public CCompiler{
 	public:
-		GCCompiler(const int& v = 0) : Compiler(v){}
+		GCCompiler(const int& v = 0) : CCompiler(v){}
 		const std::string getSharedLib(const std::string& lib) const {
 			return "lib" + lib + ".so";
 		}
@@ -258,9 +185,9 @@ class ClangCompiler : public GCCompiler{
 };
 
 
-class WINCompiler : public Compiler{
+class WINCompiler : public CCompiler{
 	public:
-		WINCompiler(const int& v = 0) : Compiler(v){}
+		WINCompiler(const int& v = 0) : CCompiler(v){}
 		virtual const std::string cc() const {
 			return "cl";
 		}
@@ -348,7 +275,7 @@ class WINCompiler : public Compiler{
 
 			using namespace kul;
 			std::string cmd = compiler + " ";
-			std::string obj = out + ".obj";
+			std::string obj = out + ".o";
 
 			for(const std::string& s : incs)
 				cmd += "\"/I" + s + "\" ";
@@ -374,48 +301,7 @@ class WINCompiler : public Compiler{
 		}
 };
 
-class Compilers{
-	private:
-		Compilers(){
-			// add compilers to map
-			GCCompiler* 	gcc		= new GCCompiler();
-			ClangCompiler* 	clang	= new ClangCompiler();
-			WINCompiler* 	win		= new WINCompiler();
-			compilers.insert(std::pair<std::string, Compiler*>("gcc"		, gcc));
-			compilers.insert(std::pair<std::string, Compiler*>("g++"		, gcc));
-			compilers.insert(std::pair<std::string, Compiler*>("nvcc"		, gcc));
-			compilers.insert(std::pair<std::string, Compiler*>("clang"		, clang));
-			compilers.insert(std::pair<std::string, Compiler*>("clang++"	, clang));
-			compilers.insert(std::pair<std::string, Compiler*>("cl"			, win));
-		}
-		static Compilers* instance;
-		kul::StringToTGMap<Compiler*> compilers;
-	public:
-		static Compilers* INSTANCE(){ if(instance == 0) instance = new Compilers(); return instance;}
-		const Compiler* get(const std::string& compiler) throw(CompilerNotFoundException){
-			std::string needle = compiler;
-			kul::String::replaceAll(needle, ".exe", "");
 
-			if(Compilers::compilers.count(compiler) > 0)
-				return (*Compilers::compilers.find(compiler)).second;
-
-			if(needle.find(" ") != std::string::npos)
-				for(const std::string& s :kul::String::split(compiler, ' ')){
-					if(Compilers::compilers.count(s) > 0)
-						return (*Compilers::compilers.find(s)).second;
-
-					if(kul::OS::localPath(s).find(kul::OS::dirSep()) != std::string::npos)
-						if(Compilers::compilers.count(s.substr(s.rfind(kul::OS::dirSep()) + 1)) > 0)
-							return (*Compilers::compilers.find(s.substr(s.rfind(kul::OS::dirSep()) + 1))).second;
-				}
-			
-			if(kul::OS::localPath(compiler).find(kul::OS::dirSep()) != std::string::npos)
-				if(Compilers::compilers.count(compiler.substr(compiler.rfind(kul::OS::dirSep()) + 1)) > 0)
-					return (*Compilers::compilers.find(compiler.substr(compiler.rfind(kul::OS::dirSep()) + 1))).second;
-			
-			throw CompilerNotFoundException(__FILE__, __LINE__, "Compiler for " + compiler + " is not implemented");
-		}
-};
 
 
 };};};
