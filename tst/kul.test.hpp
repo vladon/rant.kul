@@ -53,7 +53,7 @@ class test{ public: test(){
 		LOG(INFO) << s;
 	}
 
-	std::shared_ptr<kul::proc::CPUMonitoredProcess> p(kul::proc::CPUMonitoredProcess::create("echo"));
+	std::shared_ptr<kul::CPUMonitoredProcess> p(kul::CPUMonitoredProcess::create("echo"));
 	try{
 		(*p).addArg("Hello").addArg("World").start();
 	}catch(const kul::proc::Exception& e){ 
