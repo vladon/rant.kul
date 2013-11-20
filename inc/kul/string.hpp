@@ -61,7 +61,7 @@ class String{
 			std::string l = s;
 			std::vector<std::string> ss;
 			unsigned int pos = 0;
-			while((pos = s.find(delim, pos + 1)) != std::string::npos){
+			while((pos = s.find(delim, pos + 1)) < l.size()){
 				ss.push_back(l.substr(0, pos));
 				l = l.substr(pos + 1);
 			}

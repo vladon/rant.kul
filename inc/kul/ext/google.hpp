@@ -37,13 +37,14 @@ class HashSet : google::sparse_hash_set<T, HashFcn, EqualKey>{
 
 		std::pair<iterator, bool> 	insert(const T obj) 									{ return Hash::insert(obj); }
 		T&							operator[](const key_type& key)							{ return Hash::operator[](key); }
-		size_type 					count(const key_type& key) 						const   { return Hash::count(key); }
+		size_type 					count(const key_type& key) 						const   { return Hash::count(key); }		
 		size_type 					erase(const key_type& key) 								{ return Hash::erase(key); }
 		iterator 					begin()               									{ return Hash::begin(); }
 		iterator 					end()       											{ return Hash::end(); }
 		const_iterator 				begin() 										const   { return Hash::begin(); }
 		const_iterator 				end() 											const   { return Hash::end(); }
 		size_type 					size() 											const   { return Hash::size(); }
+		void	 					setDeletedKey(const key_type& key)						{ Hash::set_deleted_key(key); }
 };
 typedef HashSet<std::string, std::tr1::hash<std::string>, StdStringComparator> StringHashSet;
 
@@ -59,12 +60,14 @@ class HashMap : google::sparse_hash_map<K, V, HashFcn, EqualKey>{
 		std::pair<iterator, bool> 	insert(const K k, V v)						{ return insert(std::pair<K, V>(k, v)); }
 		V&							operator[](const key_type& key)				{ return map::operator[](key); }
 		size_type 					count(const key_type& key) 			const 	{ return map::count(key); }
+		size_type 					erase(const key_type& key) 					{ return map::erase(key); }
 		iterator 					begin()               						{ return map::begin(); }
 		iterator 					end()       								{ return map::end(); }
 		iterator 					find(const key_type& key)      				{ return map::find(key); }
 		const_iterator 				begin() 							const   { return map::begin(); }
 		const_iterator 				end() 								const   { return map::end(); }
 		const_iterator 				find(const key_type& key) 			const 	{ return map::find(key); }
+		void	 					setDeletedKey(const key_type& key)			{ map::set_deleted_key(key); }
 };
 
 template <class T, class HashFcn = std::tr1::hash<std::string>, class EqualKey = StdStringComparator, class Alloc = libc_allocator_with_realloc<std::pair<const std::string, T> > >
@@ -80,6 +83,7 @@ class StringToTGMap : google::sparse_hash_map<std::string, T, HashFcn, EqualKey>
 		std::pair<iterator, bool> 	insert(const std::string& s, const T& t)				{ return insert(std::pair<std::string, T>(s, t)); }
 		T&							operator[](const key_type& key)							{ return StringToT::operator[](key); }
 		size_type 					count(const key_type& key) 						const   { return StringToT::count(key); }
+		size_type 					erase(const key_type& key) 								{ return StringToT::erase(key); }
 		iterator 					begin()               									{ return StringToT::begin(); }
 		iterator 					end()       											{ return StringToT::end(); }
 		iterator 					find(const key_type& key)      							{ return StringToT::find(key); }
@@ -87,6 +91,7 @@ class StringToTGMap : google::sparse_hash_map<std::string, T, HashFcn, EqualKey>
 		const_iterator 				end() 											const   { return StringToT::end(); }
 		const_iterator 				find(const key_type& key) 						const 	{ return StringToT::find(key); }
 		size_type 					size() 											const   { return StringToT::size(); }
+		void	 					setDeletedKey(const key_type& key)						{ StringToT::set_deleted_key(key); }
 };
 
 template <class T, class HashFcn = std::tr1::hash<std::string>, class EqualKey = StdStringComparator, class Alloc = libc_allocator_with_realloc<std::pair<const std::string, std::vector<T> > > >
@@ -100,6 +105,7 @@ class StringToVectorTGMap : google::sparse_hash_map<std::string, std::vector<T>,
 		std::pair<iterator, bool> 	insert(const std::pair<std::string, std::vector<T> >& obj) 			{ return StringToVector::insert(obj); }
 		std::pair<iterator, bool> 	insert(const std::string& s, const std::vector<T>& t)				{ return insert(std::pair<std::string, std::vector<T> >(s, t)); }
 		size_type 					count(const key_type& key) 									const   { return StringToVector::count(key); }
+		size_type 					erase(const key_type& key) 											{ return StringToVector::erase(key); }
 		iterator 					begin()               												{ return StringToVector::begin(); }
 		iterator 					end()       														{ return StringToVector::end(); }
 		iterator 					find(const key_type& key)      										{ return StringToVector::find(key); }
@@ -121,6 +127,7 @@ class StringToGMapTGMap : google::sparse_hash_map<std::string, StringToTGMap<T>,
 		std::pair<iterator, bool> 	insert(const std::string s, StringToTGMap<T> t) 					{ return insert(std::pair<std::string, StringToTGMap<T> >(s, t)); }
 		StringToTGMap<T>&			operator[](const key_type& key)										{ return StringToGMapT::operator[](key); }
 		size_type 					count(const key_type& key) 									const   { return StringToGMapT::count(key); }
+		size_type 					erase(const key_type& key) 											{ return StringToGMapT::erase(key); }
 		iterator 					begin()               												{ return StringToGMapT::begin(); }
 		iterator 					end()       														{ return StringToGMapT::end(); }
 		iterator 					find(const key_type& key)      										{ return StringToGMapT::find(key); }

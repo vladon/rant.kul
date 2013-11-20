@@ -26,7 +26,7 @@ class Compiler{
 	protected:
 		Compiler(const int& v) : version(v){}
 		const int version;
-		kul::proc::Process* setupProcess(const std::string& c, const std::string& cmdline, const std::vector<kul::cli::EnvVar>& evs) const {
+		kul::Process* setupProcess(const std::string& c, const std::string& cmdline, const std::vector<kul::cli::EnvVar>& evs) const {
 			
 			std::vector<std::string> bits = kul::cli::CmdLine::asArgs(cmdline);
 
@@ -42,9 +42,9 @@ class Compiler{
 				cmd = cmd.substr(cmd.rfind(kul::OS::dirSep()) + 1);
 			}
 			
-			kul::proc::Process* p;
-			if(path.empty()) 	p = kul::proc::Process::create(cmd);
-			else 				p = kul::proc::Process::create(path, cmd);
+			kul::Process* p;
+			if(path.empty()) 	p = kul::Process::create(cmd);
+			else 				p = kul::Process::create(path, cmd);
 
 			bits.erase(bits.begin());			
 			for(const std::string& s : bits)

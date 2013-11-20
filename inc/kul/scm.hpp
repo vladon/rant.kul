@@ -39,7 +39,7 @@ class Git : public Scm{
 	public:
 		void co(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception){
 			
-			std::shared_ptr<kul::proc::Process> p(kul::proc::Process::create("git"));
+			std::shared_ptr<kul::Process> p(kul::Process::create("git"));
 			if(!OS::isDir(l)) OS::mkDir(l);
 			(*p).setDir(l.c_str());
 			(*p).addArg("clone").addArg(r.c_str());
@@ -56,7 +56,7 @@ class Git : public Scm{
 			
 			if(!kul::OS::isDir(l)) co(l, r);
 			else{
-				std::shared_ptr<kul::proc::Process> p(kul::proc::Process::create("git"));				
+				std::shared_ptr<kul::Process> p(kul::Process::create("git"));				
 				(*p).setDir(l.c_str());
 				(*p).addArg("pull");
 				if(v.compare("") != 0) (*p).addArg("-u").addArg("origin").addArg(v.c_str());

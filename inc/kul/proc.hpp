@@ -25,8 +25,9 @@ class ExitException : public Exception{
 };
 
 class AbstractExecCall{
+
 	protected:
-		virtual ~AbstractExecCall(){}
+		virtual ~AbstractExecCall(){}		
 		virtual void 				run()		throw (kul::proc::Exception) = 0; // starts the process
 		virtual void 				preStart()  = 0;
 		virtual void 				finish()	= 0;
@@ -42,8 +43,9 @@ class AbstractExecCall{
 		virtual void start() throw (kul::proc::Exception)= 0; // allows for setup before calling run - must call run manually.
 
 };
+};
 
-class Process : public AbstractExecCall{
+class Process : public proc::AbstractExecCall{
 	private:
 		bool s;
 		std::string d;
@@ -66,8 +68,8 @@ class Process : public AbstractExecCall{
 		const std::vector<std::pair<const std::string, const std::string> >& 	environmentVariables()	const { return evs; }
 	public:
 		virtual ~Process(){}
-		static Process* create(const std::string& cmd);
-		static Process* create(const std::string& p, const std::string& cmd);
+		static Process* create(const std::string& cmd, const bool wfe = true);
+		static Process* create(const std::string& p, const std::string& cmd, const bool wfe = true);
 
 		Process& addArg(const std::string& arg) { argv.push_back(arg); return *this; }
 		Process& setDir(const std::string& dir) { this->d = dir; return *this; }
@@ -104,8 +106,8 @@ class CPUMonitoredProcess : public Process{
 		}*/
 	public:
 		virtual ~CPUMonitoredProcess(){}
-		static CPUMonitoredProcess* create(const std::string& cmd);
-		static CPUMonitoredProcess* create(const std::string& path, const std::string& cmd);
+		static CPUMonitoredProcess* create(const std::string& cmd, const bool wfe = true);
+		static CPUMonitoredProcess* create(const std::string& path, const std::string& cmd, const bool wfe = true);
 
 		void start() throw(kul::proc::Exception){
 			if(started()) throw kul::proc::Exception(__FILE__, __LINE__, "Process is already started");
@@ -119,5 +121,5 @@ class CPUMonitoredProcess : public Process{
 
 
 
-};};
+};
 #endif /* _KUL_PROC_HPP_ */
