@@ -24,9 +24,9 @@ class OSException : public kul::Exception{
 class OS{
 
 	public:
-		static int 	execReturn(const std::string& cmd);
-		static int 	execNoPrintReturn(const std::string& cmd);
-		static void exec(const std::string& cmd, const char* args[]);
+		static int execReturn(const std::string& cmd);
+		static int execNoPrintReturn(const std::string& cmd);
+		static int exec(const std::string& cmd, char*const args[]);
 
 		static const char* 	getEnvVar(const char* c);
 		static void			setEnvVar(const char* var, const char* val);
