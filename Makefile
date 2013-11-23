@@ -1,6 +1,6 @@
 
 CXX=g++
-CXXFLAGS=-std=c++0x -O3 -g0 -Wall -c -fmessage-length=0
+CXXFLAGS=-std=c++0x -O3 -g0 -Wall -c -fmessage-length=0 -D__GXX_EXPERIMENTAL_CXX0X__
 #CLANGFLAGS=-stdlib=libc++
 CLANGFLAGS=
 INCS = 	-I$(CURDIR)/inc \
