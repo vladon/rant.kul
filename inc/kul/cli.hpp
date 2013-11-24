@@ -114,9 +114,12 @@ class Args{
 			for(const Arg& a : arguments()) if(strcmp(a.dashdash(), c) == 0) return a;
 			throw ArgNotFoundException(__FILE__, __LINE__, "No argument " + std::string(c) + " found");
 		}
-		const std::vector<Cmd>& commands()	 						const { return cmds;}
-		const std::vector<Arg>& arguments() 						const { return args;}
+		const std::vector<Cmd>& commands()	 		const { return cmds;}
+		const std::vector<Arg>& arguments() 		const { return args;}
 		const kul::StringToStringHashMap& values() 	const { return vals; }
+		const bool contains(const std::string& s) 	{ 
+			return vals.count(s);
+		}
 };
 
 class AWritable{
