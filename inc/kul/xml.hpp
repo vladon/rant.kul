@@ -35,7 +35,7 @@ class PugiXMLService{
 	public:
 		static void setupDocument(pugi::xml_document& doc, const char*f){
 			pugi::xml_parse_result result = doc.load_file(f, pugi::parse_full);
-			if(!result)		
+			if(!result)	
 				throw Exception(__FILE__, __LINE__, "PUGIXML Exception: " + std::string(result.description()) + " : " + std::string(f + result.offset));
 		}
 };
