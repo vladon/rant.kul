@@ -38,6 +38,7 @@ class ArgParsingException : public Exception{
 class CmdLine{
 	public:
 		static std::vector<std::string> asArgs(const std::string& cmd) throw(ArgParsingException);
+		static void print(const std::vector<std::string>& ss, bool tab = true);
 };
 
 class Cmd{
