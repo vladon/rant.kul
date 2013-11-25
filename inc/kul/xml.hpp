@@ -177,11 +177,12 @@ class NodeAttributeValidator{
 
 class NodeTextFunction{
 	private:
-		const char* f;
+		const char* n;
 	public:
-		NodeTextFunction(const char* f) : f(f){}
+		NodeTextFunction(const char* n) : n(n){}
 		virtual ~NodeTextFunction(){}
 		virtual const char* txt() = 0;
+		const char*const name(){ return n; }
 
 
 };
