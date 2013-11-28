@@ -23,9 +23,9 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 	for(const pugi::xml_node& n : node.children()){
 		bool found = false;
 		for(std::pair<std::string, NodeValidator> pair  : v.getChildren()){
-			if(std::string(n.name()).compare(pair.first) == 0){
+			if(std::string(n.name()).compare(pair.first) == 0 || pair.first.compare("*") == 0){
 				if(n.attributes().begin() != n.attributes().end()){
-					for(pugi::xml_attribute a : n.attributes()){						
+					for(pugi::xml_attribute a : n.attributes()){
 						bool attFound = false;
 						for(NodeAttributeValidator nav : pair.second.getAtVals()){
 							for(std::pair<std::string, std::vector<std::string> > attVals : nav.allowedValues()){
@@ -63,20 +63,38 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 	}
 
 	for(std::pair<std::string, NodeValidator> pair  : v.getChildren()){
-		for(const pugi::xml_node& n : node.children(pair.first.c_str())){
-			StringToStringHashMap atts;
-			if(n.attributes().begin() != n.attributes().end())
-				for(pugi::xml_attribute a : n.attributes())
-					atts.insert(std::pair<std::string, std::string>(std::string(a.name()), std::string(a.value())));
-			if(pair.second.isText() && n.text().empty())
-				ns->push_back(new TextNode(p, atts, pair.first, ""));
-			else if(n.text().empty()){
-				   Node** parent = new Node*;
-				ns->push_back((*parent = new Node(p, validate(parent, new std::vector<const Node*>, n, pair.second) , atts, pair.first.c_str())));
-			}else if(!pair.second.isText())
-				throw Exception(__FILE__, __LINE__, "XML Exception: text not expected in node " + std::string(n.name()));
-			else
-				ns->push_back(new TextNode(p, atts, pair.first, n.child_value()));
+		if(pair.first.compare("*") == 0){
+			for(const pugi::xml_node& n : node.children()){
+				StringToStringHashMap atts;
+				if(n.attributes().begin() != n.attributes().end())
+					for(pugi::xml_attribute a : n.attributes())
+						atts.insert(std::pair<std::string, std::string>(std::string(a.name()), std::string(a.value())));
+				if(pair.second.isText() && n.text().empty())
+					ns->push_back(new TextNode(p, atts, n.name(), ""));
+				else if(n.text().empty()){
+					   Node** parent = new Node*;
+					ns->push_back((*parent = new Node(p, validate(parent, new std::vector<const Node*>, n, pair.second) , atts, pair.first.c_str())));
+				}else if(!pair.second.isText())
+					throw Exception(__FILE__, __LINE__, "XML Exception: text not expected in node " + std::string(n.name()));
+				else
+					ns->push_back(new TextNode(p, atts, n.name(), n.child_value()));
+			}
+		}else{
+			for(const pugi::xml_node& n : node.children(pair.first.c_str())){
+				StringToStringHashMap atts;
+				if(n.attributes().begin() != n.attributes().end())
+					for(pugi::xml_attribute a : n.attributes())
+						atts.insert(std::pair<std::string, std::string>(std::string(a.name()), std::string(a.value())));
+				if(pair.second.isText() && n.text().empty())
+					ns->push_back(new TextNode(p, atts, pair.first, ""));
+				else if(n.text().empty()){
+					   Node** parent = new Node*;
+					ns->push_back((*parent = new Node(p, validate(parent, new std::vector<const Node*>, n, pair.second) , atts, pair.first.c_str())));
+				}else if(!pair.second.isText())
+					throw Exception(__FILE__, __LINE__, "XML Exception: text not expected in node " + std::string(n.name()));
+				else
+					ns->push_back(new TextNode(p, atts, pair.first, n.child_value()));
+			}
 		}
 	}
 

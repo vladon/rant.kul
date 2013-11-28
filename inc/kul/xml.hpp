@@ -128,23 +128,23 @@ class NodeValidator{
 		const bool text;
 	public:
 		NodeValidator(
-				const std::vector<std::pair<std::string, NodeValidator> > c,
-				const std::vector<NodeAttributeValidator> a,
-				const int mi, const int ma, const bool isT) :
+				const std::vector<std::pair<std::string, NodeValidator> >& c,
+				const std::vector<NodeAttributeValidator>& a,
+				const int& mi, const int& ma, const bool& isT) :
 					children(c)	, attributeValidators(a),
 					min(mi)		, max(ma)				, text(isT){}
 		NodeValidator(
-				const std::vector<std::pair<std::string, NodeValidator> > c,
-				const int mi, const int ma, const bool isT) :
+				const std::vector<std::pair<std::string, NodeValidator> >& c,
+				const int& mi, const int& ma, const bool& isT) :
 					children(c)	, attributeValidators()	,
 					min(mi)		, max(ma)				, text(isT){}
 		NodeValidator(
-				const std::vector<NodeAttributeValidator> a,
-				const int mi, const int ma, const bool isT) :
+				const std::vector<NodeAttributeValidator>& a,
+				const int& mi, const int& ma, const bool& isT) :
 					children()	, attributeValidators(a),
 					min(mi)		, max(ma)				, text(isT){}
 		NodeValidator(
-						const int mi, const int ma, const bool isT) :
+						const int& mi, const int& ma, const bool& isT) :
 							children()	, attributeValidators()	,
 							min(mi)		, max(ma)				, text(isT){}
 		NodeValidator(const NodeValidator& v)  :
