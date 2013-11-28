@@ -118,7 +118,7 @@ class WString{
 			std::vector<std::wstring> ss;
 			std::wstring l = s;			
 			unsigned int pos = 0;
-			while((pos = s.find(delim, pos + 1)) != std::wstring::npos){
+			while((pos = s.find(delim, pos + 1)) < l.size()){
 				ss.push_back(l.substr(0, pos));
 				l = l.substr(pos + 1);
 			}
