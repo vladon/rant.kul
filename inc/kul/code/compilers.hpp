@@ -38,7 +38,7 @@ class Compilers{
 			compilers.insert(std::pair<std::string, Compiler*>("csc"		, wincs));
 		}
 		static Compilers* instance;
-		kul::StringToTGMap<Compiler*> compilers;
+		hash::map::S2T<Compiler*> compilers;
 	public:
 		static Compilers* INSTANCE(){ if(instance == 0) instance = new Compilers(); return instance;}
 		const Compiler* get(const std::string& c) throw(CompilerNotFoundException){

@@ -5,9 +5,6 @@
  *      Author: philix
  */
 
-#include "glog/logging.h"
-
-
 #include "kul/xml.hpp"
 
 void kul::xml::NodeFactory::log(const Node* node){
@@ -65,7 +62,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 	for(std::pair<std::string, NodeValidator> pair  : v.getChildren()){
 		if(pair.first.compare("*") == 0){
 			for(const pugi::xml_node& n : node.children()){
-				StringToStringHashMap atts;
+				hash::map::S2S atts;
 				if(n.attributes().begin() != n.attributes().end())
 					for(pugi::xml_attribute a : n.attributes())
 						atts.insert(std::pair<std::string, std::string>(std::string(a.name()), std::string(a.value())));
@@ -81,7 +78,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 			}
 		}else{
 			for(const pugi::xml_node& n : node.children(pair.first.c_str())){
-				StringToStringHashMap atts;
+				hash::map::S2S atts;
 				if(n.attributes().begin() != n.attributes().end())
 					for(pugi::xml_attribute a : n.attributes())
 						atts.insert(std::pair<std::string, std::string>(std::string(a.name()), std::string(a.value())));

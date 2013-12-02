@@ -7,8 +7,6 @@
  *  Methods provided purely for convenience, 
  */
 
-#include "kul/ext/google.hpp"
-
 #include "kul/xml.hpp"
 
 class NodeWriterService{
@@ -28,7 +26,7 @@ class NodeWriterService{
 					else{												
 						for(const std::string& val : atts.second){
 							std::vector<std::string> values; values.push_back(val);
-							kul::StringToVectorTGMap<std::string> valMap;
+							kul::hash::map::S2VT<std::string> valMap;
 							valMap.insert(std::pair<std::string, std::vector<std::string> >(atts.first, values));
 							for(const kul::xml::NodeAttributeValidator& nav1 : v.getAtVals())
 								for(const std::pair<std::string, std::vector<std::string > >& atts1 : nav1.allowedValues()){

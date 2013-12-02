@@ -26,7 +26,7 @@ class WINCompiler : public Compiler{
 			const std::string& linkerEnd,
 			const std::vector<std::string>& objects,
 			const std::vector<std::string>& libs,
-			const kul::StringHashSet& libPaths,
+			const hash::set::String& libPaths,
 			const std::string& out, 
 			const Mode& mode) const throw (kul::Exception){
 			
@@ -72,15 +72,15 @@ class WINCompiler : public Compiler{
 		const std::string compileSource(
 			const std::string& compiler, 
 			const std::vector<std::string>& args, 
-			const kul::StringHashSet& incs, 
+			const hash::set::String& incs, 
 			const std::string& in, 
 			const std::string& out) const throw (kul::Exception){
 
 			return in;
 		}
 		virtual void preCompileHeader(			
-			const kul::StringHashSet& incs, 
-			const kul::StringHashSet& args, 
+			const hash::set::String& incs, 
+			const hash::set::String& args, 
 			const std::string& in, 
 			const std::string& out) 	const throw (kul::Exception) {
 

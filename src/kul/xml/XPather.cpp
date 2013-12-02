@@ -7,8 +7,6 @@
  *  Methods provided purely for convenience, 
  */
 
-#include "kul/ext/google.hpp"
-
 #include "kul/xml.hpp"
 
 void kul::xml::XPather::writeNode(const char*x, const Node& node){

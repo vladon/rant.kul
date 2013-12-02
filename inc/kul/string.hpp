@@ -10,12 +10,12 @@
 
 #include "glog/logging.h"
 
-#include "kul/ext/google.hpp"
-
 #include <string>
 #include <vector>
 #include <string.h>
 #include <sstream>
+
+#include "kul/hash.hpp"
 
 namespace kul { 
 

@@ -9,16 +9,17 @@
 #define _NODE_HPP_
 
 #include "pugixml.hpp"
+#include "glog/logging.h"
 
 #include <string>
 #include <vector>
 #include <memory>
 #include <stdexcept>
 
+#include "kul/hash.hpp"
 #include "kul/file.hpp"
 #include "kul/smart.hpp"
 #include "kul/except.hpp"
-#include "kul/ext/google.hpp"
 
 namespace kul{ namespace xml{
 
@@ -68,10 +69,10 @@ class Node{
 	private:
 		Node**const prev;
 		const smart::Vector<const Node> kinder;
-		const StringToStringHashMap atts;
+		const hash::map::S2S atts;
 		const std::string n;
 	public:
-		Node(Node**const p, const std::vector<const Node*>* c, const StringToStringHashMap atts, const std::string n) :
+		Node(Node**const p, const std::vector<const Node*>* c, const hash::map::S2S atts, const std::string n) :
 			prev(p),
 			kinder(smart::Vector<const Node>(c)), atts(atts),
 			n(n){}
@@ -85,7 +86,7 @@ class Node{
 		const std::string		 		txt() 			const throw (Exception);
 		const std::string		 		att(const std::string& s) const throw (Exception);
 		const std::vector<const Node*>&	children()		const { return *this->kinder.get(); }
-		const StringToStringHashMap&	attributes()	const { return atts; }
+		const hash::map::S2S&			attributes()	const { return atts; }
 		const std::string&				name() 			const { return this->n; }
 };
 
@@ -93,7 +94,7 @@ class TextNode : public Node{
 	private:
 		const std::string t;
 	public:
-		TextNode(Node**const p, const StringToStringHashMap atts, const std::string n, const std::string t) :
+		TextNode(Node**const p, const hash::map::S2S atts, const std::string n, const std::string t) :
 			Node(p, new std::vector<const Node*>(), atts, n), t(t){}
 		TextNode(Node**const p, const std::string n, const std::string t) :
 			Node(p, new std::vector<const Node*>(), n), t(t){}
@@ -161,18 +162,18 @@ class NodeValidator{
 
 class NodeAttributeValidator{
 	private:
-		const StringToVectorTGMap<std::string> avs;
+		const hash::map::S2VT<std::string> avs;
 		const bool checked;
 		const bool unique;
 		const bool mandatory;
 	public:
-		NodeAttributeValidator(const StringToVectorTGMap<std::string> a, const bool c, const bool u, const bool m) : avs(a), checked(c), unique(u), mandatory(m){}
-		NodeAttributeValidator(const StringToVectorTGMap<std::string> a, const bool u, const bool m) : avs(a), checked(0), unique(u), mandatory(m){}
+		NodeAttributeValidator(const hash::map::S2VT<std::string> a, const bool c, const bool u, const bool m) : avs(a), checked(c), unique(u), mandatory(m){}
+		NodeAttributeValidator(const hash::map::S2VT<std::string> a, const bool u, const bool m) : avs(a), checked(0), unique(u), mandatory(m){}
 		NodeAttributeValidator(const NodeAttributeValidator& n) : avs(n.allowedValues()), checked(n.isChecked()), unique(n.isUnique()), mandatory(n.isMandatory()){}
 		const bool 								isChecked() 		const { return checked; }
 		const bool 								isUnique() 			const { return unique; }
 		const bool 								isMandatory() 		const { return mandatory; }
-		const StringToVectorTGMap<std::string>& allowedValues() 	const { return avs;}
+		const hash::map::S2VT<std::string>& 	allowedValues() 	const { return avs;}
 };
 
 class NodeTextFunction{

@@ -5,8 +5,6 @@
  *      Author: philix
  */
 
-#include "glog/logging.h"
-
 #include "kul/xml.hpp"
 
 const kul::xml::Node& kul::xml::Node::operator[](const std::string& s) const  throw (Exception){

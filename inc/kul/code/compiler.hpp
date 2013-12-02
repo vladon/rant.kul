@@ -10,13 +10,13 @@
 
 #include "glog/logging.h"
 
+
 #include "kul/os.hpp"
 #include "kul/cli.hpp"
+#include "kul/hash.hpp"
 #include "kul/proc.hpp"
 #include "kul/string.hpp"
 #include "kul/except.hpp"
-
-#include "kul/ext/google.hpp"
 
 namespace kul{ namespace code{ 
 
@@ -62,7 +62,7 @@ class Compiler{
 			const std::string& linkerEnd,
 			const std::vector<std::string>& objects, 	
 			const std::vector<std::string>& libs,
-			const kul::StringHashSet& libPaths,
+			const hash::set::String& libPaths,
 			const std::string& out, 
 			const Mode& mode) 			const throw (kul::Exception) = 0;
 		virtual const std::string buildSharedLibrary(
@@ -78,12 +78,12 @@ class Compiler{
 		virtual const std::string compileSource	(
 			const std::string& compiler,
 			const std::vector<std::string>& args, 		
-			const kul::StringHashSet& incs, 
+			const hash::set::String& incs, 
 			const std::string& in, 
 			const std::string& out) 	const throw (kul::Exception) = 0;
 		virtual void preCompileHeader(
-			const kul::StringHashSet& incs, 
-			const kul::StringHashSet& args, 
+			const hash::set::String& incs, 
+			const hash::set::String& args, 
 			const std::string& in, 
 			const std::string& out) 	const throw (kul::Exception) = 0;
 };

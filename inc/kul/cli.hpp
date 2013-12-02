@@ -14,9 +14,9 @@
 #include <vector>
 
 #include "kul/os.hpp"
+#include "kul/hash.hpp"
 #include "kul/except.hpp"
 #include "kul/string.hpp"
-#include "kul/ext/google.hpp"
 
 namespace kul{  namespace cli {
 
@@ -97,7 +97,7 @@ class Args{
 	private:
 		const std::vector<Cmd>& cmds;
 		const std::vector<Arg>& args;
-		kul::StringToStringHashMap vals;
+		hash::map::S2S vals;
 		Args();
 	public:
 		Args(const std::vector<Cmd>& cmds, const std::vector<Arg>& args) : cmds(cmds), args(args){}
@@ -114,9 +114,9 @@ class Args{
 			for(const Arg& a : arguments()) if(strcmp(a.dashdash(), c) == 0) return a;
 			throw ArgNotFoundException(__FILE__, __LINE__, "No argument " + std::string(c) + " found");
 		}
-		const std::vector<Cmd>& commands()	 		const { return cmds;}
-		const std::vector<Arg>& arguments() 		const { return args;}
-		const kul::StringToStringHashMap& values() 	const { return vals; }
+		const std::vector<Cmd>& commands()	const { return cmds;}
+		const std::vector<Arg>& arguments() const { return args;}
+		const hash::map::S2S& 	values() 	const { return vals; }
 		const bool contains(const std::string& s) 	{ 
 			return vals.count(s);
 		}
