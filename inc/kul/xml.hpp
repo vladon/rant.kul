@@ -78,7 +78,7 @@ class Node{
 			n(n){}
 		Node(Node**const p, const std::vector<const Node*>* c, std::string n) :
 			prev(p),
-			kinder(smart::Vector<const Node>(c)),
+			kinder(smart::Vector<const Node>(c)), atts(),
 			n(n){}
 		const Node& 					operator[](const std::string& s) const throw (Exception);
 		const Node&				 		operator()(const std::string& c, const std::string& a, const std::string& v) const throw (Exception);
