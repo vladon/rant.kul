@@ -31,21 +31,34 @@ class Scm{
 		Scm(){}
 	public:
 		virtual ~Scm(){}
-		virtual void co(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception) = 0 ;
-		virtual void up(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception) = 0 ;
+		virtual void co(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception) = 0;
+		virtual void up(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception) = 0;
+		virtual const std::string& localVersion() const = 0;
+		virtual const std::string& remoteVersion(const std::string& url, const std::string branch = "") const throw(Exception) = 0;
 };
 
 class Git : public Scm{
+	private:
+		std::string lVersion;
+		std::string rVersion;
+		void captureLocalVersion(std::string s) const {
+			const_cast<Git*>(this)->lVersion = s;
+		}
+		void captureRemoteVersion(std::string s) const{
+			const_cast<Git*>(this)->rVersion = s;
+		}
 	public:
 		void co(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception){
 			
 			std::shared_ptr<kul::Process> p(kul::Process::create("git"));
 			if(!OS::isDir(l)) OS::mkDir(l);
-			(*p).setDir(l.c_str());
-			(*p).addArg("clone").addArg(r.c_str());
-			if(v.compare("master") != 0 && v.compare("") != 0) (*p).addArg("-b").addArg(v.c_str());
+			p->setDir(l.c_str());
+			p->addArg("clone").addArg(r.c_str());
+			if(v.compare("master") != 0 && v.compare("") != 0) p->addArg("-b").addArg(v.c_str());
 			try{
-				(*p).addArg(".").start();
+				p->addArg(".");
+				std::cout << "PERFORMING: " << p->toString() << std::endl;
+				p->start();
 			}catch(const kul::proc::ExitException& e){
 				OS::dirDel(l);
 				throw Exception(__FILE__, __LINE__, "SCM ERROR - Check remote dependency location / version");
@@ -57,16 +70,43 @@ class Git : public Scm{
 			if(!kul::OS::isDir(l)) co(l, r);
 			else{
 				std::shared_ptr<kul::Process> p(kul::Process::create("git"));				
-				(*p).setDir(l.c_str());
-				(*p).addArg("pull");
-				if(v.compare("") != 0) (*p).addArg("-u").addArg("origin").addArg(v.c_str());
+				p->setDir(l.c_str());
+				p->addArg("pull");
+				if(v.compare("") != 0) p->addArg("-u").addArg("origin").addArg(v.c_str());
 				try{
-					(*p).start();
+					std::cout << "PERFORMING: " << p->toString() << std::endl;
+					p->start();
 				}catch(const kul::proc::ExitException& e){
 					OS::dirDel(l);
 					throw Exception(__FILE__, __LINE__, "SCM ERROR - Check remote dependency location / version");
 				}
 			}
+		}
+		const std::string& localVersion() const{
+			std::shared_ptr<kul::Process> p(kul::Process::create("git"));
+			p->addArg("rev-parse").addArg("HEAD");
+			try{
+				p->setDir(kul::OS::pwd().c_str());
+				std::function<void(std::string)> fun(std::bind(&Git::captureLocalVersion, std::ref(*this), std::placeholders::_1));
+				p->setOut(fun);
+				p->start();
+			}catch(const kul::proc::ExitException& e){
+				throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
+			}
+			return this->lVersion;
+		}
+		const std::string& remoteVersion(const std::string& url, const std::string branch = "") const throw(Exception){
+			std::shared_ptr<kul::Process> p(kul::Process::create("git"));
+			p->addArg("ls-remote").addArg(url).addArg(branch);
+			try{
+				p->setDir(kul::OS::pwd().c_str());
+				std::function<void(std::string)> fun(std::bind(&Git::captureRemoteVersion, std::ref(*this), std::placeholders::_1));
+				p->setOut(fun);
+				p->start();
+			}catch(const kul::proc::ExitException& e){
+				throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
+			}
+			return this->rVersion;
 		}
 };
 
@@ -82,6 +122,12 @@ class Svn : public Scm{
 			if(!kul::OS::isDir(l)) co(l, r);
 			else{}
 		};
+		const std::string& localVersion() const{
+			throw Exception(__FILE__, __LINE__, "SCM ERROR - SVN NOT YET IMPLEMENTED");
+		}
+		const std::string& remoteVersion(const std::string& url, const std::string branch = "") const throw(Exception){
+			throw Exception(__FILE__, __LINE__, "SCM ERROR - SVN NOT YET IMPLEMENTED");
+		}
 };
 
 class Manager{

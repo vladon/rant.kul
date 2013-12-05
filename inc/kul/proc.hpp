@@ -23,49 +23,42 @@ class ExitException : public Exception{
 	public:
 		ExitException(const char*f, const int l, std::string s) : Exception(f, l, s){}
 };
-
-class AbstractExecCall{
-
-	protected:
-		virtual ~AbstractExecCall(){}		
-		virtual void 				run()		throw (kul::proc::Exception) = 0; // starts the process
-		virtual void 				preStart()  = 0;
-		virtual void 				finish()	= 0;
-		virtual const int& 			pid()		= 0;
-		virtual const std::string& 	directory()	= 0;
-		virtual void out(const std::string& s){
-			std::cout << s << std::endl;
-		}
-		virtual void err(const std::string& s){
-			std::cerr << s << std::endl;
-		}
-	public:
-		virtual void start() throw (kul::proc::Exception)= 0; // allows for setup before calling run - must call run manually.
-
-};
 };
 
-class Process : public proc::AbstractExecCall{
+class Process{
 	private:
+		const bool wfe;
 		bool s;
 		std::string d;
 		const std::string p;
+		std::function<void(std::string)> e;
+		std::function<void(std::string)> o;
 		std::vector<std::string> argv;
 		std::vector<std::pair<const std::string, const std::string> > evs;
 
 	protected:
-		Process(const std::string& cmd) : AbstractExecCall(), s(0), d(), p(){ argv.push_back(cmd); }
-		Process(const std::string& p, const std::string& cmd) : AbstractExecCall(), s(0), d(), p(p){ argv.push_back(cmd); }
+		Process(const std::string& cmd, const bool& wfe) : wfe(wfe), s(0), d(), p(){ argv.push_back(cmd); }
+		Process(const std::string& p, const std::string& cmd, const bool& wfe) : wfe(wfe), s(0), d(), p(p){ argv.push_back(cmd); }
 
-		const bool& 		started() 		{ return s; }
-		const std::string&	directory()		{ return d; }
-		const std::string&	path()			{ return p; }
+		const bool& 		started() 		const { return s; }
+		const std::string&	directory()		const { return d; }
+		const std::string&	path()			const { return p; }
 		void 				setStarted() 	{ this->s = true; }
 		virtual void 		preStart() 		= 0;
 		virtual void 		finish()		= 0;
+		virtual void 		run() throw (kul::proc::Exception) = 0; // starts the process
+		const bool			waitForExit()	const { return wfe; }
 
 		const std::vector<std::string>&		 									arguments()				const { return argv; };
 		const std::vector<std::pair<const std::string, const std::string> >& 	environmentVariables()	const { return evs; }
+		virtual void out(const std::string& s){
+			if(this->o) this->o(s);
+			else 		std::cout << s << std::endl;
+		}
+		virtual void err(const std::string& s){
+			if(this->e) this->e(s);
+			else 		std::cerr << s << std::endl;
+		}
 	public:
 		virtual ~Process(){}
 		static Process* create(const std::string& cmd, const bool wfe = true);
@@ -79,46 +72,16 @@ class Process : public proc::AbstractExecCall{
 			setStarted();
 			this->run();
 		}
-};
-
-class CPUMonitoredProcess : public Process{
-	/*
-	#include <chrono>
-	#include <time.h>
-	typedef std::chrono::high_resolution_clock Clock;
-	typedef std::chrono::system_clock::time_point timePoint;
-	private:
-		timePoint sTime;
-		timePoint eTime;
-		clockid_t clockid;
-		struct timespec ts;*/
-	protected:
-		CPUMonitoredProcess(const std::string& cmd) 							: Process(cmd)		{}//, clockid(){}
-		CPUMonitoredProcess(const std::string& path, const std::string& cmd)	: Process(path, cmd){}//, clockid(){}
-
-		virtual void preStart() = 0;//    { sTime = Clock::now(); }
-		virtual void finish() = 0;//      { eTime = Clock::now(); }
-		/*virtual void tick() = 0;{ // really only needs to be done once before the process exits.
-			if (clock_getcpuclockid(pid(), &clockid) != 0)
-				throw ExitException(__FILE__, __LINE__, "getting clock_getcpuclockid");
-			if (clock_gettime(clockid, &ts) == -1)
-				throw ExitException(__FILE__, __LINE__, "getting clock_gettime");
-		}*/
-	public:
-		virtual ~CPUMonitoredProcess(){}
-		static CPUMonitoredProcess* create(const std::string& cmd, const bool wfe = true);
-		static CPUMonitoredProcess* create(const std::string& path, const std::string& cmd, const bool wfe = true);
-
-		void start() throw(kul::proc::Exception){
-			if(started()) throw kul::proc::Exception(__FILE__, __LINE__, "Process is already started");
-			setStarted();
-			this->run();
+		virtual std::string	toString(){
+			std::string s(argv[0]);
+			if(d.size())
+				s = kul::OS::dirJoin(d, argv[0]);
+			for(int i = 1; i < argv.size(); i++) s += " " + argv[i];
+			return s;
 		}
-		/*const timePoint& 	startTime()	{ return sTime;}
-		const timePoint& 	endTime()	{ return eTime;}
-		const long int& 	cpuTime()	{ return ts.tv_nsec; }*/
+		void			setOut(std::function<void(std::string)>& o) { this->o = o; }
+		void			setErr(std::function<void(std::string)>& e) { this->e = e; }
 };
-
 
 
 };
