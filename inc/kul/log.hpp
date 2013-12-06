@@ -113,7 +113,7 @@ class LogMessage{
 		std::string m;
 	public:		
 		~LogMessage(){
-			std::cout << f << " " << l << " " << m << std::endl;
+			std::cout << f << " " << t << " " << l << " " << m << std::endl;
 		}
 		LogMessage(const char* f, int l, const char*t) :  l(l), f(f), t(t) {}
 		template<class T> LogMessage& operator<<(const T& s){
@@ -146,7 +146,7 @@ class LogMessageToFile : public LogMessage{
 #define KLOG2_FILE_INFO 	kul::LogMessageToFile(__FILE__, __LINE__, "INFO")
 #define KLOG2_FILE_ERROR 	kul::LogMessageToFile(__FILE__, __LINE__, "ERROR")
 #define KLOG2_FILE_DEBUG 	kul::LogMessageToFile(__FILE__, __LINE__, "DEBUG")
-#define KLOG2(sev, logger) KLOG2_ ## sev ## _ ## logger
+#define KLOG2(logger, sev) KLOG2_ ## logger ## _ ## sev
 
 };
 
