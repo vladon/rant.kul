@@ -8,17 +8,17 @@
 		<include>./inc</include>
 		<include>./tst</include>
 		<include>./ext/pugixml/trunk/src</include>
-		<include>./ext/glog/make/include</include>
+		
 		<include>./ext/sparsehash/make/include</include>
 	</includes>
 	<libraries>
 		<library>pugixml</library>
-		<library>glog</library>	
+			
 		<library>pthread</library>	
 	</libraries>
 	<library-paths>		
 		<library-path>./ext/pugixml/trunk/scripts</library-path>
-		<library-path>./ext/glog/make/lib</library-path>
+		
 	</library-paths>
 	<!-- used when no profile is specified -->	
 	<build type="lib" mode="static" lang="cpp"> 
@@ -41,17 +41,17 @@
 				<include>./inc</include>
 				<include>./tst</include>
 				<include>./ext/pugixml/trunk/src</include>
-				<include>./ext/glog/make/include</include>
+				
 				<include>./ext/sparsehash/make/include</include>
 			</includes>
 			<libraries>	
 				<library>pugixml</library>
-				<library>glog</library>	
+					
 				<library>pthread</library>	
 			</libraries>
 			<library-paths>		
 				<library-path>./ext/pugixml/trunk/scripts</library-path>
-				<library-path>./ext/glog/make/lib</library-path>
+				
 			</library-paths>			
 			<build type="lib" mode="static" lang="cpp"> 
 				<files>
@@ -92,17 +92,17 @@
 				<include>./inc</include>
 				<include>./tst</include>
 				<include>./ext/pugixml/trunk/src</include>
-				<include>./ext/glog/make/include</include>
+				
 				<include>./ext/sparsehash/make/include</include>
 			</includes>
 			<libraries>	
 				<library>pugixml</library>
-				<library>glog</library>	
+					
 				<library>pthread</library>	
 			</libraries>
 			<library-paths>		
 				<library-path>./ext/pugixml/trunk/scripts</library-path>
-				<library-path>./ext/glog/make/lib</library-path>
+				
 			</library-paths>			
 			<build type="lib" mode="static" lang="cpp">
 				<files>
@@ -137,17 +137,17 @@
 			<includes>
 				<include>./inc</include>
 				<include>./ext/pugixml/llvm/src</include>
-				<include>./ext/glog/llvm/include</include>
+				
 				<include>./ext/sparsehash/make/include</include>
 			</includes>
 			<libraries>	
 				<library>pugixml</library>
-				<library>glog</library>	
+					
 				<library>pthread</library>	
 			</libraries>
 			<library-paths>		
 				<library-path>./ext/pugixml/llvm/scripts</library-path>
-				<library-path>./ext/glog/llvm/lib</library-path>
+				
 			</library-paths>
 			<build type="lib" mode="static" lang="cpp">
 				<files>
@@ -201,16 +201,16 @@
 			<includes>
 				<include>./inc</include>
 				<include>./ext/pugixml/llvm/src</include>
-				<include>./ext/glog/llvm/include</include>
+				
 				<include>./ext/sparsehash/make/include</include>
 			</includes>
 			<libraries>	
 				<library>pugixml</library>
-				<library>glog</library>
+				
 			</libraries>
 			<library-paths>		
 				<library-path>./ext/pugixml/llvm/scripts</library-path>
-				<library-path>./ext/glog/llvm/lib</library-path>
+				
 			</library-paths>
 			<build type="lib" mode="static" lang="cpp">
 				<files>
@@ -270,7 +270,6 @@
 				<include>./inc</include>
 				<include>./tst</include>
 				<include>./ext/pugixml/trunk/src</include>
-				<include>./ext/glog/trunk/src/windows</include>
 				<include>./ext/sparsehash/trunk/src</include>
 				<include>./ext/sparsehash/make/src</include>
 				<include>./../win/master/ext/msinttypes-r26</include>
@@ -280,7 +279,7 @@
 			</includes>
 			<libraries>	
 				<library>pugixml</library>
-				<library>libglog</library>
+				
 			</libraries>
 			<!-- used when no profile is specified. supplied default values to profiles if required -->	
 			<build type="lib" mode="static" lang="cpp">
@@ -314,7 +313,6 @@
 		<profile name="win64" parent="winc">
 			<library-paths>		
 				<library-path>./ext/pugixml/trunk/lib64</library-path>
-				<library-path>./ext/glog/make/lib64</library-path>
 			</library-paths>
 			<build type="lib" mode="static" lang="cpp"> 
 				<env>					

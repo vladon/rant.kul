@@ -27,8 +27,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _CLI_HPP_
 #define _CLI_HPP_
 
-#include "glog/logging.h"
-
 #include <string>
 #include <vector>
 
@@ -57,7 +55,27 @@ class ArgParsingException : public Exception{
 class CmdLine{
 	public:
 		static std::vector<std::string> asArgs(const std::string& cmd) throw(ArgParsingException);
-		static void print(const std::vector<std::string>& ss, bool tab = true);
+		static void print(const std::vector<std::string>& ss, bool tab = true);		
+};
+
+class CmdIn{
+	private:
+		static std::shared_ptr<CmdIn> inst;
+	public:
+		static CmdIn* SET(CmdIn* cin){ 			
+			inst.reset(cin); 
+			return inst.get();
+		}
+		static CmdIn* INSTANCE(){
+			if(!inst.get()) inst.reset(new CmdIn());
+			return inst.get();
+		}
+		virtual const std::string receive(const std::string txt){
+			std::string s;
+			std::cout << txt << std::endl;
+			std::cin >> s;
+			return s;
+		}
 };
 
 class Cmd{

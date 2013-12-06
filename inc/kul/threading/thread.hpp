@@ -27,8 +27,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _KUL_THREADING_THREAD_HPP_
 #define _KUL_THREADING_THREAD_HPP_
 
-#include "glog/logging.h"
-
 #include <queue>
  
 #include "kul/except.hpp"

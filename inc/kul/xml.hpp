@@ -24,11 +24,10 @@ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT
 LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF 
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#ifndef _NODE_HPP_
-#define _NODE_HPP_
+#ifndef _KUL_XML_HPP_
+#define _KUL_XML_HPP_
 
 #include "pugixml.hpp"
-#include "glog/logging.h"
 
 #include <string>
 #include <vector>
@@ -143,8 +142,8 @@ class NodeValidator{
 	private:
 		const std::vector<std::pair<std::string, NodeValidator> > children;
 		const std::vector<NodeAttributeValidator> attributeValidators;
-		const int min;
-		const int max;
+		const int mi;
+		const int ma;
 		const bool text;
 	public:
 		NodeValidator(
@@ -152,30 +151,30 @@ class NodeValidator{
 				const std::vector<NodeAttributeValidator>& a,
 				const int& mi, const int& ma, const bool& isT) :
 					children(c)	, attributeValidators(a),
-					min(mi)		, max(ma)				, text(isT){}
+					mi(mi)		, ma(ma)				, text(isT){}
 		NodeValidator(
 				const std::vector<std::pair<std::string, NodeValidator> >& c,
 				const int& mi, const int& ma, const bool& isT) :
 					children(c)	, attributeValidators()	,
-					min(mi)		, max(ma)				, text(isT){}
+					mi(mi)		, ma(ma)				, text(isT){}
 		NodeValidator(
 				const std::vector<NodeAttributeValidator>& a,
 				const int& mi, const int& ma, const bool& isT) :
 					children()	, attributeValidators(a),
-					min(mi)		, max(ma)				, text(isT){}
+					mi(mi)		, ma(ma)				, text(isT){}
 		NodeValidator(
 						const int& mi, const int& ma, const bool& isT) :
 							children()	, attributeValidators()	,
-							min(mi)		, max(ma)				, text(isT){}
+							mi(mi)		, ma(ma)				, text(isT){}
 		NodeValidator(const NodeValidator& v)  :
 			children(v.getChildren())	, attributeValidators(v.attributeValidators),
-			min(v.minimum())			, max(v.maximum())					, text(v.isText()){}
+			mi(v.minimum())			, ma(v.maximum())					, text(v.isText()){}
 
 		const NodeValidator 	operator=(const NodeValidator& n)					const { return *this; }
 		const std::vector<std::pair<std::string, NodeValidator> >&	getChildren() 	const { return this->children; }
 		const std::vector<NodeAttributeValidator>& 					getAtVals()		const { return attributeValidators; }
-		const int& 													minimum() 		const { return this->min; }
-		const int& 													maximum() 		const { return this->max; }
+		const int& 													minimum() 		const { return this->mi; }
+		const int& 													maximum() 		const { return this->ma; }
 		const bool& 												isText() 		const { return this->text; }
 };
 
@@ -197,4 +196,4 @@ class NodeAttributeValidator{
 
 
 };};
-#endif /* _NODE_HPP_ */
+#endif /* _KUL_XML_HPP_ */

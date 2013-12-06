@@ -5,7 +5,6 @@ CXXFLAGS=-std=c++0x -O3 -g0 -Wall -c -fmessage-length=0 -D__GXX_EXPERIMENTAL_CXX
 CLANGFLAGS=
 INCS = 	-I$(CURDIR)/inc \
 		-I$(CURDIR)/ext/pugixml/trunk/src \
-		-I$(CURDIR)/ext/glog/make/include \
 		-I$(CURDIR)/ext/sparsehash/make/include
 LIB = bin/libkul.a
 
@@ -24,13 +23,6 @@ kul:
 	$(MAKE) files
 	
 libs:
-	@if [ ! -d "$(CURDIR)/ext/glog/make" ]; then \
-		svn co http://google-glog.googlecode.com/svn/trunk/ ext/glog/trunk; \
-		mkdir ./ext/glog/make; \
-		cd ./ext/glog/make; bash ../trunk/configure --prefix=$(CURDIR)/ext/glog/make; \
-		$(MAKE) -C $(CURDIR)/ext/glog/make; \
-		$(MAKE) -C $(CURDIR)/ext/glog/make install; \
-	fi;
 	@if [ ! -d "$(CURDIR)/ext/sparsehash/make" ]; then \
 		svn co http://sparsehash.googlecode.com/svn/trunk/ ext/sparsehash/trunk; \
 		mkdir ./ext/sparsehash/make; \
@@ -51,14 +43,6 @@ libs:
 	fi;
 
 clang:
-	@@echo "Making glog"
-	@if [ ! -d "$(CURDIR)/ext/glog/llvm" ]; then \
-		svn co http://google-glog.googlecode.com/svn/trunk/ ext/glog/trunk; \
-		mkdir ./ext/glog/llvm; \
-		cd ./ext/glog/llvm; bash ../trunk/configure --prefix=$(CURDIR)/ext/glog/llvm CC=$(CLANG) CXX=$(CLANG) CXXFLAGS=$(CLANGFLAGS); \
-		$(MAKE) -C $(CURDIR)/ext/glog/llvm;\
-		$(MAKE) -C $(CURDIR)/ext/glog/llvm install; \
-	fi;
 	@if [ ! -d "$(CURDIR)/ext/sparsehash/make" ]; then \
 		svn co http://sparsehash.googlecode.com/svn/trunk/ ext/sparsehash/trunk; \
 		mkdir ./ext/sparsehash/make; \
@@ -88,8 +72,6 @@ clean:
 	rm -rf bin
 
 clean-all: clean
-	rm -rf ./ext/glog/make
-	rm -rf ./ext/glog/llvm
 	rm -rf ./ext/sparsehash/make
 	rm -rf ./ext/pugixml/trunk/scripts
 	rm -rf ./ext/pugixml/llvm/scripts

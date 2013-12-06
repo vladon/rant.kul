@@ -25,6 +25,7 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include "kul/xml.hpp"
+#include "kul/log.hpp"
 
 class NodeWriterService{
  	public:
@@ -116,7 +117,7 @@ void kul::xml::NodeFactory::writeToFile(const char*n, const NodeValidator& v, ku
 			writer.write(s.c_str(), true);
 			int i = 0;			
 			if(v.maximum() > 0 && i == v.maximum()){ // print the remaining possibile attributes values
-				break; LOG(INFO) << "MAX BROKE!";
+				break; KLOG(INFO) << "MAX BROKE!";
 			}
 		}
 	}

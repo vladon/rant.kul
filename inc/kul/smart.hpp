@@ -24,12 +24,10 @@ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT
 LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF 
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#ifndef _Vector_HPP_
-#define _Vector_HPP_
+#ifndef _KUL_SMART_HPP_
+#define _KUL_SMART_HPP_
 
 #include <vector>
-
-#include "glog/logging.h"
 
 namespace kul { namespace smart{
 
@@ -90,4 +88,4 @@ template <class T> class Vector{
 
 
 };};
-#endif /* _Vector_HPP_ */
+#endif /* _KUL_SMART_HPP_ */

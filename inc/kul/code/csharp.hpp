@@ -28,6 +28,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _KUL_CODE_CSHARP_HPP_
 
 #include "kul/code/compiler.hpp"
+#include "kul/log.hpp"
 
 namespace kul{ namespace code{ namespace csharp{ 
 
@@ -63,9 +64,8 @@ class WINCompiler : public Compiler{
 				cmd += " /reference:" + lib + ".dll ";			
 
 			cmd += linkerEnd;
-			LOG(INFO) << cmd;
-
-			LOG(INFO) << kul::OS::getEnvVar("PATH");
+			KLOG2(CONS, INFO) << cmd;
+			
 			if(kul::OS::execReturn(cmd) != 0)
 				throw Exception(__FILE__, __LINE__, "Failed to build executable");
 

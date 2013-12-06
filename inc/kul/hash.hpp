@@ -32,10 +32,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *		V VECTOR 
 **/
 
-
-
-#ifndef _GOOGLE_H_
-#define _GOOGLE_H_
+#ifndef _KUL_HASH_HPP_
+#define _KUL_HASH_HPP_
 
 #include "sparsehash/sparse_hash_map"
 #include "sparsehash/sparse_hash_set"
@@ -171,4 +169,4 @@ class S2S2T : google::sparse_hash_map<std::string, S2T<T>, HashFcn, EqualKey>{
 };
 
 };};
-#endif /* _GOOGLE_H_ */
+#endif /* _KUL_HASH_HPP_ */

@@ -28,6 +28,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _KUL_CODE_CPP_HPP_
 
 #include "kul/code/compiler.hpp"
+#include "kul/log.hpp"
 
 namespace kul{ namespace code{ namespace cpp{ 
 
@@ -84,7 +85,7 @@ class GCCompiler : public CCompiler{
 			for(const std::string& lib : libs)
 				cmd += " -l" + lib + " ";
 			cmd += linkerEnd;
-			LOG(INFO) << cmd;
+			KLOG2(CONS, INFO) << cmd;
 			
 			if(kul::OS::execReturn(cmd) != 0)
 				throw Exception(__FILE__, __LINE__, "Failed to build executable");
@@ -101,7 +102,7 @@ class GCCompiler : public CCompiler{
 			std::string cmd = linker + " -shared -o " + lib;
 			for(const std::string& o : objects)
 				cmd += " " + o;
-			LOG(INFO) << cmd;
+			KLOG2(CONS, INFO) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
 				throw Exception(__FILE__, __LINE__, "Failed to build shared lib");
@@ -118,7 +119,7 @@ class GCCompiler : public CCompiler{
 			std::string cmd = archiver + " " + lib + " ";
 			for(const std::string& o : objects)
 				cmd += " " + o;
-			LOG(INFO) << cmd;
+			KLOG2(CONS, INFO) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
 				throw Exception(__FILE__, __LINE__, "Failed to build static lib");
@@ -143,7 +144,7 @@ class GCCompiler : public CCompiler{
 
 			if(!OS::isDir(OS::dirDotDot(out))) OS::mkDir(OS::dirDotDot(out));
 			cmd += " -o " + obj + " -c " + in;
-			LOG(INFO) << cmd;
+			KLOG2(CONS, INFO) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
 				throw Exception(__FILE__, __LINE__, "Failed to compile source");
@@ -179,7 +180,7 @@ class GCCompiler : public CCompiler{
 
 			if(!OS::isDir(OS::dirDotDot(out))) OS::mkDir(OS::dirDotDot(out));
 			cmd += " -o " + out;
-			LOG(INFO) << cmd;
+			KLOG2(CONS, INFO) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
 				throw Exception(__FILE__, __LINE__, "Failed to pre-compile header");
@@ -251,9 +252,9 @@ class WINCompiler : public CCompiler{
 					cmd += " \"" + getStaticLib(lib) + "\" ";
 
 			cmd += linkerEnd;
-			LOG(INFO) << cmd;
+			KLOG2(CONS, INFO) << cmd;
 
-			LOG(INFO) << kul::OS::getEnvVar("PATH");
+			KLOG2(CONS, INFO) << kul::OS::getEnvVar("PATH");
 			if(kul::OS::execReturn(cmd) != 0)
 				throw Exception(__FILE__, __LINE__, "Failed to build executable");
 
@@ -278,7 +279,7 @@ class WINCompiler : public CCompiler{
 			std::string cmd = archiver + " /OUT:\"" + lib + "\" /NOLOGO /LTCG ";
 			for(const std::string& o : objects)
 				cmd += " \"" + o + "\" ";
-			LOG(INFO) << cmd;
+			KLOG2(CONS, INFO) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
 				throw Exception(__FILE__, __LINE__, "Failed to build static lib");
@@ -303,7 +304,7 @@ class WINCompiler : public CCompiler{
 
 			if(!OS::isDir(OS::dirDotDot(OS::localPath(out)))) OS::mkDir(OS::dirDotDot(OS::localPath(out)));
 			cmd += " -c \"/Fo" + obj + "\" \"" + in + "\"";			
-			LOG(INFO) << cmd;
+			KLOG2(CONS, INFO) << cmd;
 			
 			if(kul::OS::execReturn(cmd) != 0)
 				throw Exception(__FILE__, __LINE__, "Failed to compile source");

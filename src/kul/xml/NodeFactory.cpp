@@ -25,12 +25,13 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include "kul/xml.hpp"
+#include "kul/log.hpp"
 
 void kul::xml::NodeFactory::log(const Node* node){
 	if(node->children().empty()) return;
-	LOG(INFO) << "printing children for node " << node->name();
+	KLOG(INFO) << "printing children for node " << node->name();
 	for(const Node* n : node->children())
-		LOG(INFO) << n->name() <<  " is a child of node " << node->name();	
+		KLOG(INFO) << n->name() <<  " is a child of node " << node->name();	
 	for(const Node* n : node->children())
 		log(n);
 }
@@ -50,7 +51,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 							if(attFound) break;
 						}	
 						if(!attFound) {
-							LOG(ERROR) << "Attribute \"" << a.name() << "\" for Element : \"" << n.name() << "\" is unknown";
+							KLOG(ERROR) << "Attribute \"" << a.name() << "\" for Element : \"" << n.name() << "\" is unknown";
 							throw Exception(__FILE__, __LINE__, "XML Exception: Attribute: \"" + std::string(a.name()) + "\" for Element : \"" + std::string(n.name()) + "\" is unknown");
 						}
 					}
@@ -59,7 +60,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 			}
 		}
 		if(!found){
-			LOG(ERROR) << "Element \"" << n.name() << "\" is unknown";
+			KLOG(ERROR) << "Element \"" << n.name() << "\" is unknown";
 			throw Exception(__FILE__, __LINE__, "XML Exception: Element " + std::string(n.name()) + " is unknown");
 		}
 	}
@@ -67,13 +68,13 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 	for(std::pair<std::string, NodeValidator> pair  : v.getChildren()){
 		const int i = node.select_nodes(pugi::xpath_query(pair.first.c_str(), 0)).size();
 		if(pair.second.minimum() != 0 && i < pair.second.minimum()){
-			LOG(ERROR) << "Invalid minimum number of Element: " << pair.first;
-			LOG(ERROR) << "Minimum number expected: " << pair.second.minimum();
+			KLOG(ERROR) << "Invalid minimum number of Element: " << pair.first;
+			KLOG(ERROR) << "Minimum number expected: " << pair.second.minimum();
 			throw Exception(__FILE__, __LINE__, "XML Exception: Invalid minimum number of Element: " + pair.first);
 		}
 		if(pair.second.maximum() != 0 && i > pair.second.maximum()){
-			LOG(ERROR) << "Invalid maximum number of Element: " << pair.first;
-			LOG(ERROR) << "Maximum number expected: " << pair.second.maximum();
+			KLOG(ERROR) << "Invalid maximum number of Element: " << pair.first;
+			KLOG(ERROR) << "Maximum number expected: " << pair.second.maximum();
 			throw Exception(__FILE__, __LINE__, "XML Exception: Invalid maximum number of Element: " + pair.first);
 		}
 	}

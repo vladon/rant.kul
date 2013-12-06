@@ -27,8 +27,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _KUL_CODE_COMPILER_HPP_
 #define _KUL_CODE_COMPILER_HPP_
 
-#include "glog/logging.h"
-
 
 #include "kul/os.hpp"
 #include "kul/cli.hpp"

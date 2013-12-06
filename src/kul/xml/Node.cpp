@@ -25,6 +25,7 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include "kul/xml.hpp"
+#include "kul/log.hpp"
 
 const kul::xml::Node& kul::xml::Node::operator[](const std::string& s) const  throw (Exception){
 	for(const Node* n : this->children())
@@ -38,7 +39,7 @@ const kul::xml::Node& kul::xml::Node::operator()(const std::string& c, const std
 			if(c.compare(n->name()) == 0){
 				try{
 					if(n->att(a).compare(v) == 0) return *n;
-				}catch(const Exception& e){ LOG(INFO) << e.what();}
+				}catch(const Exception& e){ KLOG(ERROR) << e.what();}
 			}
 	throw Exception(__FILE__, __LINE__, "XML Exception: No Element " + c + " contains attribute " + a + " with value " + v + " under node " + this->name());
 }
