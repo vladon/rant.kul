@@ -29,11 +29,11 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "kul/log.hpp"
 
 void kul::scm::Svn::co(const std::string& l, const std::string& r, const std::string&) const throw(Exception){
-	KLOG2(CONS, INFO) << "SVN UP";
+	KLOG2(COUT, INFO) << "SVN UP";
 	throw Exception(__FILE__, __LINE__, "SCM ERROR - SVN NOT YET IMPLEMENTED");
 };
 void kul::scm::Svn::up(const std::string& l, const std::string& r, const std::string&) const throw(Exception){
-	KLOG2(CONS, INFO) << "SVN UP";
+	KLOG2(COUT, INFO) << "SVN UP";
 	throw Exception(__FILE__, __LINE__, "SCM ERROR - SVN NOT YET IMPLEMENTED");
 	if(!kul::OS::isDir(l)) co(l, r);
 	else{}

@@ -64,7 +64,7 @@ class WINCompiler : public Compiler{
 				cmd += " /reference:" + lib + ".dll ";			
 
 			cmd += linkerEnd;
-			KLOG2(CONS, INFO) << cmd;
+			KLOG2(COUT, INFO) << cmd;
 			
 			if(kul::OS::execReturn(cmd) != 0)
 				throw Exception(__FILE__, __LINE__, "Failed to build executable");

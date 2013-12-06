@@ -124,9 +124,13 @@ class LogMessage{
 		}
 };
 
-class LogMessageToConsole : public LogMessage{
+class LogMessageToCOut : public LogMessage{
 	public:
-		LogMessageToConsole(const char* f, int l, const char*t) : LogMessage(f, l, t){}
+		LogMessageToCOut(const char* f, int l, const char*t) : LogMessage(f, l, t){}
+};
+class LogMessageToCErr : public LogMessage{
+	public:
+		LogMessageToCErr(const char* f, int l, const char*t) : LogMessage(f, l, t){}
 };
 
 class LogMessageToFile : public LogMessage{
@@ -140,9 +144,12 @@ class LogMessageToFile : public LogMessage{
 #define KLOG_DEBUG 	kul::LogMessage(__FILE__, __LINE__, "DEBUG")
 #define KLOG(sev) KLOG_ ## sev
 
-#define KLOG2_CONS_INFO 	kul::LogMessageToConsole(__FILE__, __LINE__, "INFO")
-#define KLOG2_CONS_ERROR 	kul::LogMessageToConsole(__FILE__, __LINE__, "ERROR")
-#define KLOG2_CONS_DEBUG 	kul::LogMessageToConsole(__FILE__, __LINE__, "DEBUG")
+#define KLOG2_COUT_INFO 	kul::LogMessageToCOut(__FILE__, __LINE__, "INFO")
+#define KLOG2_COUT_ERROR 	kul::LogMessageToCOut(__FILE__, __LINE__, "ERROR")
+#define KLOG2_COUT_DEBUG 	kul::LogMessageToCOut(__FILE__, __LINE__, "DEBUG")
+#define KLOG2_CERR_INFO 	kul::LogMessageToCErr(__FILE__, __LINE__, "INFO")
+#define KLOG2_CERR_ERROR 	kul::LogMessageToCErr(__FILE__, __LINE__, "ERROR")
+#define KLOG2_CERR_DEBUG 	kul::LogMessageToCErr(__FILE__, __LINE__, "DEBUG")
 #define KLOG2_FILE_INFO 	kul::LogMessageToFile(__FILE__, __LINE__, "INFO")
 #define KLOG2_FILE_ERROR 	kul::LogMessageToFile(__FILE__, __LINE__, "ERROR")
 #define KLOG2_FILE_DEBUG 	kul::LogMessageToFile(__FILE__, __LINE__, "DEBUG")
