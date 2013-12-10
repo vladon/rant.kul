@@ -48,35 +48,48 @@ class Scm{
 		Scm(){}
 	public:
 		virtual ~Scm(){}
+		const std::string type() { return typeid(*this).name(); }
 		virtual void co(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception) = 0;
 		virtual void up(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception) = 0;
-		virtual const std::string& localVersion() const = 0;
-		virtual const std::string& remoteVersion(const std::string& url, const std::string branch = "") const throw(Exception) = 0;
+		virtual const std::string origin(const std::string& d) = 0;
+		virtual const std::string localVersion(const std::string& d) = 0;
+		virtual const std::string remoteVersion(const std::string& url, const std::string branch = "")  throw(Exception) = 0;
+
+		virtual const bool hasChanges(const std::string& d) const = 0;
+
+		virtual void setOrigin(const std::string& d, const std::string& r) = 0;
+		virtual void status(const std::string& d) = 0;
+		virtual void diff(const std::string& d) = 0;
 };
 
 class Git : public Scm{
-	private:
-		std::string lVersion;
-		std::string rVersion;
-		void captureLocalVersion(std::string s) const {
-			const_cast<Git*>(this)->lVersion = s;
-		}
-		void captureRemoteVersion(std::string s) const{
-			const_cast<Git*>(this)->rVersion = s;
-		}
 	public:
 		void co(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception);		
 		void up(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception);
-		const std::string& localVersion() const;
-		const std::string& remoteVersion(const std::string& url, const std::string branch = "") const throw(Exception);
+		const std::string origin(const std::string& d);
+		const std::string localVersion(const std::string& d);
+		const std::string remoteVersion(const std::string& url, const std::string branch = "") throw(Exception);
+
+		const bool hasChanges(const std::string& d) const;
+
+		void setOrigin(const std::string& d, const std::string& r);
+		void status(const std::string& d);
+		void diff(const std::string& d);
 };
 
 class Svn : public Scm{
 	public:
 		void co(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception);
 		void up(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception);
-		const std::string& localVersion() const;
-		const std::string& remoteVersion(const std::string& url, const std::string branch = "") const throw(Exception);
+		const std::string origin(const std::string& d);
+		const std::string localVersion(const std::string& d);
+		const std::string remoteVersion(const std::string& url, const std::string branch = "") throw(Exception);
+
+		const bool hasChanges(const std::string& d) const;
+
+		void setOrigin(const std::string& d, const std::string& r);
+		void status(const std::string& d);
+		void diff(const std::string& d);
 };
 
 class Manager{

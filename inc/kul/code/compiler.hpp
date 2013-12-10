@@ -43,34 +43,6 @@ class Compiler{
 	protected:
 		Compiler(const int& v) : version(v){}
 		const int version;
-		kul::Process* setupProcess(const std::string& c, const std::string& cmdline, const std::vector<kul::cli::EnvVar>& evs) const {
-			
-			std::vector<std::string> bits = kul::cli::CmdLine::asArgs(cmdline);
-
-			std::string cmd = c;
-			std::string path;
-			if(c.find(" ") != std::string::npos)
-				for(const std::string& s : kul::String::split(c, ' ')){
-					cmd = s;
-					break;	
-				}
-			if(kul::OS::localPath(cmd).find(kul::OS::dirSep()) != std::string::npos){
-				path = cmd.substr(0, cmd.rfind(kul::OS::dirSep()));
-				cmd = cmd.substr(cmd.rfind(kul::OS::dirSep()) + 1);
-			}
-			
-			kul::Process* p;
-			if(path.empty()) 	p = kul::Process::create(cmd);
-			else 				p = kul::Process::create(path, cmd);
-
-			bits.erase(bits.begin());			
-			for(const std::string& s : bits)
-				p->addArg(s);			
-			for(const kul::cli::EnvVar& ev : evs)
-				p->addEnvVar(ev.name(), ev.toString());
-
-			return p;
-		}
 	public:
 		virtual ~Compiler(){}		
 		virtual bool sourceIsBin()		const = 0;

@@ -32,6 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
 
 #include "kul/os.hpp"
+#include "kul/log.hpp"
 #include "kul/hash.hpp"
 #include "kul/except.hpp"
 #include "kul/string.hpp"
@@ -41,6 +42,11 @@ namespace kul{  namespace cli {
 class Exception : public kul::Exception{
 	public:
 		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+};
+
+class ParseException : public kul::Exception{
+	public:
+		ParseException(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
 };
 
 class ArgNotFoundException : public Exception{
@@ -63,7 +69,7 @@ class CmdIn{
 	private:
 		static std::shared_ptr<CmdIn> inst;
 	public:
-		static CmdIn* SET(CmdIn* cin){ 			
+		static CmdIn* SET(CmdIn* cin){
 			inst.reset(cin); 
 			return inst.get();
 		}
@@ -71,10 +77,26 @@ class CmdIn{
 			if(!inst.get()) inst.reset(new CmdIn());
 			return inst.get();
 		}
-		virtual const std::string receive(const std::string txt){
+		virtual const bool receiveBool(const std::string txt) {
+			std::string t = receive(txt);
+			kul::String::trim(t);
+			std::vector<std::string> pos; 
+			pos.push_back("yes"); pos.push_back("y");  pos.push_back("true");
+			std::vector<std::string> 
+			neg; neg.push_back("no"); neg; neg.push_back("n");  neg.push_back("false");
+
+			for(const std::string& s : pos) if(kul::String::cicmp(t, s)) return true;
+			for(const std::string& s : neg) if(kul::String::cicmp(t, s)) return false;
+
+			if(t.compare("1") == 0) return true;
+			if(t.compare("0") == 0) return false;
+
+			KEXCEPT(ParseException, "input not bool-able");
+		}
+		virtual const std::string receive(const std::string t){
 			std::string s;
-			std::cout << txt << std::endl;
-			std::cin >> s;
+			std::cout << t << std::endl;
+			std::getline(std::cin, s);
 			return s;
 		}
 };
@@ -105,12 +127,12 @@ class EnvVar{
 			std::string var(value());
 			kul::String::replaceAll(var, kul::OS::newLine(), "");
 			kul::String::trim(var);
-			std::string ev(OS::getEnvVar(name()));			
+			std::string ev(OS::getEnvVar(name()));
 			if(ev.compare("") != 0){
 				if 		(mode() == EnvVarMode::PREP)
-					var = var + std::string(kul::OS::pathSep()) + ev;	
-				else if (mode() == EnvVarMode::APPE)				
-					var = ev + std::string(kul::OS::pathSep()) + var;	
+					var = var + std::string(kul::OS::pathSep()) + ev;
+				else if (mode() == EnvVarMode::APPE)
+					var = ev + std::string(kul::OS::pathSep()) + var;
 			}
 			return var;
 		}
@@ -122,7 +144,7 @@ class Arg : public Cmd{
 	private:
 		const char* d;
 		ArgType t;
-	public:		
+	public:
 		Arg(const char* d, const char* dd, ArgType t, const char* h = "") : Cmd(dd, h), d(d), t(t){}
 		Arg(const char* d, const char* dd, const char* h = "") : Cmd(dd, h), d(d), t(ArgType::FLAG){}
 		const char* dash() const { return d;}
@@ -155,7 +177,7 @@ class Args{
 		const std::vector<Cmd>& commands()	const { return cmds;}
 		const std::vector<Arg>& arguments() const { return args;}
 		const hash::map::S2S& 	values() 	const { return vals; }
-		const bool contains(const std::string& s) 	{ 
+		const bool contains(const std::string& s) { 
 			return vals.count(s);
 		}
 };

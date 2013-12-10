@@ -29,18 +29,33 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "kul/log.hpp"
 
 void kul::scm::Svn::co(const std::string& l, const std::string& r, const std::string&) const throw(Exception){
-	KLOG2(COUT, INFO) << "SVN UP";
 	throw Exception(__FILE__, __LINE__, "SCM ERROR - SVN NOT YET IMPLEMENTED");
 };
 void kul::scm::Svn::up(const std::string& l, const std::string& r, const std::string&) const throw(Exception){
-	KLOG2(COUT, INFO) << "SVN UP";
 	throw Exception(__FILE__, __LINE__, "SCM ERROR - SVN NOT YET IMPLEMENTED");
 	if(!kul::OS::isDir(l)) co(l, r);
 	else{}
 };
-const std::string& kul::scm::Svn::localVersion() const{
+const std::string kul::scm::Svn::localVersion(const std::string& d) {
 	throw Exception(__FILE__, __LINE__, "SCM ERROR - SVN NOT YET IMPLEMENTED");
 }
-const std::string& kul::scm::Svn::remoteVersion(const std::string& url, const std::string branch) const throw(Exception){
+const std::string kul::scm::Svn::remoteVersion(const std::string& url, const std::string branch) throw(Exception){
+	throw Exception(__FILE__, __LINE__, "SCM ERROR - SVN NOT YET IMPLEMENTED");
+}
+const std::string kul::scm::Svn::origin(const std::string& d) {
+	throw Exception(__FILE__, __LINE__, "SCM ERROR - SVN NOT YET IMPLEMENTED");
+}
+
+const bool kul::scm::Svn::hasChanges(const std::string& d) const{
+	throw Exception(__FILE__, __LINE__, "SCM ERROR - SVN NOT YET IMPLEMENTED");
+}
+
+void kul::scm::Svn::setOrigin(const std::string& d, const std::string& r){
+	throw Exception(__FILE__, __LINE__, "SCM ERROR - SVN NOT YET IMPLEMENTED");
+}
+void kul::scm::Svn::status(const std::string& d){
+	throw Exception(__FILE__, __LINE__, "SCM ERROR - SVN NOT YET IMPLEMENTED");
+}
+void kul::scm::Svn::diff(const std::string& d){
 	throw Exception(__FILE__, __LINE__, "SCM ERROR - SVN NOT YET IMPLEMENTED");
 }

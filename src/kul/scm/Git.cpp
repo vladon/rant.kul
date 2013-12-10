@@ -29,7 +29,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "kul/log.hpp"
 
 void kul::scm::Git::co(const std::string& l, const std::string& r, const std::string& v) const throw(Exception){
-			
+
 	std::shared_ptr<kul::Process> p(kul::Process::create("git"));
 	if(!OS::isDir(l)) OS::mkDir(l);
 	p->setDir(l.c_str());
@@ -48,7 +48,7 @@ void kul::scm::Git::up(const std::string& l, const std::string& r, const std::st
 	
 	if(!kul::OS::isDir(l)) co(l, r);
 	else{
-		std::shared_ptr<kul::Process> p(kul::Process::create("git"));				
+		std::shared_ptr<kul::Process> p(kul::Process::create("git"));
 		p->setDir(l.c_str());
 		p->addArg("pull");
 		if(v.compare("") != 0) p->addArg("-u").addArg("origin").addArg(v.c_str());
@@ -61,29 +61,89 @@ void kul::scm::Git::up(const std::string& l, const std::string& r, const std::st
 		}
 	}
 }
-const std::string& kul::scm::Git::localVersion() const{
+const std::string kul::scm::Git::localVersion(const std::string& d) {
 	std::shared_ptr<kul::Process> p(kul::Process::create("git"));
+	kul::ProcessCapture pc(*p.get());
 	p->addArg("rev-parse").addArg("HEAD");
 	try{
-		p->setDir(kul::OS::pwd().c_str());
-		std::function<void(std::string)> fun(std::bind(&Git::captureLocalVersion, std::ref(*this), std::placeholders::_1));
-		p->setOut(fun);
+		p->setDir(d);
 		p->start();
 	}catch(const kul::proc::ExitException& e){
 		throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
 	}
-	return this->lVersion;
+	return pc.outs()[0];
 }
-const std::string& kul::scm::Git::remoteVersion(const std::string& url, const std::string branch) const throw(Exception){
+const std::string kul::scm::Git::remoteVersion(const std::string& url, const std::string branch) throw(Exception){
 	std::shared_ptr<kul::Process> p(kul::Process::create("git"));
+	kul::ProcessCapture pc(*p.get());
 	p->addArg("ls-remote").addArg(url).addArg(branch);
 	try{
 		p->setDir(kul::OS::pwd().c_str());
-		std::function<void(std::string)> fun(std::bind(&Git::captureRemoteVersion, std::ref(*this), std::placeholders::_1));
-		p->setOut(fun);
+		p->start();
+	}catch(const kul::proc::ExitException& e){
+		throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
+	}	
+	std::string s(pc.outs()[0]);
+	kul::String::trim(s);
+	return s.substr(0, s.find("	"));
+}
+
+const std::string kul::scm::Git::origin(const std::string& d) {
+	std::shared_ptr<kul::Process> p(kul::Process::create("git"));
+	kul::ProcessCapture pc(*p.get());
+	p->addArg("remote").addArg("-v");
+	try{
+		p->setDir(kul::OS::pwd().c_str());
 		p->start();
 	}catch(const kul::proc::ExitException& e){
 		throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
 	}
-	return this->rVersion;
+	return kul::String::split(kul::String::split(pc.outs()[0], "	")[1], " ")[0];
+}
+
+const bool kul::scm::Git::hasChanges(const std::string& d) const{
+	std::shared_ptr<kul::Process> p(kul::Process::create("git"));
+	kul::ProcessCapture pc(*p.get());
+	p->addArg("status").addArg("-sb");
+	try{
+		p->setDir(kul::OS::pwd().c_str());
+		p->start();
+	}catch(const kul::proc::ExitException& e){
+		throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
+	}
+	return pc.outs().size() > 0;
+}
+
+void kul::scm::Git::setOrigin(const std::string& d, const std::string& r){
+
+	std::shared_ptr<kul::Process> p(kul::Process::create("git"));
+	p->addArg("remote").addArg("set-url").addArg("r");
+	try{
+		p->setDir(kul::OS::pwd().c_str());
+		p->start();
+	}catch(const kul::proc::ExitException& e){
+		throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
+	}
+}
+void kul::scm::Git::status(const std::string& d){
+
+	std::shared_ptr<kul::Process> p(kul::Process::create("git"));
+	p->addArg("status");
+	try{
+		p->setDir(kul::OS::pwd().c_str());
+		p->start();
+	}catch(const kul::proc::ExitException& e){
+		throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
+	}
+}
+void kul::scm::Git::diff(const std::string& d){
+
+	std::shared_ptr<kul::Process> p(kul::Process::create("git"));
+	p->addArg("diff");
+	try{
+		p->setDir(kul::OS::pwd().c_str());
+		p->start();
+	}catch(const kul::proc::ExitException& e){
+		throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
+	}
 }

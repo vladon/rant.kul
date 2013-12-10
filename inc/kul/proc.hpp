@@ -63,9 +63,10 @@ class Process{
 		const std::string&	directory()		const { return d; }
 		const std::string&	path()			const { return p; }
 		void 				setStarted() 	{ this->s = true; }
-		virtual void 		preStart() 		= 0;
-		virtual void 		finish()		= 0;
-		virtual void 		run() throw (kul::proc::Exception) = 0; // starts the process
+		virtual void 		preStart() 		{}
+		virtual void 		finish()		{}
+		virtual void 		tearDown()		{}
+		virtual void 		run() throw (kul::proc::Exception) = 0;
 		const bool			waitForExit()	const { return wfe; }
 
 		const std::vector<std::string>&		 									arguments()				const { return argv; };
@@ -77,6 +78,10 @@ class Process{
 		virtual void err(const std::string& s){
 			if(this->e) this->e(s);
 			else 		std::cerr << s << std::endl;
+		}
+		void error(const int line, std::string s) throw (kul::proc::Exception){
+			tearDown();
+			throw kul::proc::Exception(__FILE__, line,  s);
 		}
 	public:
 		virtual ~Process(){}
@@ -98,9 +103,32 @@ class Process{
 			for(int i = 1; i < argv.size(); i++) s += " " + argv[i];
 			return s;
 		}
-		void			setOut(std::function<void(std::string)>& o) { this->o = o; }
-		void			setErr(std::function<void(std::string)>& e) { this->e = e; }
+		void setOut(std::function<void(std::string)> o) { this->o = o; }
+		void setErr(std::function<void(std::string)> e) { this->e = e; }
 };
+
+class ProcessCapture{
+	private:
+		Process& p;
+		std::vector<std::string> oV;
+		std::vector<std::string> eV;
+	protected:
+		virtual void out(const std::string& s){
+			oV.push_back(s);
+		}
+		virtual void err(const std::string& s){
+			eV.push_back(s);
+		}
+	public:
+		ProcessCapture(Process& p) : p(p){
+			p.setOut(std::bind(&ProcessCapture::out, std::ref(*this), std::placeholders::_1));
+			p.setErr(std::bind(&ProcessCapture::err, std::ref(*this), std::placeholders::_1));
+		}
+		virtual ~ProcessCapture(){}
+		const std::vector<std::string> outs(){return oV;}
+		const std::vector<std::string> errs(){return oV;}
+};
+
 
 
 };

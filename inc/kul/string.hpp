@@ -85,12 +85,25 @@ class String{
 			ss.push_back(l);
 			return ss;
 		}		
-		static bool compareIgnoreCase(const std::string& a, const std::string& b){
+		static bool cicmp(const std::string& a, const std::string& b){
 			    std::string aCpy(a);
 			    std::string bCpy(b);
 			    std::transform(aCpy.begin(), aCpy.end(), aCpy.begin(), ::tolower);
 			    std::transform(bCpy.begin(), bCpy.end(), bCpy.begin(), ::tolower);
 			    return (aCpy == bCpy);
+		}
+		static std::vector<std::string> lines(const char* ch){
+			std::vector<std::string> ls;
+			std::string s(ch);
+			if(s.find("\n") != std::string::npos){
+				std::string l;
+				std::stringstream ss(s);
+				while(std::getline(ss, l)) {
+					if(l.compare("") != 0)
+						ls.push_back(l);
+				}
+			}else ls.push_back(s);
+			return ls;
 		}
 };
 

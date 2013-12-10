@@ -76,6 +76,7 @@ class LogNodeUser  : public kul::xml::NodeUser<LogNodeUser>{
 };
 
 class LogMan{
+	//KLOG(INFO) << kul::OS::getEnvVar("KLOG");
 	private:
 		static LogMan* instance;
 		kul::smart::Array<log::ALogger> loggers;
@@ -113,7 +114,9 @@ class LogMessage{
 		std::string m;
 	public:		
 		~LogMessage(){
-			std::cout << f << " " << t << " " << l << " " << m << std::endl;
+			if(!l || !f || !t) std::cout << m << std::endl;
+			else 
+				std::cout << f << " " << t << " " << l << " " << m << std::endl;
 		}
 		LogMessage(const char* f, int l, const char*t) :  l(l), f(f), t(t) {}
 		template<class T> LogMessage& operator<<(const T& s){
@@ -126,6 +129,7 @@ class LogMessage{
 
 class LogMessageToCOut : public LogMessage{
 	public:
+		LogMessageToCOut() : LogMessage(0, 0, 0){}
 		LogMessageToCOut(const char* f, int l, const char*t) : LogMessage(f, l, t){}
 };
 class LogMessageToCErr : public LogMessage{
@@ -144,6 +148,7 @@ class LogMessageToFile : public LogMessage{
 #define KLOG_DEBUG 	kul::LogMessage(__FILE__, __LINE__, "DEBUG")
 #define KLOG(sev) KLOG_ ## sev
 
+#define KLOG2_COUT_NONE		kul::LogMessageToCOut()
 #define KLOG2_COUT_INFO 	kul::LogMessageToCOut(__FILE__, __LINE__, "INFO")
 #define KLOG2_COUT_ERROR 	kul::LogMessageToCOut(__FILE__, __LINE__, "ERROR")
 #define KLOG2_COUT_DEBUG 	kul::LogMessageToCOut(__FILE__, __LINE__, "DEBUG")
