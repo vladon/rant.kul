@@ -32,7 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "kul/xml.hpp"
 #include "kul/proc.hpp"
 #include "kul/smart.hpp"
-#include "kul/threading.hpp"
+#include "kul/threads.hpp"
 
 namespace kul {
 class TestThreadObject{
@@ -41,10 +41,10 @@ class TestThreadObject{
 		kul::Mutex mutex;
 	public:
 		TestThreadObject() : i(0){}
-		void operator()(){			
+		void operator()(){
 		   	KLOG(INFO) << "THREAD RUNNING";
 			kul::ScopeLock lock(mutex);
-			i++;			
+			i++;
 		}
 		void operator()() const{
 			KLOG(INFO) << "CONST THREAD RUNNING";
@@ -56,7 +56,7 @@ class test{ public: test(){
 	kul::smart::Array<int> a;
 	a.add()(new int(1)) (new int(2)) (new int(3));
 	for(const int& ii : a) KLOG(INFO) << ii;
-	for(int i = 0; i < a.size(); i++) KLOG(INFO) << a[i];	
+	for(int i = 0; i < a.size(); i++) KLOG(INFO) << a[i];
 
 	KLOG(INFO);
 	KLOG(INFO) << OS::dirSep();

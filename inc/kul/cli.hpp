@@ -82,8 +82,8 @@ class CmdIn{
 			kul::String::trim(t);
 			std::vector<std::string> pos; 
 			pos.push_back("yes"); pos.push_back("y");  pos.push_back("true");
-			std::vector<std::string> 
-			neg; neg.push_back("no"); neg; neg.push_back("n");  neg.push_back("false");
+			std::vector<std::string> neg; 
+			neg.push_back("no"); neg.push_back("n");  neg.push_back("false");
 
 			for(const std::string& s : pos) if(kul::String::cicmp(t, s)) return true;
 			for(const std::string& s : neg) if(kul::String::cicmp(t, s)) return false;

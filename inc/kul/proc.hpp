@@ -29,6 +29,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <iostream>
 
+//#include "kul/log.hpp"
 #include "kul/except.hpp"
 
 namespace kul { namespace proc {
@@ -88,7 +89,7 @@ class Process{
 		static Process* create(const std::string& cmd, const bool wfe = true);
 		static Process* create(const std::string& p, const std::string& cmd, const bool wfe = true);
 
-		Process& addArg(const std::string& arg) { argv.push_back(arg); return *this; }
+		Process& addArg(const std::string& arg) { if(arg.size()) argv.push_back(arg); return *this; }
 		Process& setDir(const std::string& dir) { this->d = dir; return *this; }
 		Process& addEnvVar(const std::string& n, const std::string& v) { evs.push_back(std::pair<const std::string, const std::string>(n, v)); return *this;}
 		virtual void start() throw(kul::proc::Exception){
@@ -100,7 +101,7 @@ class Process{
 			std::string s(argv[0]);
 			if(d.size())
 				s = kul::OS::dirJoin(d, argv[0]);
-			for(int i = 1; i < argv.size(); i++) s += " " + argv[i];
+			for(unsigned int i = 1; i < argv.size(); i++) s += " " + argv[i];
 			return s;
 		}
 		void setOut(std::function<void(std::string)> o) { this->o = o; }
@@ -109,7 +110,6 @@ class Process{
 
 class ProcessCapture{
 	private:
-		Process& p;
 		std::vector<std::string> oV;
 		std::vector<std::string> eV;
 	protected:
@@ -120,13 +120,13 @@ class ProcessCapture{
 			eV.push_back(s);
 		}
 	public:
-		ProcessCapture(Process& p) : p(p){
+		ProcessCapture(Process& p){
 			p.setOut(std::bind(&ProcessCapture::out, std::ref(*this), std::placeholders::_1));
 			p.setErr(std::bind(&ProcessCapture::err, std::ref(*this), std::placeholders::_1));
 		}
 		virtual ~ProcessCapture(){}
 		const std::vector<std::string> outs(){return oV;}
-		const std::vector<std::string> errs(){return oV;}
+		const std::vector<std::string> errs(){return eV;}
 };
 
 

@@ -105,11 +105,14 @@ class AThreader{
 };
 };};
 
+namespace this_thread{	
+	void oSleep(const long& millis); // linux needs a wait as the threads are loaded too fast - TODO look into - if it is resolved, it should be safely removed
+	void sleep(const long& millis);	
+};
+
 namespace threading{
 class ThreaderService{
 	public:
-		static void oSleep(const long& millis); // linux needs a wait as the threads are loaded too fast - TODO look into - if it is resolved, it should be safely removed
-		static void sleep(const long& millis);
 		template <class T> static kul::osi::threading::AThreader* getThreader(const T& t);
 		template <class T> static kul::osi::threading::AThreader* getRefThreader(const Ref<T>& ref);
 		template <class T> static kul::osi::threading::AThreader* getCRefThreader(const CRef<T>& ref);
@@ -155,7 +158,7 @@ class ScopeLock : public ALock{
 			*/
 			//LOG(INFO) << "ATTEMPTING LOCK " << this;
 			while(this != m.front()){ /*ThreaderService::sleep(1); */
-				threading::ThreaderService::sleep(111);
+				this_thread::sleep(111);
 			}
 			
 		}
@@ -182,10 +185,10 @@ class Thread : public threading::AThread{
 			th->run();			
 		}
 		void join(){ 			
-			th->join();
+			if(started()) th->join();
 		}
 		void sleep(const long& millis){
-			threading::ThreaderService::sleep(millis);
+			this_thread::sleep(millis);
 		}
 		void detach(){ 			
 			th->detach();
@@ -211,7 +214,7 @@ class ThreadGroup{
 		void runAll(){
 			for(Thread& t: threads){
 				t.run();
-				threading::ThreaderService::oSleep(1);
+				this_thread::oSleep(10);
 			}
 		}
 		void joinAll(){
@@ -221,7 +224,7 @@ class ThreadGroup{
 				for(Thread& t: threads) 
 					if(!t.finished()){ f = false; break; }
 				if(f) break;
-				threading::ThreaderService::sleep(1);
+				this_thread::sleep(1);
 			}
 		}
 };
@@ -302,16 +305,16 @@ class ThreadPool{
 						kul::osi::threading::AThreader* at = pT->getThreader();
 						ts.push_back(at);
 						at->run();
-						threading::ThreaderService::oSleep(1);
+						this_thread::oSleep(10);
 					}
-					threading::ThreaderService::sleep(1);
+					this_thread::sleep(10);
 				}
 			}else{
 				for(unsigned int i = 0 ; i < m; i++){
 					kul::osi::threading::AThreader* at = pT->getThreader();
 					ts.push_back(at);
 					at->run();
-					threading::ThreaderService::oSleep(1);
+					this_thread::oSleep(10);
 				}
 			}
 			while(true){
@@ -319,7 +322,7 @@ class ThreadPool{
 				for(const kul::osi::threading::AThreader* at : ts)
 					if(at->finished()) f++;
 				if(f == ts.size()) return;
-				threading::ThreaderService::sleep(1);
+				this_thread::sleep(10);
 			}
 		}
 		void detach(){ d = true;}		

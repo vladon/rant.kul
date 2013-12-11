@@ -39,7 +39,7 @@ kul::log::LogNodeUser* kul::log::LogNodeUser::get(){
 		this->reset(kul::xml::NodeFactory::create(this->file().c_str(), "kul-log", validator()));
 	}
 	using namespace kul::xml;
-	for(const Node* node : this->root()->children()){}
+	//for(const Node* node : this->root()->children()){}
 
 	return this;
 }

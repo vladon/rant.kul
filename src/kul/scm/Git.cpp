@@ -26,7 +26,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "kul/scm.hpp"
-#include "kul/log.hpp"
 
 void kul::scm::Git::co(const std::string& l, const std::string& r, const std::string& v) const throw(Exception){
 
@@ -73,16 +72,16 @@ const std::string kul::scm::Git::localVersion(const std::string& d) {
 	}
 	return pc.outs()[0];
 }
-const std::string kul::scm::Git::remoteVersion(const std::string& url, const std::string branch) throw(Exception){
+const std::string kul::scm::Git::remoteVersion(const std::string& d, const std::string& url, const std::string branch) throw(Exception){
 	std::shared_ptr<kul::Process> p(kul::Process::create("git"));
 	kul::ProcessCapture pc(*p.get());
 	p->addArg("ls-remote").addArg(url).addArg(branch);
-	try{
-		p->setDir(kul::OS::pwd().c_str());
-		p->start();
+	try{		
+		p->setDir(d);
+		p->start();		
 	}catch(const kul::proc::ExitException& e){
-		throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
-	}	
+		KEXCEPT(Exception, "SCM ERROR" + std::string(e.what()));
+	}
 	std::string s(pc.outs()[0]);
 	kul::String::trim(s);
 	return s.substr(0, s.find("	"));

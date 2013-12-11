@@ -54,16 +54,22 @@ class ALogger{
 
 };
 
-class FileLogger : public ALogger{
+class NullLogger  : public ALogger{
 	public:
 		void log() const{}
-		const logger type(){ return FILE; }
+		const logger type(){ return NONE; }
 };
 
 class ConsoleLogger  : public ALogger{
 	public:
 		void log() const{}
 		const logger type(){ return CONSOLE; }
+};
+
+class FileLogger : public ALogger{
+	public:
+		void log() const{}
+		const logger type(){ return FILE; }
 };
 
 class LogNodeUser  : public kul::xml::NodeUser<LogNodeUser>{
@@ -95,14 +101,13 @@ class LogMan{
 
 		virtual ~LogMan(){}
 
-
 		void addLogger(log::ALogger* l){
 			if(l)  loggers.add()(l);
 		}
 		void log(const std::vector<log::logger> types){
-			for(const log::logger& t : types)
-				for(const log::ALogger& l : loggers)
-					l.log();
+			// for(const log::logger& t : types)
+				// for(const log::ALogger& l : loggers)
+					// l.log();
 		}
 };
 
