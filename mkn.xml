@@ -28,7 +28,7 @@
 		<files>
 			<file type="cpp">
 				<args>
-					<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
+					<arg>-std=c++11</arg>
 					<arg>-Wall</arg><arg>-fmessage-length=0</arg>
 					<arg>-O0</arg><arg>-g3</arg>
 				</args>
@@ -40,24 +40,21 @@
 			<includes>
 				<include>./inc</include>
 				<include>./tst</include>
-				<include>./ext/pugixml/trunk/src</include>
-				
+				<include>./ext/pugixml/trunk/src</include>				
 				<include>./ext/sparsehash/make/include</include>
 			</includes>
 			<libraries>	
 				<library>pugixml</library>
-					
 				<library>pthread</library>	
 			</libraries>
 			<library-paths>		
-				<library-path>./ext/pugixml/trunk/scripts</library-path>
-				
+				<library-path>./ext/pugixml/trunk/scripts</library-path>				
 			</library-paths>			
 			<build type="lib" mode="static" lang="cpp"> 
 				<files>
 					<file type="cpp">
 						<args>
-							<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
+							<arg>-std=c++11</arg>
 							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
 						</args>
 					</file>
@@ -96,8 +93,7 @@
 				<include>./ext/sparsehash/make/include</include>
 			</includes>
 			<libraries>	
-				<library>pugixml</library>
-					
+				<library>pugixml</library>					
 				<library>pthread</library>	
 			</libraries>
 			<library-paths>		
@@ -112,7 +108,7 @@
 						<compiler>ccache g++ -m64</compiler>
 						<linker>ccache g++ -m64</linker>
 						<args>						
-							<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
+							<arg>-std=c++11</arg>
 							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
 							<arg>-O0</arg><arg>-g3</arg>
 						</args>
@@ -157,8 +153,8 @@
 						<compiler>ccache clang++ -m64</compiler>
 						<linker>ccache clang++ -m64</linker>
 						<args>
-							<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
-							<arg>-stdlib=libstdc++</arg>
+							<arg>-std=c++11</arg>
+							
 							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
 						</args>
 					</file>
@@ -220,8 +216,8 @@
 						<compiler>ccache clang++ -m64</compiler>
 						<linker>ccache clang++ -m64</linker>
 						<args>
-							<arg>-std=c++0x</arg><arg>-D__GXX_EXPERIMENTAL_CXX0X__</arg>
-							<arg>-stdlib=libstdc++</arg>
+							<arg>-std=c++11</arg>
+							
 							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
 							<arg>-O3</arg><arg>-g0</arg>
 						</args>

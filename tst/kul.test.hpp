@@ -38,9 +38,24 @@ namespace kul {
 class TestThreadObject{
 	private:
 		int i;
-		kul::Mutex mutex;
 	public:
 		TestThreadObject() : i(0){}
+		void operator()(){
+		   	KLOG(INFO) << "THREAD RUNNING";
+			i++;
+		}
+		void operator()() const{
+			KLOG(INFO) << "CONST THREAD RUNNING";
+		}
+		void print(){ KLOG(INFO) << "i = " << i;}
+};
+
+class TestThreadPoolObject{
+	private:
+		int i;
+		Mutex& mutex;
+	public:
+		TestThreadPoolObject(Mutex& mutex) : i(0), mutex(mutex){}
 		void operator()(){
 		   	KLOG(INFO) << "THREAD RUNNING";
 			kul::ScopeLock lock(mutex);
@@ -124,12 +139,12 @@ class test{ public: test(){
 	kul::ScopeLock lock(mutex);
 
 	KLOG(INFO) << "CANONBALL";
-	TestThreadObject tto4;
-	kul::Ref<TestThreadObject> ref2(tto4);
+	TestThreadPoolObject ttpo(mutex);
+	kul::Ref<TestThreadPoolObject> ref2(ttpo);
 	kul::ThreadPool<std::queue<int> > tp(ref2);
 	tp.setMax(8);
 	tp.runAndJoinAll();
-	tto4.print();
+	ttpo.print();
 }};
 
 

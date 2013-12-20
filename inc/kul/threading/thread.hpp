@@ -28,7 +28,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _KUL_THREADING_THREAD_HPP_
 
 #include <queue>
- 
+#include <atomic>
+
+#include "kul/log.hpp" 
 #include "kul/except.hpp"
 
 //osi = OS Independent
@@ -106,7 +108,7 @@ class AThreader{
 };};
 
 namespace this_thread{	
-	void oSleep(const long& millis); // linux needs a wait as the threads are loaded too fast - TODO look into - if it is resolved, it should be safely removed
+	void uSleep(const long& nanos); // linux needs a wait as the threads are loaded too fast - TODO look into - if it is resolved, it should be safely removed
 	void sleep(const long& millis);	
 };
 
@@ -125,45 +127,30 @@ class ALock{
 		virtual ~ALock(){}
 };
 
-class AMutex{
+class Mutex{
 	private:
-		bool l;
-		std::queue<const ALock*> locks;
-		virtual void mute() const = 0;
-		void addLock(const ALock& lock)	{ locks.push(&lock);}
-		void popLock()					{ locks.pop();}
-		const ALock* front()			{ return locks.front();}
-		const int size()				{ return locks.size();}
-
+		std::atomic<bool> l;
+		
+		const bool  locked()			{ return this->l.load(); }
+		void  lock()					{ this->l.exchange(1); }
+		void  unlock()					{ this->l.exchange(0); }
+		
 	public:
-		AMutex() : l(0){}
-		virtual ~AMutex(){}
-		const bool& locked(){ return l;}
+		Mutex() : l(0) {}
+		virtual ~Mutex() {}
 		friend class ScopeLock;
 };
 
 class ScopeLock : public ALock{
 	private:
-		AMutex& m;
+		Mutex& m;
 	public:
-		ScopeLock(AMutex& m) : m(m){
-			m.addLock(*this);			
-			/*
-			std::queue<const ALock*> locks = m.locks;
-			LOG(INFO) << "MUTEX " << &m;
-			while(locks.size() > 0){
-				LOG(INFO) << "LOCK " << locks.front();
-				locks.pop();
-			}			
-			*/
-			//LOG(INFO) << "ATTEMPTING LOCK " << this;
-			while(this != m.front()){ /*ThreaderService::sleep(1); */
-				this_thread::sleep(111);
-			}
-			
+		ScopeLock(Mutex& m) : m(m) {			
+			while(this->m.locked()) this_thread::sleep(1);			
+			this->m.lock();			
 		}
-		~ScopeLock(){
-			m.popLock();			
+		~ScopeLock(){			
+			this->m.unlock();
 		}
 };
 
@@ -214,7 +201,7 @@ class ThreadGroup{
 		void runAll(){
 			for(Thread& t: threads){
 				t.run();
-				this_thread::oSleep(10);
+				this_thread::uSleep(111);
 			}
 		}
 		void joinAll(){
@@ -305,16 +292,16 @@ class ThreadPool{
 						kul::osi::threading::AThreader* at = pT->getThreader();
 						ts.push_back(at);
 						at->run();
-						this_thread::oSleep(10);
+						this_thread::uSleep(111);
 					}
-					this_thread::sleep(10);
+					this_thread::sleep(1);
 				}
 			}else{
 				for(unsigned int i = 0 ; i < m; i++){
 					kul::osi::threading::AThreader* at = pT->getThreader();
 					ts.push_back(at);
 					at->run();
-					this_thread::oSleep(10);
+					this_thread::uSleep(111);
 				}
 			}
 			while(true){
@@ -322,7 +309,7 @@ class ThreadPool{
 				for(const kul::osi::threading::AThreader* at : ts)
 					if(at->finished()) f++;
 				if(f == ts.size()) return;
-				this_thread::sleep(10);
+				this_thread::sleep(1);
 			}
 		}
 		void detach(){ d = true;}		
