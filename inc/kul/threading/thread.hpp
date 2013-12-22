@@ -292,7 +292,7 @@ class ThreadPool{
 						kul::osi::threading::AThreader* at = pT->getThreader();
 						ts.push_back(at);
 						at->run();
-						this_thread::uSleep(111);
+						this_thread::sleep(1);
 					}
 					this_thread::sleep(1);
 				}
@@ -301,7 +301,7 @@ class ThreadPool{
 					kul::osi::threading::AThreader* at = pT->getThreader();
 					ts.push_back(at);
 					at->run();
-					this_thread::uSleep(111);
+					this_thread::sleep(1);
 				}
 			}
 			while(true){

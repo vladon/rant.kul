@@ -60,6 +60,7 @@ class TestThreadPoolObject{
 		   	KLOG(INFO) << "THREAD RUNNING";
 			kul::ScopeLock lock(mutex);
 			i++;
+			KLOG(INFO) << "THREAD FINISHED";
 		}
 		void operator()() const{
 			KLOG(INFO) << "CONST THREAD RUNNING";
@@ -134,9 +135,11 @@ class test{ public: test(){
 	
 	kul::Mutex mutex;
 	{
+		{
+			kul::ScopeLock lock(mutex);
+		}
 		kul::ScopeLock lock(mutex);
 	}
-	kul::ScopeLock lock(mutex);
 
 	KLOG(INFO) << "CANONBALL";
 	TestThreadPoolObject ttpo(mutex);
