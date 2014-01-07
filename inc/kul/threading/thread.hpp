@@ -31,6 +31,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <atomic>
 
 #include "kul/log.hpp" 
+#include "kul/defs.hpp" 
 #include "kul/except.hpp"
 
 //osi = OS Independent
@@ -108,8 +109,8 @@ class AThreader{
 };};
 
 namespace this_thread{	
-	void uSleep(const long& nanos); // linux needs a wait as the threads are loaded too fast - TODO look into - if it is resolved, it should be safely removed
-	void sleep(const long& millis);	
+	void uSleep(const unsigned long& nanos); // linux needs a wait as the threads are loaded too fast - TODO look into - if it is resolved, it should be safely removed
+	void sleep(const unsigned long& millis);	
 };
 
 namespace threading{
@@ -131,9 +132,9 @@ class Mutex{
 	private:
 		std::atomic<bool> l;
 		
-		const bool  locked()			{ return this->l.load(); }
-		void  lock()					{ this->l.exchange(1); }
-		void  unlock()					{ this->l.exchange(0); }
+		const bool  locked(){ return this->l.load(); }
+		void  lock()		{ this->l.exchange(1); }
+		void  unlock()		{ this->l.exchange(0); }
 		
 	public:
 		Mutex() : l(0) {}
@@ -201,7 +202,7 @@ class ThreadGroup{
 		void runAll(){
 			for(Thread& t: threads){
 				t.run();
-				this_thread::uSleep(111);
+				this_thread::uSleep(__KUL_THREAD_SPAWN_UWAIT__);
 			}
 		}
 		void joinAll(){
@@ -292,7 +293,7 @@ class ThreadPool{
 						kul::osi::threading::AThreader* at = pT->getThreader();
 						ts.push_back(at);
 						at->run();
-						this_thread::sleep(1);
+						this_thread::uSleep(__KUL_THREAD_SPAWN_UWAIT__);
 					}
 					this_thread::sleep(1);
 				}
@@ -301,7 +302,7 @@ class ThreadPool{
 					kul::osi::threading::AThreader* at = pT->getThreader();
 					ts.push_back(at);
 					at->run();
-					this_thread::sleep(1);
+					this_thread::uSleep(__KUL_THREAD_SPAWN_UWAIT__);
 				}
 			}
 			while(true){
