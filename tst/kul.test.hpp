@@ -88,10 +88,8 @@ class test{ public: test(){
 		(*p).addArg("Hello").addArg("World").start();
 	}catch(const kul::proc::Exception& e){ 
 		KLOG(INFO) << e.debug()<< " : " << typeid(e).name();
-		exit(1);
+		KLOG(INFO) << "Error expected on windows without echo on path";
 	}
-
-	
 
 	for(const std::string& arg : kul::cli::CmdLine::asArgs("/path/to \"words in quotes\" words\\ not\\ in\\ quotes end"))
 		KLOG(INFO) << "ARG: " << arg;
