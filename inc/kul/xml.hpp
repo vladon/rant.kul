@@ -160,9 +160,9 @@ class NodeValidator{
 					children()	, attributeValidators(a),
 					mi(mi)		, ma(ma)				, text(isT){}
 		NodeValidator(
-						const int& mi, const int& ma, const bool& isT) :
-							children()	, attributeValidators()	,
-							mi(mi)		, ma(ma)				, text(isT){}
+				const int& mi, const int& ma, const bool& isT) :
+					children()	, attributeValidators()	,
+					mi(mi)		, ma(ma)				, text(isT){}
 		NodeValidator(const NodeValidator& v)  :
 			children(v.getChildren())	, attributeValidators(v.attributeValidators),
 			mi(v.minimum())			, ma(v.maximum())					, text(v.isText()){}
