@@ -24,6 +24,10 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_DEFS_HPP_
 #define _KUL_DEFS_HPP_
 
+#ifndef KLOG_LVL
+	#define KLOG_LVL 0
+#endif /*  KLOG_LVL */
+
 #ifndef __KUL_THREAD_SPAWN_UWAIT__
  	#define __KUL_THREAD_SPAWN_UWAIT__ 1000000
 #endif /*  __KUL_THREAD_SPAWN_UWAIT__ */

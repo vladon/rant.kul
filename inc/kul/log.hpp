@@ -30,6 +30,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "kul/os.hpp"
 #include "kul/xml.hpp"
+#include "kul/defs.hpp"
 #include "kul/smart.hpp"
 #include "kul/except.hpp"
 

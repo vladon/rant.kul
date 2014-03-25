@@ -27,6 +27,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/os.hpp"
 #include "kul/log.hpp"
 #include "kul/xml.hpp"
+#include "kul/time.hpp"
 #include "kul/proc.hpp"
 #include "kul/smart.hpp"
 #include "kul/threads.hpp"
@@ -94,13 +95,12 @@ class test{ public: test(){
 	for(const std::string& arg : kul::cli::CmdLine::asArgs("/path/to \"words in quotes\" words\\ not\\ in\\ quotes end"))
 		KLOG(INFO) << "ARG: " << arg;
 
-	//LOG(INFO) << std::chrono::duration_cast<std::chrono::nanoseconds>(p->endTime() - p->startTime()).count();
-	//LOG(INFO) << "p->startTime(): " << p->startTime().time_since_epoch().count();
 
-	//LOG(INFO) << "p->endTime(): " << p->endTime().time_since_epoch().count();
 
-	//LOG(INFO) << "run time endTime - startTime (microseconds): " << (p->endTime() - p->startTime()).count();
-	//LOG(INFO) << "cpuTime of m: " << p->cpuTime();
+	KLOG(INFO) << "KLOG(INFO) << kul::time::Now::millis(); " << kul::time::Now::millis();
+	KLOG(INFO) << "KLOG(INFO) << kul::time::Now::micros(); " << kul::time::Now::micros();
+	KLOG(INFO) << "KLOG(INFO) << kul::time::Now::nanos();  " << kul::time::Now::nanos();
+
 
 	TestThreadObject tto1;
 	kul::Ref<TestThreadObject> ref(tto1);
