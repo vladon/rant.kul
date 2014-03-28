@@ -180,7 +180,7 @@ const kul::xml::Node* kul::xml::NodeFactory::create(const char*f, const char* ro
 		//TODO GET LINE # OF ERROR IN FILE
 		if(result.status == pugi::xml_parse_status::status_end_element_mismatch)	
 			throw Exception(__FILE__, __LINE__, "PUGIXML Exception: " + std::string(result.description()) + " at " + (f + result.offset));
-		throw Exception(__FILE__, __LINE__, "PUGIXML Exception: " + std::string(result.description()));
+		throw Exception(__FILE__, __LINE__, "PUGIXML Exception: " + std::string(result.description()) + " : " + f);
 	}
 	if(doc.child(root).empty())
 		throw Exception(__FILE__, __LINE__, "root element \"" + std::string(root) + "\" not found, malformed document");

@@ -30,18 +30,15 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 	<includes>
 		<include>./inc</include>
 		<include>./tst</include>
-		<include>./ext/pugixml/trunk/src</include>
-		
+		<include>./ext/pugixml/trunk/src</include>		
 		<include>./ext/sparsehash/make/include</include>
 	</includes>
 	<libraries>
-		<library>pugixml</library>
-			
+		<library>pugixml</library>			
 		<library>pthread</library>	
 	</libraries>
 	<library-paths>		
-		<library-path>./ext/pugixml/trunk/scripts</library-path>
-		
+		<library-path>./ext/pugixml/trunk/scripts</library-path>		
 	</library-paths>
 	<!-- used when no profile is specified -->	
 	<build type="lib" mode="static" lang="cpp"> 
@@ -111,8 +108,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			<includes>
 				<include>./inc</include>
 				<include>./tst</include>
-				<include>./ext/pugixml/trunk/src</include>
-				
+				<include>./ext/pugixml/trunk/src</include>				
 				<include>./ext/sparsehash/make/include</include>
 			</includes>
 			<libraries>	
@@ -120,8 +116,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				<library>pthread</library>	
 			</libraries>
 			<library-paths>		
-				<library-path>./ext/pugixml/trunk/scripts</library-path>
-				
+				<library-path>./ext/pugixml/trunk/scripts</library-path>				
 			</library-paths>			
 			<build type="lib" mode="static" lang="cpp">
 				<files>
