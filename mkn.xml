@@ -214,17 +214,14 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 		<profile name="lincllvmpt">  <!-- requires -pthread in app>(profile>)build>file>linker -->
 			<includes>
 				<include>./inc</include>
-				<include>./ext/pugixml/llvm/src</include>
-				
+				<include>./ext/pugixml/llvm/src</include>				
 				<include>./ext/sparsehash/make/include</include>
 			</includes>
 			<libraries>	
-				<library>pugixml</library>
-				
+				<library>pugixml</library>				
 			</libraries>
 			<library-paths>		
-				<library-path>./ext/pugixml/llvm/scripts</library-path>
-				
+				<library-path>./ext/pugixml/llvm/scripts</library-path>				
 			</library-paths>
 			<build type="lib" mode="static" lang="cpp">
 				<files>
@@ -234,8 +231,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 						<compiler>ccache clang++ -m64</compiler>
 						<linker>ccache clang++ -m64</linker>
 						<args>
-							<arg>-std=c++11</arg>
-							
+							<arg>-std=c++11</arg>							
 							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
 							<arg>-O3</arg><arg>-g0</arg>
 						</args>
@@ -292,8 +288,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				<include>C:\apps\MVS2012\VC\include</include> <!-- MAKE LAST INCLUDE! -->	
 			</includes>
 			<libraries>	
-				<library>pugixml</library>
-				
+				<library>pugixml</library>				
 			</libraries>
 			<!-- used when no profile is specified. supplied default values to profiles if required -->	
 			<build type="lib" mode="static" lang="cpp">
