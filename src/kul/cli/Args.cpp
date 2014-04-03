@@ -79,6 +79,7 @@ void kul::cli::Args::process(int argc, char* argv[]){
 			if(c.find("=") == std::string::npos){
 				arg = const_cast<Arg*>(&doubleDashes(c.c_str()));
 				valExpected = arg->valueExpected();
+				if(!valExpected) vals[arg->dashdash()] = "";
 				continue;
 			}
 			valExpectedFor = c.substr(0, c.find("="));
@@ -87,7 +88,7 @@ void kul::cli::Args::process(int argc, char* argv[]){
 			if(!valExpected) throw Exception(__FILE__, __LINE__, "Found = when no value is expected for arg " + valExpectedFor);
 
 			c = c.substr(c.find("=") + 1);			
-			vals[arg->dashdash()] = c;			
+			vals[arg->dashdash()] = c;
 		}
 		else if(c.find("-") == 0){
 			valExpectedFor = c;

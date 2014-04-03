@@ -74,6 +74,7 @@ class Git : public Scm{
 		void diff(const std::string& d);
 };
 
+// SVN URL CHANGE: svn switch –relocate  <from URL> <to URL>
 class Svn : public Scm{
 	public:
 		void co(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception);
