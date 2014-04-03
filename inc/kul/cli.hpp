@@ -144,10 +144,10 @@ class Arg : public Cmd{
 	public:
 		Arg(const char* d, const char* dd, ArgType t, const char* h = "") : Cmd(dd, h), d(d), t(t){}
 		Arg(const char* d, const char* dd, const char* h = "") : Cmd(dd, h), d(d), t(ArgType::FLAG){}
-		const char* dash() const { return d;}
-		const char* dashdash() const { return command();}
-		const bool valueExpected() const { return t != ArgType::FLAG;}
-		const ArgType& type() const { return t; }
+		const char* dash() 			const { return d;}
+		const char* dashdash() 		const { return command();}
+		const bool valueExpected() 	const { return t != ArgType::FLAG;}
+		const ArgType& type() 		const { return t; }
 };
 
 class Args{

@@ -59,10 +59,10 @@ void kul::cli::Args::process(int argc, char* argv[]){
 		t = c;
 
 		kul::String::replaceAll(t, "----", "---");
-		if(t.find("---") != std::string::npos) throw Exception(__FILE__, __LINE__, "Illegal argument " + c);
-		if(c.compare("---") == 0)	throw Exception(__FILE__, __LINE__, "Illegal argument ---");
-		if(c.compare("--") == 0)	throw Exception(__FILE__, __LINE__, "Illegal argument --");
-		if(c.compare("-") == 0) throw Exception(__FILE__, __LINE__, "Illegal argument -");
+		if(t.find("---") != std::string::npos) 	throw Exception(__FILE__, __LINE__, "Illegal argument " + c);
+		if(c.compare("---") == 0)				throw Exception(__FILE__, __LINE__, "Illegal argument ---");
+		if(c.compare("--") == 0)				throw Exception(__FILE__, __LINE__, "Illegal argument --");
+		if(c.compare("-") == 0) 				throw Exception(__FILE__, __LINE__, "Illegal argument -");
 		if((c.find("--") == 0 || c.find("-") == 0) && valExpected)
 			throw Exception(__FILE__, __LINE__, "Value expected for argument: \""+ valExpectedFor + "\"");
 
