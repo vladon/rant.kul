@@ -51,7 +51,6 @@ void kul::scm::Git::up(const std::string& d, const std::string& r, const std::st
 			std::cout << "PERFORMING: " << p->toString() << std::endl;
 			p->start();
 		}catch(const kul::proc::ExitException& e){
-			OS::dirDel(d);
 			throw Exception(__FILE__, __LINE__, "SCM ERROR - Check remote dependency location / version");
 		}
 	}
