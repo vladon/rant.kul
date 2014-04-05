@@ -37,14 +37,26 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				<source>./trunk/src</source>
 			</sources>
 		</profile>
+		<profile name="nix" parent="com">
+ 			<build type="lib" mode="static" lang="cpp">
+				<files>
+					<file type="cpp">
+						<args>		
+							<arg>-std=c++11</arg>
+							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
+							<arg>-O0</arg><arg>-g3</arg>
+						</args>
+					</file>
+				</files>
+			</build>
+		</profile>
+		<profile name="mac" parent="nix">
+ 			<build type="lib" mode="static" lang="cpp"/>
+		</profile>
 		<profile name="win" parent="com">
  			<build type="lib" mode="static" lang="cpp">
 				<files>
 					<file type="cpp">
-						<archiver>lib</archiver>
-						<assembler>as</assembler>
-						<compiler>cl</compiler>
-						<linker>link</linker>
 						<args><arg>/EHsc</arg></args>
 					</file>
 				</files>

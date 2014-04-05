@@ -29,7 +29,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 	</project>
 
 	<profiles>
-		<profile name="linc">
+		<profile name="nixc">
 			<includes>
 				<include>./inc</include>
 				<include>./ext/sparsehash/make/include</include>
@@ -38,7 +38,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				<dependency>
 					<name>pugixml</name>
 					<version>master</version>
-					<profile>lin64</profile>
+					<profile>nix</profile>
 					<local>./ext/pugixml</local>
 				</dependency>
 			</dependencies>	
@@ -53,7 +53,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				</files>
 			</build>
 		</profile>
-		<profile name="lin" parent="linc">
+		<profile name="nix" parent="nixc">
 			<includes>
 				<include>./tst</include>
 			</includes>
@@ -65,7 +65,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				</files>
 			</build>
 		</profile>
-		<profile name="linr" parent="linc">
+		<profile name="nixr" parent="nixc">
 			<build type="lib" mode="static" lang="cpp"> 
 				<files>
 					<file type="cpp">
