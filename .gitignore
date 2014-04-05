@@ -1,2 +1,4 @@
 bin
-ext
+ext/pugixml/bin
+ext/pugixml/trunk
+ext/sparsehash

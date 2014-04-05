@@ -27,49 +27,21 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 		<name>kul</name>		
 		<version>master</version>
 	</project>
-	<includes>
-		<include>./inc</include>
-		<include>./tst</include>
-		<include>./ext/pugixml/trunk/src</include>		
-		<include>./ext/sparsehash/make/include</include>
-	</includes>
-	<libraries>
-		<library>pugixml</library>			
-		<library>pthread</library>	
-	</libraries>
-	<library-paths>		
-		<library-path>./ext/pugixml/trunk/scripts</library-path>		
-	</library-paths>
-	<!-- used when no profile is specified -->	
-	<build type="lib" mode="static" lang="cpp"> 
-		<env>
-			<vars><!--var name="PATH" mode="replace"></var--></vars>
-		</env>		
-		<files>
-			<file type="cpp">
-				<args>
-					<arg>-std=c++11</arg>
-					<arg>-Wall</arg><arg>-fmessage-length=0</arg>
-					<arg>-O0</arg><arg>-g3</arg>
-				</args>
-			</file>
-		</files>
-	</build>
+
 	<profiles>
 		<profile name="linc">
 			<includes>
 				<include>./inc</include>
-				<include>./tst</include>
-				<include>./ext/pugixml/trunk/src</include>				
 				<include>./ext/sparsehash/make/include</include>
 			</includes>
-			<libraries>	
-				<library>pugixml</library>
-				<library>pthread</library>	
-			</libraries>
-			<library-paths>		
-				<library-path>./ext/pugixml/trunk/scripts</library-path>				
-			</library-paths>			
+			<dependencies>
+				<dependency>
+					<name>pugixml</name>
+					<version>master</version>
+					<profile>lin64</profile>
+					<local>./ext/pugixml</local>
+				</dependency>
+			</dependencies>	
 			<build type="lib" mode="static" lang="cpp"> 
 				<files>
 					<file type="cpp">
@@ -82,12 +54,13 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			</build>
 		</profile>
 		<profile name="lin" parent="linc">
+			<includes>
+				<include>./tst</include>
+			</includes>
 			<build type="lib" mode="static" lang="cpp"> 
 				<files>
 					<file type="cpp">
-						<args>							
-							<arg>-O0</arg><arg>-g3</arg>
-						</args>
+						<args><arg>-O0</arg><arg>-g3</arg></args>
 					</file>
 				</files>
 			</build>
@@ -96,239 +69,31 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			<build type="lib" mode="static" lang="cpp"> 
 				<files>
 					<file type="cpp">
-						<args>
-							<arg>-O3</arg><arg>-g0</arg>
-						</args>
-					</file>
-				</files>
-			</build>
-		</profile>
-
-		<profile name="lin64"> 
-			<includes>
-				<include>./inc</include>
-				<include>./tst</include>
-				<include>./ext/pugixml/trunk/src</include>				
-				<include>./ext/sparsehash/make/include</include>
-			</includes>
-			<libraries>	
-				<library>pugixml</library>					
-				<library>pthread</library>	
-			</libraries>
-			<library-paths>		
-				<library-path>./ext/pugixml/trunk/scripts</library-path>				
-			</library-paths>			
-			<build type="lib" mode="static" lang="cpp">
-				<files>
-					<file type="cpp">
-						<archiver>ar -r</archiver>
-						<assembler>as</assembler>
-						<compiler>ccache g++ -m64</compiler>
-						<linker>ccache g++ -m64</linker>
-						<args>						
-							<arg>-std=c++11</arg>
-							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
-							<arg>-O0</arg><arg>-g3</arg>
-						</args>
-					</file>
-				</files>
-			</build>
-		</profile>
-
-		<profile name="lin64r" parent="lin64"> 
-			<build type="lib" mode="static" lang="cpp">
-				<files>
-					<file type="cpp">
-						<args>
-							<arg>-O3</arg><arg>-g0</arg>
-						</args>
-					</file>
-				</files>
-			</build>
-		</profile>
-
-		<profile name="linllvmc"> 
-			<includes>
-				<include>./inc</include>
-				<include>./ext/pugixml/llvm/src</include>
-				
-				<include>./ext/sparsehash/make/include</include>
-			</includes>
-			<libraries>	
-				<library>pugixml</library>
-					
-				<library>pthread</library>	
-			</libraries>
-			<library-paths>		
-				<library-path>./ext/pugixml/llvm/scripts</library-path>
-				
-			</library-paths>
-			<build type="lib" mode="static" lang="cpp">
-				<files>
-					<file type="cpp">
-						<archiver>ar -r</archiver>
-						<assembler>as</assembler>
-						<compiler>ccache clang++ -m64</compiler>
-						<linker>ccache clang++ -m64</linker>
-						<args>
-							<arg>-std=c++11</arg>
-							
-							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
-						</args>
-					</file>
-				</files>
-			</build>
-		</profile>
-		<profile name="linllvm" parent="linllvmc"> 
-			<includes>
-				<include>./tst</include>
-			</includes>
-			<build type="lib" mode="static" lang="cpp">
-				<env>
-					<vars>
-						<var name="PATH" mode="prepend">/home/philix/sand/repo/cpp/l/llvm/make-debug/Debug+Asserts/bin</var>
-					</vars>
-				</env>	
-				<files>
-					<file type="cpp">
-						<args><arg>-O0</arg><arg>-g3</arg></args>
-					</file>
-				</files>
-			</build>
-		</profile>
-		<profile name="linrllvm" parent="linllvmc"> 
-			<build type="lib" mode="static" lang="cpp">
-				<env>
-					<vars>
-						<var name="PATH" mode="prepend">/home/philix/sand/repo/cpp/l/llvm/make-debug/Debug+Asserts/bin</var>
-					</vars>
-				</env>	
-				<files>
-					<file type="cpp">
 						<args><arg>-O3</arg><arg>-g0</arg></args>
 					</file>
 				</files>
 			</build>
 		</profile>
 
-		<profile name="lincllvmpt">  <!-- requires -pthread in app>(profile>)build>file>linker -->
+		<profile name="win">
+			<dependencies>
+				<dependency>
+					<name>pugixml</name>
+					<version>master</version>
+					<profile>win</profile>
+					<local>./ext/pugixml</local>
+				</dependency>
+			</dependencies>
 			<includes>
 				<include>./inc</include>
-				<include>./ext/pugixml/llvm/src</include>				
+				<include>./tst</include>
 				<include>./ext/sparsehash/make/include</include>
-			</includes>
-			<libraries>	
-				<library>pugixml</library>				
-			</libraries>
-			<library-paths>		
-				<library-path>./ext/pugixml/llvm/scripts</library-path>				
-			</library-paths>
-			<build type="lib" mode="static" lang="cpp">
-				<files>
-					<file type="cpp">
-						<archiver>ar -r</archiver>
-						<assembler>as</assembler>
-						<compiler>ccache clang++ -m64</compiler>
-						<linker>ccache clang++ -m64</linker>
-						<args>
-							<arg>-std=c++11</arg>							
-							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
-							<arg>-O3</arg><arg>-g0</arg>
-						</args>
-					</file>
-				</files>
-			</build>
-		</profile>
-		<profile name="linllvmpt" parent="lincllvmpt">
-			<includes>
-				<include>./tst</include>
-			</includes>
-			<build type="lib" mode="static" lang="cpp">
-				<env>
-					<vars>
-						<var name="PATH" mode="prepend">/home/philix/sand/repo/cpp/l/llvm/make-debug/Debug+Asserts/bin</var>
-					</vars>
-				</env>	
-				<files>
-					<file type="cpp">
-						<args>
-							<arg>-O0</arg><arg>-g3</arg>
-						</args>
-					</file>
-				</files>
-			</build>
-		</profile>		
-		<profile name="linrllvmpt" parent="lincllvmpt">
-			<build type="lib" mode="static" lang="cpp">
-				<env>
-					<vars>
-						<var name="PATH" mode="prepend">/home/philix/sand/repo/cpp/l/llvm/make-debug/Debug+Asserts/bin</var>
-					</vars>
-				</env>	
-				<files>
-					<file type="cpp">
-						<args>
-							<arg>-O3</arg><arg>-g0</arg>
-						</args>
-					</file>
-				</files>
-			</build>
-		</profile>
-
-		<profile name="winc">
-			<includes>
-				<include>./inc</include>
-				<include>./tst</include>
-				<include>./ext/pugixml/trunk/src</include>
-				<include>./ext/sparsehash/trunk/src</include>
-				<include>./ext/sparsehash/make/src</include>
 				<include>./../win/master/ext/msinttypes-r26</include>
-				<include>E:\sand\repo\cpp\b\boost\makewin\include\boost-1_53</include>
-				<include>E:\sand\repo\cpp\b\boost\makewin\include\boost-1_53\boost\tr1</include>
-				<include>C:\apps\MVS2012\VC\include</include> <!-- MAKE LAST INCLUDE! -->	
+				<!--include>boost\makewin\include\boost-1_53</include-->
+				<!--include>boost\makewin\include\boost-1_53\boost\tr1</include-->
+				<!--include>C:\apps\MVS2012\VC\include</include> <!-- MAKE LAST INCLUDE! -->
 			</includes>
-			<libraries>	
-				<library>pugixml</library>				
-			</libraries>
-			<!-- used when no profile is specified. supplied default values to profiles if required -->	
 			<build type="lib" mode="static" lang="cpp">
-				<files>
-					<file type="cpp">
-						<archiver>lib</archiver>
-						<assembler>as</assembler>
-						<compiler>cl</compiler>
-						<linker>link</linker>
-						<args><arg>/EHsc</arg></args>
-					</file>
-				</files>
-			</build>
-		</profile>
-
-		<profile name="win" parent="winc">
-			<build type="lib" mode="static" lang="cpp">	
-				<env>					
-					<vars>
-						<var name="PATH" mode="prepend">C:\apps\MVS2012\VC\bin</var>						
-					</vars>
-				</env>	
-				<files>
-					<file type="cpp">
-						<args><arg>/EHsc</arg></args>
-					</file>
-				</files>
-			</build>
-		</profile>
-
-		<profile name="win64" parent="winc">
-			<library-paths>		
-				<library-path>./ext/pugixml/trunk/lib64</library-path>
-			</library-paths>
-			<build type="lib" mode="static" lang="cpp"> 
-				<env>					
-					<vars>
-						<var name="PATH" mode="prepend">C:\apps\MVS2012\VC\bin\x86_amd64</var>						
-					</vars>
-				</env>		
 				<files>
 					<file type="cpp">
 						<args><arg>/EHsc</arg></args>
@@ -338,10 +103,3 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 		</profile>
 	</profiles>
 </maiken>
-
-
-<!-- 
-DateTime formatting reference
-http://www.boost.org/doc/libs/1_52_0/doc/html/date_time/date_time_io.html#date_time.format_flags
--->
-
