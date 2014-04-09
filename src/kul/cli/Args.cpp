@@ -34,20 +34,20 @@ void kul::cli::Args::process(int argc, char* argv[]){
 
 	for(const Arg& a : arguments())
 		if(strlen(a.dash()) > 1)
-			throw Exception(__FILE__, __LINE__, "Short param too long, only one character allowed");
+			KEXCEPT(Exception, "Short param too long, only one character allowed");
 
 	for(const Arg& a1 : arguments())
 		for(const Arg& a2 : arguments()){
 			if(&a1 == &a2) continue;
 			if(strcmp(a1.dash(), a2.dash()) == 0
 					|| strcmp(a1.dashdash(), a2.dashdash()) == 0)
-				throw Exception(__FILE__, __LINE__, "Duplicate argument detected");
+				KEXCEPT(Exception, "Duplicate argument detected");
 		}
 	for(const Cmd& c1 : commands())
 		for(const Cmd& c2 : commands()){
 			if(&c1 == &c2) continue;
 			if(strcmp(c1.command(), c2.command()) == 0)
-				throw Exception(__FILE__, __LINE__, "Duplicate argument detected");
+				KEXCEPT(Exception, "Duplicate argument detected");
 		}
 
 	Arg* arg = 0;
@@ -59,12 +59,12 @@ void kul::cli::Args::process(int argc, char* argv[]){
 		t = c;
 
 		kul::String::replaceAll(t, "----", "---");
-		if(t.find("---") != std::string::npos) 	throw Exception(__FILE__, __LINE__, "Illegal argument " + c);
-		if(c.compare("---") == 0)				throw Exception(__FILE__, __LINE__, "Illegal argument ---");
-		if(c.compare("--") == 0)				throw Exception(__FILE__, __LINE__, "Illegal argument --");
-		if(c.compare("-") == 0) 				throw Exception(__FILE__, __LINE__, "Illegal argument -");
+		if(t.find("---") != std::string::npos) 	KEXCEPT(Exception, "Illegal argument " + c);
+		if(c.compare("---") == 0)				KEXCEPT(Exception, "Illegal argument ---");
+		if(c.compare("--") == 0)				KEXCEPT(Exception, "Illegal argument --");
+		if(c.compare("-") == 0) 				KEXCEPT(Exception, "Illegal argument -");
 		if((c.find("--") == 0 || c.find("-") == 0) && valExpected)
-			throw Exception(__FILE__, __LINE__, "Value expected for argument: \""+ valExpectedFor + "\"");
+			KEXCEPT(Exception, "Value expected for argument: \""+ valExpectedFor + "\"");
 
 		if(valExpected){
 			valExpected = !valExpected;
@@ -85,7 +85,7 @@ void kul::cli::Args::process(int argc, char* argv[]){
 			valExpectedFor = c.substr(0, c.find("="));
 			arg = const_cast<Arg*>(&doubleDashes(valExpectedFor.c_str()));
 			valExpected = arg->valueExpected();
-			if(!valExpected) throw Exception(__FILE__, __LINE__, "Found = when no value is expected for arg " + valExpectedFor);
+			if(!valExpected) KEXCEPT(Exception, "Found = when no value is expected for arg " + valExpectedFor);
 
 			c = c.substr(c.find("=") + 1);			
 			vals[arg->dashdash()] = c;
@@ -95,7 +95,7 @@ void kul::cli::Args::process(int argc, char* argv[]){
 			c = c.substr(c.find("-") + 1);
 			if(c.find("=") != std::string::npos){
 				if(c.substr(0, c.find("=")).size() > 1)
-					throw Exception(__FILE__, __LINE__, "Cannot mix flag and non-flag arguments");
+					KEXCEPT(Exception, "Cannot mix flag and non-flag arguments");
 				arg = const_cast<Arg*>(&dashes(c.substr(0, c.find("=")).c_str()));
 				vals[arg->dashdash()] = c.substr(c.find("=") + 1);
 				valExpected = 0;
@@ -104,7 +104,7 @@ void kul::cli::Args::process(int argc, char* argv[]){
 					char ch = c[i];
 					arg = const_cast<Arg*>(&dashes(&ch));
 					if(arg->valueExpected())
-						throw Exception(__FILE__, __LINE__, "Cannot mix flag and non-flag arguments");
+						KEXCEPT(Exception, "Cannot mix flag and non-flag arguments");
 					vals[arg->dashdash()] = "";
 				}
 			}else{
@@ -124,5 +124,5 @@ void kul::cli::Args::process(int argc, char* argv[]){
 		vals[c] = "";
 	}
 	if(valExpected)
-		throw Exception(__FILE__, __LINE__, "Value expected for argument: \""+ valExpectedFor + "\"");
+		KEXCEPT(Exception, "Value expected for argument: \""+ valExpectedFor + "\"");
 }

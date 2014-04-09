@@ -85,7 +85,7 @@ class GCCompiler : public CCompiler{
 			KLOG2(COUT, INFO) << cmd;
 			
 			if(kul::OS::execReturn(cmd) != 0)
-				throw Exception(__FILE__, __LINE__, "Failed to build executable");
+				KEXCEPT(Exception, "Failed to build executable");
 
 			return exe; 
 		}
@@ -102,7 +102,7 @@ class GCCompiler : public CCompiler{
 			KLOG2(COUT, INFO) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
-				throw Exception(__FILE__, __LINE__, "Failed to build shared lib");
+				KEXCEPT(Exception, "Failed to build shared lib");
 
 			return lib; 
 		}
@@ -119,7 +119,7 @@ class GCCompiler : public CCompiler{
 			KLOG2(COUT, INFO) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
-				throw Exception(__FILE__, __LINE__, "Failed to build static lib");
+				KEXCEPT(Exception, "Failed to build static lib");
 
 			return lib; 
 		}
@@ -144,7 +144,7 @@ class GCCompiler : public CCompiler{
 			KLOG2(COUT, INFO) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
-				throw Exception(__FILE__, __LINE__, "Failed to compile source");
+				KEXCEPT(Exception, "Failed to compile source");
 			
 			return obj;
 		}
@@ -157,7 +157,7 @@ class GCCompiler : public CCompiler{
 			using namespace kul;
 			
 			if(in.rfind(".") == std::string::npos)
-				throw Exception(__FILE__, __LINE__, "Unknown header type");
+				KEXCEPT(Exception, "Unknown header type");
 			
 			std::string cmd;// = compiler + " -x";
 			std::string h = in.substr(in.rfind(".") + 1);
@@ -168,7 +168,7 @@ class GCCompiler : public CCompiler{
 			if(h.compare("hpp") == 0)
 				cmd = cxx() + " -x c++-header ";
 			else
-				throw Exception(__FILE__, __LINE__, "Failed to pre-compile header - uknown file type: " + h);
+				KEXCEPT(Exception, "Failed to pre-compile header - uknown file type: " + h);
 			cmd += in + " ";
 			for(const std::string& s : args)
 				cmd += s + " ";
@@ -180,7 +180,7 @@ class GCCompiler : public CCompiler{
 			KLOG2(COUT, INFO) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
-				throw Exception(__FILE__, __LINE__, "Failed to pre-compile header");
+				KEXCEPT(Exception, "Failed to pre-compile header");
 		}
 		virtual const std::string cc() const {
 			return "gcc";
@@ -253,7 +253,7 @@ class WINCompiler : public CCompiler{
 
 			KLOG2(COUT, INFO) << kul::OS::getEnvVar("PATH");
 			if(kul::OS::execReturn(cmd) != 0)
-				throw Exception(__FILE__, __LINE__, "Failed to build executable");
+				KEXCEPT(Exception, "Failed to build executable");
 
 			return exe; 
 		}
@@ -279,7 +279,7 @@ class WINCompiler : public CCompiler{
 			KLOG2(COUT, INFO) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
-				throw Exception(__FILE__, __LINE__, "Failed to build static lib");
+				KEXCEPT(Exception, "Failed to build static lib");
 
 			return lib;
 		}
@@ -304,7 +304,7 @@ class WINCompiler : public CCompiler{
 			KLOG2(COUT, INFO) << cmd;
 			
 			if(kul::OS::execReturn(cmd) != 0)
-				throw Exception(__FILE__, __LINE__, "Failed to compile source");
+				KEXCEPT(Exception, "Failed to compile source");
 			
 			return obj;
 		}
@@ -314,7 +314,7 @@ class WINCompiler : public CCompiler{
 			const std::string& in, 
 			const std::string& out) 	const throw (kul::Exception) {
 
-			throw Exception(__FILE__, __LINE__, "Method is not implemented");
+			KEXCEPT(Exception, "Method is not implemented");
 		}
 };
 

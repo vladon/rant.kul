@@ -36,7 +36,7 @@ void kul::scm::Git::co(const std::string& d, const std::string& r, const std::st
 		p->start();
 	}catch(const kul::proc::ExitException& e){
 		OS::dirDel(d);
-		throw Exception(__FILE__, __LINE__, "SCM ERROR - Check remote dependency location / version");
+		KEXCEPT(Exception, "SCM ERROR - Check remote dependency location / version");
 	}			
 }		
 void kul::scm::Git::up(const std::string& d, const std::string& r, const std::string& v) const throw(Exception){
@@ -51,7 +51,7 @@ void kul::scm::Git::up(const std::string& d, const std::string& r, const std::st
 			std::cout << "PERFORMING: " << p->toString() << std::endl;
 			p->start();
 		}catch(const kul::proc::ExitException& e){
-			throw Exception(__FILE__, __LINE__, "SCM ERROR - Check remote dependency location / version");
+			KEXCEPT(Exception, "SCM ERROR - Check remote dependency location / version");
 		}
 	}
 }
@@ -63,7 +63,7 @@ const std::string kul::scm::Git::localVersion(const std::string& d) {
 		p->setDir(d);
 		p->start();
 	}catch(const kul::proc::ExitException& e){
-		throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
+		KEXCEPT(Exception, "SCM ERROR" + std::string(e.what()));
 	}
 	return pc.outs()[0];
 }
@@ -90,7 +90,7 @@ const std::string kul::scm::Git::origin(const std::string& d) {
 		p->setDir(d.c_str());
 		p->start();
 	}catch(const kul::proc::ExitException& e){
-		throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
+		KEXCEPT(Exception, "SCM ERROR" + std::string(e.what()));
 	}
 	return kul::String::split(kul::String::split(pc.outs()[0], "	")[1], " ")[0];
 }
@@ -103,7 +103,7 @@ const bool kul::scm::Git::hasChanges(const std::string& d) const{
 		p->setDir(d.c_str());
 		p->start();
 	}catch(const kul::proc::ExitException& e){
-		throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
+		KEXCEPT(Exception, "SCM ERROR" + std::string(e.what()));
 	}
 	return pc.outs().size() > 0;
 }
@@ -116,7 +116,7 @@ void kul::scm::Git::setOrigin(const std::string& d, const std::string& r){
 		p->setDir(d.c_str());
 		p->start();
 	}catch(const kul::proc::ExitException& e){
-		throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
+		KEXCEPT(Exception, "SCM ERROR" + std::string(e.what()));
 	}
 }
 void kul::scm::Git::status(const std::string& d){
@@ -127,7 +127,7 @@ void kul::scm::Git::status(const std::string& d){
 		p->setDir(d.c_str());
 		p->start();
 	}catch(const kul::proc::ExitException& e){
-		throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
+		KEXCEPT(Exception, "SCM ERROR" + std::string(e.what()));
 	}
 }
 void kul::scm::Git::diff(const std::string& d){
@@ -138,6 +138,6 @@ void kul::scm::Git::diff(const std::string& d){
 		p->setDir(d.c_str());
 		p->start();
 	}catch(const kul::proc::ExitException& e){
-		throw Exception(__FILE__, __LINE__, "SCM ERROR" + std::string(e.what()));
+		KEXCEPT(Exception, "SCM ERROR" + std::string(e.what()));
 	}
 }

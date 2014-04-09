@@ -49,7 +49,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 						}	
 						if(!attFound) {
 							KLOG(ERROR) << "Attribute \"" << a.name() << "\" for Element : \"" << n.name() << "\" is unknown";
-							throw Exception(__FILE__, __LINE__, "XML Exception: Attribute: \"" + std::string(a.name()) + "\" for Element : \"" + std::string(n.name()) + "\" is unknown");
+							KEXCEPT(Exception, "XML Exception: Attribute: \"" + std::string(a.name()) + "\" for Element : \"" + std::string(n.name()) + "\" is unknown");
 						}
 					}
 				}
@@ -58,7 +58,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 		}
 		if(!found){
 			KLOG(ERROR) << "Element \"" << n.name() << "\" is unknown";
-			throw Exception(__FILE__, __LINE__, "XML Exception: Element " + std::string(n.name()) + " is unknown");
+			KEXCEPT(Exception, "XML Exception: Element " + std::string(n.name()) + " is unknown");
 		}
 	}
 
@@ -67,12 +67,12 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 		if(pair.second.minimum() != 0 && i < pair.second.minimum()){
 			KLOG(ERROR) << "Invalid minimum number of Element: " << pair.first;
 			KLOG(ERROR) << "Minimum number expected: " << pair.second.minimum();
-			throw Exception(__FILE__, __LINE__, "XML Exception: Invalid minimum number of Element: " + pair.first);
+			KEXCEPT(Exception, "XML Exception: Invalid minimum number of Element: " + pair.first);
 		}
 		if(pair.second.maximum() != 0 && i > pair.second.maximum()){
 			KLOG(ERROR) << "Invalid maximum number of Element: " << pair.first;
 			KLOG(ERROR) << "Maximum number expected: " << pair.second.maximum();
-			throw Exception(__FILE__, __LINE__, "XML Exception: Invalid maximum number of Element: " + pair.first);
+			KEXCEPT(Exception, "XML Exception: Invalid maximum number of Element: " + pair.first);
 		}
 	}
 
@@ -89,7 +89,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 					   Node** parent = new Node*;
 					ns->push_back((*parent = new Node(p, validate(parent, new std::vector<const Node*>, n, pair.second) , atts, pair.first.c_str())));
 				}else if(!pair.second.isText())
-					throw Exception(__FILE__, __LINE__, "XML Exception: text not expected in node " + std::string(n.name()));
+					KEXCEPT(Exception, "XML Exception: text not expected in node " + std::string(n.name()));
 				else
 					ns->push_back(new TextNode(p, atts, n.name(), n.child_value()));
 			}
@@ -105,7 +105,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 					   Node** parent = new Node*;
 					ns->push_back((*parent = new Node(p, validate(parent, new std::vector<const Node*>, n, pair.second) , atts, pair.first.c_str())));
 				}else if(!pair.second.isText())
-					throw Exception(__FILE__, __LINE__, "XML Exception: text not expected in node " + std::string(n.name()));
+					KEXCEPT(Exception, "XML Exception: text not expected in node " + std::string(n.name()));
 				else
 					ns->push_back(new TextNode(p, atts, pair.first, n.child_value()));
 			}
@@ -127,14 +127,14 @@ void kul::xml::NodeFactory::validateAttributes(const std::vector<const Node*>& n
 							if(s.compare(attPair.second) == 0){ f = true; break; }
 						if(f) break;
 					}
-				if(!f && v.isChecked()) throw Exception(__FILE__, __LINE__, "Attribute \"" + valPair.first + "\" on node \"" + n->name() + "\" is not one of the expected values!");
+				if(!f && v.isChecked()) KEXCEPT(Exception, "Attribute \"" + valPair.first + "\" on node \"" + n->name() + "\" is not one of the expected values!");
 			}
 		}
 		for(const Node* n : nodes)
 			if(v.isMandatory()){
 				try{
 					n->att(valPair.first);
-				}catch(kul::xml::Exception& e){ throw Exception(__FILE__, __LINE__, "Attribute \"" + valPair.first + "\" on node \"" + n->name() + "\" is MANDATORY!");}
+				}catch(kul::xml::Exception& e){ KEXCEPT(Exception, "Attribute \"" + valPair.first + "\" on node \"" + n->name() + "\" is MANDATORY!");}
 			}
 
 		if(v.isUnique()){
@@ -150,7 +150,7 @@ void kul::xml::NodeFactory::validateAttributes(const std::vector<const Node*>& n
 				int i = 0;
 				for(std::string s2 : atts)
 					if(s1.compare(s2) == 0) i++;
-				if(i > 1) throw Exception(__FILE__, __LINE__, "Attribute " + valPair.first + " on node " + name + " must be unique!");
+				if(i > 1) KEXCEPT(Exception, "Attribute " + valPair.first + " on node " + name + " must be unique!");
 			}
 		}
 	}
@@ -179,11 +179,11 @@ const kul::xml::Node* kul::xml::NodeFactory::create(const char*f, const char* ro
 	if(!result){
 		//TODO GET LINE # OF ERROR IN FILE
 		if(result.status == pugi::xml_parse_status::status_end_element_mismatch)	
-			throw Exception(__FILE__, __LINE__, "PUGIXML Exception: " + std::string(result.description()) + " at " + (f + result.offset));
-		throw Exception(__FILE__, __LINE__, "PUGIXML Exception: " + std::string(result.description()) + " : " + f);
+			KEXCEPT(Exception, "PUGIXML Exception: " + std::string(result.description()) + " at " + (f + result.offset));
+		KEXCEPT(Exception, "PUGIXML Exception: " + std::string(result.description()) + " : " + f);
 	}
 	if(doc.child(root).empty())
-		throw Exception(__FILE__, __LINE__, "root element \"" + std::string(root) + "\" not found, malformed document");
+		KEXCEPT(Exception, "root element \"" + std::string(root) + "\" not found, malformed document");
 	Node** n = new Node*;
 	*n = new Node(0, validate(n, new std::vector<const kul::xml::Node*>(), doc.child(root), v), root);
 	std::vector<const Node*> rootV; rootV.push_back(*n);

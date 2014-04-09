@@ -45,7 +45,7 @@ class Reader{
 		std::ifstream f;
 		std::auto_ptr<std::string> string;
 	public:
-		Reader(const char* c) : f(c), string(0) { if(!f) throw Exception(__FILE__, __LINE__, "FileException : file \"" + std::string(c) + "\" not found");}
+		Reader(const char* c) : f(c), string(0) { if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");}
 		std::string* read(){
 			string.reset(0);
 			std::string s;
@@ -62,7 +62,7 @@ class Writer{
 		std::ofstream ofs;
 	public:
 		Writer(const char*f)  {
-			if(!f) throw Exception(__FILE__, __LINE__, "FileException : file \"" + std::string(f) + "\" not found");
+			if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(f) + "\" not found");
 			if(!kul::OS::isDir(kul::OS::dirDotDot(f))) kul::OS::mkDir(kul::OS::dirDotDot(f));
 			ofs.open(f);
 		}

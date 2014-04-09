@@ -64,7 +64,7 @@ class WINCompiler : public Compiler{
 			KLOG2(COUT, INFO) << cmd;
 			
 			if(kul::OS::execReturn(cmd) != 0)
-				throw Exception(__FILE__, __LINE__, "Failed to build executable");
+				KEXCEPT(Exception, "Failed to build executable");
 
 			return exe; 
 		}
@@ -83,7 +83,7 @@ class WINCompiler : public Compiler{
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
-			throw Exception(__FILE__, __LINE__, "No static libraries in C Sharp");
+			KEXCEPT(Exception, "No static libraries in C Sharp");
 		}
 		const std::string compileSource(
 			const std::string& compiler, 
@@ -100,7 +100,7 @@ class WINCompiler : public Compiler{
 			const std::string& in, 
 			const std::string& out) 	const throw (kul::Exception) {
 
-			throw Exception(__FILE__, __LINE__, "Method is not implemented");
+			KEXCEPT(Exception, "Method is not implemented");
 		}
 };
 
