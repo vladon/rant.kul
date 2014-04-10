@@ -1,6 +1,6 @@
 
 CXX=g++
-CXXFLAGS=-std=c++11 -O3 -g0 -Wall -c -fmessage-length=0 -D__GXX_EXPERIMENTAL_CXX0X__
+CXXFLAGS=-std=c++11 -O3 -g0 -Wall -c -fmessage-length=0 
 #CLANGFLAGS=-stdlib=libc++
 CLANGFLAGS=
 INCS = 	-I$(CURDIR)/inc \
@@ -20,58 +20,42 @@ kul:
 		fi; \
 		$(CXX) $(CXXFLAGS) $(INCS) -o "$(CURDIR)/bin/$$f.o" "$(CURDIR)/$$f"; \
 	done;
-	$(MAKE) files
-	
-libs:
-	@if [ ! -d "$(CURDIR)/ext/sparsehash/make" ]; then \
-		svn co http://sparsehash.googlecode.com/svn/trunk/ ext/sparsehash/trunk; \
-		mkdir ./ext/sparsehash/make; \
-		cd ./ext/sparsehash/make; bash ../trunk/configure --prefix=$(CURDIR)/ext/sparsehash/make; \
-		$(MAKE) -C $(CURDIR)/ext/sparsehash/make; \
-		$(MAKE) -C $(CURDIR)/ext/sparsehash/make install; \
-	fi;
+	$(MAKE) kullib
 
-	@if [ ! -d "$(CURDIR)/ext/pugixml/trunk" ]; then \
-		svn co http://pugixml.googlecode.com/svn/tags/latest/ ext/pugixml/trunk; \
-		cd ./ext/pugixml/trunk/scripts; cmake CMakeLists.txt; \
-		$(MAKE) -C $(CURDIR)/ext/pugixml/trunk/scripts; \
-	fi;
-	@if [ ! -d "$(CURDIR)/ext/pugixml/trunk/scripts" ]; then \
-		cd ./ext/pugixml/trunk; svn up; \
-		cd ./ext/pugixml/trunk/scripts; cmake CMakeLists.txt; \
-		$(MAKE) -C $(CURDIR)/ext/pugixml/trunk/scripts; \
-	fi;
-
-clang:
-	@if [ ! -d "$(CURDIR)/ext/sparsehash/make" ]; then \
-		svn co http://sparsehash.googlecode.com/svn/trunk/ ext/sparsehash/trunk; \
-		mkdir ./ext/sparsehash/make; \
-		cd ./ext/sparsehash/make; bash ../trunk/configure --prefix=$(CURDIR)/ext/sparsehash/make; \
-		$(MAKE) -C $(CURDIR)/ext/sparsehash/make; \
-		$(MAKE) -C $(CURDIR)/ext/sparsehash/make install; \
-	fi;
-
-	CXX=$(CLANG)
-	@@echo "Making pugixml"
-	@if [ ! -d "$(CURDIR)/ext/pugixml/llvm" ]; then \
-		svn co http://pugixml.googlecode.com/svn/tags/latest/ ext/pugixml/llvm; \
-		cd ./ext/pugixml/llvm/scripts; cmake CMakeLists.txt; \
-		$(MAKE) -C $(CURDIR)/ext/pugixml/llvm/scripts; \
-	fi;
-	@if [ ! -d "$(CURDIR)/ext/pugixml/llvm/scripts" ]; then \
-		cd ./ext/pugixml/llvm; svn up; \
-		cd ./ext/pugixml/llvm/scripts; cmake CMakeLists.txt; \
-		$(MAKE) -C $(CURDIR)/ext/pugixml/llvm/scripts; \
-	fi;
-
-files:
+kullib:
 	$(eval FILES := $(foreach dir,$(shell find $(CURDIR)/bin -type f -name *.o),$(dir)))	
 	cd $(CURDIR); ar -r "$(LIB)" $(FILES)
+
+libs:
+	$(MAKE) hash
+	$(MAKE) pugi
+
+clang:
+	$(MAKE) hash	 
+	$(MAKE) pugi CXX=$(CLANG)
+
+hash:
+	@if [ ! -d "$(CURDIR)/ext/sparsehash/make" ]; then \
+		svn co http://sparsehash.googlecode.com/svn/trunk/ ext/sparsehash/trunk; \
+		mkdir ./ext/sparsehash/make; \
+		cd ./ext/sparsehash/make; bash ../trunk/configure --prefix=$(CURDIR)/ext/sparsehash/make; \
+		$(MAKE) -C $(CURDIR)/ext/sparsehash/make; \
+		$(MAKE) -C $(CURDIR)/ext/sparsehash/make install; \
+	fi;
+
+pugi:
+	@if [ ! -d "$(CURDIR)/ext/pugixml/trunk" ]; then \
+		svn co http://pugixml.googlecode.com/svn/tags/latest/ ext/pugixml/trunk; \
+	fi;
+	@if [ ! -d "$(CURDIR)/ext/pugixml/trunk/bin" ]; then \
+		mkdir ext/pugixml/trunk/bin; \
+	fi;
+	$(CXX) $(CXXFLAGS) -I$(CURDIR)/ext/pugixml/trunk/src -o "$(CURDIR)/ext/pugixml/trunk/bin/pugixml.o" "$(CURDIR)/ext/pugixml/trunk/src/pugixml.cpp";
+	ar -r $(CURDIR)/ext/pugixml/trunk/bin/libpugixml.a "$(CURDIR)/ext/pugixml/trunk/bin/pugixml.o"
 
 clean:
 	rm -rf bin
 
 clean-all: clean
-	rm -rf ./ext/sparsehash/make
-	rm -rf ./ext/pugixml/trunk/scripts
-	rm -rf ./ext/pugixml/llvm/scripts
+	rm -rf $(CURDIR)/ext/sparsehash/make
+	rm -rf $(CURDIR)/ext/pugixml/bin
