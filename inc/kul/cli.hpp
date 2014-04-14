@@ -135,7 +135,7 @@ class EnvVar{
 		}
 };
 
-enum ArgType{ FLAG = 0, STRING, INT};
+enum ArgType{ FLAG = 0, STRING, MAYBE};
 
 class Arg : public Cmd{
 	private:
@@ -146,7 +146,6 @@ class Arg : public Cmd{
 		Arg(const char* d, const char* dd, const char* h = "") : Cmd(dd, h), d(d), t(ArgType::FLAG){}
 		const char* dash() 			const { return d;}
 		const char* dashdash() 		const { return command();}
-		const bool valueExpected() 	const { return t != ArgType::FLAG;}
 		const ArgType& type() 		const { return t; }
 };
 

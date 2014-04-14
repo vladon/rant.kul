@@ -80,12 +80,12 @@ class NodeWriterService{
  };
 
 void kul::xml::NodeFactory::writeToFile(const char*n, const char*f, const NodeValidator& v){
-	kul::file::Writer w(f);
+	kul::io::Writer w(f);
 	w.write("<?xml version=\"1.0\"?>", true);
 	writeToFile(n, v, w, 0);
 }
 
-void kul::xml::NodeFactory::writeToFile(const char*n, const NodeValidator& v, kul::file::Writer& writer, int tabs){
+void kul::xml::NodeFactory::writeToFile(const char*n, const NodeValidator& v, kul::io::Writer& writer, int tabs){
 	std::string s, t;
 	NodeWriterService::addTabs(t, tabs);
 	s += t + "<" + std::string(n) + ">";
