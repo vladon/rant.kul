@@ -82,7 +82,7 @@ class GCCompiler : public CCompiler{
 			for(const std::string& lib : libs)
 				cmd += " -l" + lib + " ";
 			cmd += linkerEnd;
-			KLOG2(COUT, INFO) << cmd;
+			KLOG2(COUT, NONE) << cmd;
 			
 			if(kul::OS::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build executable");
@@ -99,7 +99,7 @@ class GCCompiler : public CCompiler{
 			std::string cmd = linker + " -shared -o " + lib;
 			for(const std::string& o : objects)
 				cmd += " " + o;
-			KLOG2(COUT, INFO) << cmd;
+			KLOG2(COUT, NONE) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build shared lib");
@@ -116,7 +116,7 @@ class GCCompiler : public CCompiler{
 			std::string cmd = archiver + " " + lib + " ";
 			for(const std::string& o : objects)
 				cmd += " " + o;
-			KLOG2(COUT, INFO) << cmd;
+			KLOG2(COUT, NONE) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build static lib");
@@ -141,7 +141,7 @@ class GCCompiler : public CCompiler{
 
 			if(!OS::isDir(OS::dirDotDot(out))) OS::mkDir(OS::dirDotDot(out));
 			cmd += " -o " + obj + " -c " + in;
-			KLOG2(COUT, INFO) << cmd;
+			KLOG2(COUT, NONE) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to compile source");
@@ -177,7 +177,7 @@ class GCCompiler : public CCompiler{
 
 			if(!OS::isDir(OS::dirDotDot(out))) OS::mkDir(OS::dirDotDot(out));
 			cmd += " -o " + out;
-			KLOG2(COUT, INFO) << cmd;
+			KLOG2(COUT, NONE) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to pre-compile header");
@@ -249,9 +249,7 @@ class WINCompiler : public CCompiler{
 					cmd += " \"" + getStaticLib(lib) + "\" ";
 
 			cmd += linkerEnd;
-			KLOG2(COUT, INFO) << cmd;
-
-			KLOG2(COUT, INFO) << kul::OS::getEnvVar("PATH");
+			KLOG2(COUT, NONE) << cmd;
 			if(kul::OS::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build executable");
 
@@ -276,7 +274,7 @@ class WINCompiler : public CCompiler{
 			std::string cmd = archiver + " /OUT:\"" + lib + "\" /NOLOGO /LTCG ";
 			for(const std::string& o : objects)
 				cmd += " \"" + o + "\" ";
-			KLOG2(COUT, INFO) << cmd;
+			KLOG2(COUT, NONE) << cmd;
 
 			if(kul::OS::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build static lib");
@@ -301,7 +299,7 @@ class WINCompiler : public CCompiler{
 
 			if(!OS::isDir(OS::dirDotDot(OS::localPath(out)))) OS::mkDir(OS::dirDotDot(OS::localPath(out)));
 			cmd += " -c \"/Fo" + obj + "\" \"" + in + "\"";			
-			KLOG2(COUT, INFO) << cmd;
+			KLOG2(COUT, NONE) << cmd;
 			
 			if(kul::OS::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to compile source");
