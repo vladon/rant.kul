@@ -76,6 +76,9 @@ class OS{
 		static std::string userAppDir(const std::string& app);
 
 		static std::string newLine();
+
+		static const unsigned int cores();
+		static const unsigned int threads();
 };
 
 
