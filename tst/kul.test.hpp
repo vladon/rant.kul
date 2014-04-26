@@ -73,14 +73,14 @@ class test{ public: test(){
 	for(int i = 0; i < a.size(); i++) KLOG(INFO) << a[i];
 
 	KLOG(INFO);
-	KLOG(INFO) << OS::dirSep();
-	KLOG(INFO) << OS::pwd();
-	KLOG(INFO) << OS::userDir();
-	KLOG(INFO) << OS::userAppDir("maiken");
-	for(std::string s : OS::dirs()){
+	KLOG(INFO) << os::dirSep();
+	KLOG(INFO) << os::pwd();
+	KLOG(INFO) << os::userDir();
+	KLOG(INFO) << os::userAppDir("maiken");
+	for(std::string s : os::dirs()){
 		KLOG(INFO) << s;
 	}
-	for(std::string s : OS::files(OS::pwd(), true)){
+	for(std::string s : os::files(os::pwd(), true)){
 		KLOG(INFO) << s;
 	}
 
@@ -141,8 +141,8 @@ class test{ public: test(){
 	tp.runAndJoinAll();
 	ttpo.print();
 
-	kul::OS::cores();
-	kul::OS::threads();
+	kul::os::cores();
+	kul::os::threads();
 }};
 
 

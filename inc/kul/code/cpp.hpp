@@ -251,7 +251,7 @@ class WINCompiler : public CCompiler{
 			cmd += linkerEnd;
 
 			KLOG2(COUT, NONE) << cmd;
-			if(kul::OS::execReturn(cmd) != 0)
+			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build executable");
 			return exe; 
 		}

@@ -73,5 +73,8 @@ std::string userAppDir(const std::string& app);
 
 std::string newLine();
 
+const unsigned int cores();
+const unsigned int threads();
+
 };};
 #endif /* _KUL_OS_HPP_ */

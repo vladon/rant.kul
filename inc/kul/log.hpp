@@ -79,7 +79,7 @@ class LogNodeUser  : public kul::xml::NodeUser<LogNodeUser>{
 };
 
 class LogMan{
-	//KLOG(INFO) << kul::OS::getEnvVar("KLOG");
+	//KLOG(INFO) << kul::os::getEnvVar("KLOG");
 	private:
 		static LogMan* instance;
 		kul::smart::Array<log::ALogger> loggers;
