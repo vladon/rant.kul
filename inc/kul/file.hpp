@@ -15,7 +15,7 @@ version 2.1 of the License, or (at your option) any later version.
 
 This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPosE.  See the GNU
 Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
@@ -63,7 +63,7 @@ class Writer{
 	public:
 		Writer(const char*f)  {
 			if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(f) + "\" not found");
-			if(!kul::OS::isDir(kul::OS::dirDotDot(f))) kul::OS::mkDir(kul::OS::dirDotDot(f));
+			if(!kul::os::isDir(kul::os::dirDotDot(f))) kul::os::mkDir(kul::os::dirDotDot(f));
 			ofs.open(f);
 		}
 		~Writer() { ofs.close();}

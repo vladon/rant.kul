@@ -15,7 +15,7 @@ version 2.1 of the License, or (at your option) any later version.
 
 This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPosE.  See the GNU
 Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
@@ -29,7 +29,7 @@ void kul::scm::Svn::co(const std::string& l, const std::string& r, const std::st
 };
 void kul::scm::Svn::up(const std::string& l, const std::string& r, const std::string&) const throw(Exception){
 	KEXCEPT(Exception, "SCM ERROR - SVN NOT YET IMPLEMENTED");
-	if(!kul::OS::isDir(l)) co(l, r);
+	if(!kul::os::isDir(l)) co(l, r);
 	else{}
 };
 const std::string kul::scm::Svn::localVersion(const std::string& d) {

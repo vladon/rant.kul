@@ -15,7 +15,7 @@ version 2.1 of the License, or (at your option) any later version.
 
 This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPosE.  See the GNU
 Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
@@ -69,14 +69,14 @@ class Compilers{
 					if(Compilers::compilers.count(s) > 0)
 						return (*Compilers::compilers.find(s)).second;
 
-					if(kul::OS::localPath(s).find(kul::OS::dirSep()) != std::string::npos)
-						if(Compilers::compilers.count(s.substr(s.rfind(kul::OS::dirSep()) + 1)) > 0)
-							return (*Compilers::compilers.find(s.substr(s.rfind(kul::OS::dirSep()) + 1))).second;
+					if(kul::os::localPath(s).find(kul::os::dirSep()) != std::string::npos)
+						if(Compilers::compilers.count(s.substr(s.rfind(kul::os::dirSep()) + 1)) > 0)
+							return (*Compilers::compilers.find(s.substr(s.rfind(kul::os::dirSep()) + 1))).second;
 				}
 			
-			if(kul::OS::localPath(compiler).find(kul::OS::dirSep()) != std::string::npos)
-				if(Compilers::compilers.count(compiler.substr(compiler.rfind(kul::OS::dirSep()) + 1)) > 0)
-					return (*Compilers::compilers.find(compiler.substr(compiler.rfind(kul::OS::dirSep()) + 1))).second;
+			if(kul::os::localPath(compiler).find(kul::os::dirSep()) != std::string::npos)
+				if(Compilers::compilers.count(compiler.substr(compiler.rfind(kul::os::dirSep()) + 1)) > 0)
+					return (*Compilers::compilers.find(compiler.substr(compiler.rfind(kul::os::dirSep()) + 1))).second;
 			
 			throw CompilerNotFoundException(__FILE__, __LINE__, "Compiler for " + compiler + " is not implemented");
 		}

@@ -122,14 +122,14 @@ class EnvVar{
 		const EnvVarMode 	mode() 		const { return m; }
 		const std::string 	toString() 	const {
 			std::string var(value());
-			kul::String::replaceAll(var, kul::OS::newLine(), "");
+			kul::String::replaceAll(var, kul::os::newLine(), "");
 			kul::String::trim(var);
-			std::string ev(OS::getEnvVar(name()));
+			std::string ev(os::getEnvVar(name()));
 			if(ev.compare("") != 0){
 				if 		(mode() == EnvVarMode::PREP)
-					var = var + std::string(kul::OS::pathSep()) + ev;
+					var = var + std::string(kul::os::pathSep()) + ev;
 				else if (mode() == EnvVarMode::APPE)
-					var = ev + std::string(kul::OS::pathSep()) + var;
+					var = ev + std::string(kul::os::pathSep()) + var;
 			}
 			return var;
 		}

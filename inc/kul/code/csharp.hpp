@@ -15,7 +15,7 @@ version 2.1 of the License, or (at your option) any later version.
 
 This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPosE.  See the GNU
 Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
@@ -63,7 +63,7 @@ class WINCompiler : public Compiler{
 			cmd += linkerEnd;
 			KLOG2(COUT, INFO) << cmd;
 			
-			if(kul::OS::execReturn(cmd) != 0)
+			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build executable");
 
 			return exe; 
@@ -74,7 +74,7 @@ class WINCompiler : public Compiler{
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
-			const std::string lib(kul::OS::dirJoin(outDir, outFile) + ".dll"); 
+			const std::string lib(kul::os::dirJoin(outDir, outFile) + ".dll"); 
 			return lib;
 		}
 		const std::string buildStaticLibrary(

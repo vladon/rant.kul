@@ -96,7 +96,7 @@ class Process{
 		virtual std::string	toString(){
 			std::string s(argv[0]);
 			if(d.size())
-				s = kul::OS::dirJoin(d, argv[0]);
+				s = kul::os::dirJoin(d, argv[0]);
 			for(unsigned int i = 1; i < argv.size(); i++) s += " " + argv[i];
 			return s;
 		}

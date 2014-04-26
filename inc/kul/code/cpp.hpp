@@ -15,7 +15,7 @@ version 2.1 of the License, or (at your option) any later version.
 
 This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPosE.  See the GNU
 Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
@@ -84,7 +84,7 @@ class GCCompiler : public CCompiler{
 			cmd += linkerEnd;
 			KLOG2(COUT, INFO) << cmd;
 			
-			if(kul::OS::execReturn(cmd) != 0)
+			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build executable");
 
 			return exe; 
@@ -95,13 +95,13 @@ class GCCompiler : public CCompiler{
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
-			const std::string lib(kul::OS::dirJoin(outDir, "lib" + outFile) + ".so");			
+			const std::string lib(kul::os::dirJoin(outDir, "lib" + outFile) + ".so");			
 			std::string cmd = linker + " -shared -o " + lib;
 			for(const std::string& o : objects)
 				cmd += " " + o;
 			KLOG2(COUT, INFO) << cmd;
 
-			if(kul::OS::execReturn(cmd) != 0)
+			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build shared lib");
 
 			return lib; 
@@ -112,13 +112,13 @@ class GCCompiler : public CCompiler{
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
-			const std::string lib(kul::OS::dirJoin(outDir, "lib" + outFile) + ".a"); 
+			const std::string lib(kul::os::dirJoin(outDir, "lib" + outFile) + ".a"); 
 			std::string cmd = archiver + " " + lib + " ";
 			for(const std::string& o : objects)
 				cmd += " " + o;
 			KLOG2(COUT, INFO) << cmd;
 
-			if(kul::OS::execReturn(cmd) != 0)
+			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build static lib");
 
 			return lib; 
@@ -139,11 +139,11 @@ class GCCompiler : public CCompiler{
 			for(const std::string& s : args)
 				cmd += s + " ";
 
-			if(!OS::isDir(OS::dirDotDot(out))) OS::mkDir(OS::dirDotDot(out));
+			if(!os::isDir(os::dirDotDot(out))) os::mkDir(os::dirDotDot(out));
 			cmd += " -o " + obj + " -c " + in;
 			KLOG2(COUT, INFO) << cmd;
 
-			if(kul::OS::execReturn(cmd) != 0)
+			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to compile source");
 			
 			return obj;
@@ -175,11 +175,11 @@ class GCCompiler : public CCompiler{
 			for(const std::string& s : incs)
 				cmd += "-I" + s + " ";
 
-			if(!OS::isDir(OS::dirDotDot(out))) OS::mkDir(OS::dirDotDot(out));
+			if(!os::isDir(os::dirDotDot(out))) os::mkDir(os::dirDotDot(out));
 			cmd += " -o " + out;
 			KLOG2(COUT, INFO) << cmd;
 
-			if(kul::OS::execReturn(cmd) != 0)
+			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to pre-compile header");
 		}
 		virtual const std::string cc() const {
@@ -251,8 +251,8 @@ class WINCompiler : public CCompiler{
 			cmd += linkerEnd;
 			KLOG2(COUT, INFO) << cmd;
 
-			KLOG2(COUT, INFO) << kul::OS::getEnvVar("PATH");
-			if(kul::OS::execReturn(cmd) != 0)
+			KLOG2(COUT, INFO) << kul::os::getEnvVar("PATH");
+			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build executable");
 
 			return exe; 
@@ -263,7 +263,7 @@ class WINCompiler : public CCompiler{
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
-			const std::string lib(kul::OS::dirJoin(outDir, outFile) + ".dll"); 
+			const std::string lib(kul::os::dirJoin(outDir, outFile) + ".dll"); 
 			return lib;
 		}
 		const std::string buildStaticLibrary(
@@ -272,13 +272,13 @@ class WINCompiler : public CCompiler{
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
-			const std::string lib(kul::OS::dirJoin(outDir, outFile) + ".lib"); 
+			const std::string lib(kul::os::dirJoin(outDir, outFile) + ".lib"); 
 			std::string cmd = archiver + " /OUT:\"" + lib + "\" /NOLOGO /LTCG ";
 			for(const std::string& o : objects)
 				cmd += " \"" + o + "\" ";
 			KLOG2(COUT, INFO) << cmd;
 
-			if(kul::OS::execReturn(cmd) != 0)
+			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build static lib");
 
 			return lib;
@@ -299,11 +299,11 @@ class WINCompiler : public CCompiler{
 			for(const std::string& s : args)
 				cmd += s + " ";
 
-			if(!OS::isDir(OS::dirDotDot(OS::localPath(out)))) OS::mkDir(OS::dirDotDot(OS::localPath(out)));
+			if(!os::isDir(os::dirDotDot(os::localPath(out)))) os::mkDir(os::dirDotDot(os::localPath(out)));
 			cmd += " -c \"/Fo" + obj + "\" \"" + in + "\"";			
 			KLOG2(COUT, INFO) << cmd;
 			
-			if(kul::OS::execReturn(cmd) != 0)
+			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to compile source");
 			
 			return obj;

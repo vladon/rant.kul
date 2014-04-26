@@ -26,7 +26,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 void kul::scm::Git::co(const std::string& d, const std::string& r, const std::string& v) const throw(Exception){
 
 	std::shared_ptr<kul::Process> p(kul::Process::create("git"));
-	if(!OS::isDir(d)) OS::mkDir(d);
+	if(!os::isDir(d)) os::mkDir(d);
 	p->setDir(d.c_str());
 	p->addArg("clone").addArg(r.c_str());
 	if(v.compare("master") != 0 && v.compare("") != 0) p->addArg("-b").addArg(v.c_str());
@@ -35,13 +35,13 @@ void kul::scm::Git::co(const std::string& d, const std::string& r, const std::st
 		std::cout << "PERFORMING: " << p->toString() << std::endl;
 		p->start();
 	}catch(const kul::proc::ExitException& e){
-		OS::dirDel(d);
+		os::dirDel(d);
 		KEXCEPT(Exception, "SCM ERROR - Check remote dependency location / version");
 	}			
 }		
 void kul::scm::Git::up(const std::string& d, const std::string& r, const std::string& v) const throw(Exception){
 	
-	if(!kul::OS::isDir(d)) co(d, r);
+	if(!kul::os::isDir(d)) co(d, r);
 	else{
 		std::shared_ptr<kul::Process> p(kul::Process::create("git"));
 		p->setDir(d.c_str());
