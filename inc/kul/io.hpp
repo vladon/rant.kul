@@ -1,6 +1,6 @@
 /**
 
-./inc/kul/file.hpp
+./inc/kul/io.hpp
 
 Created on: 21 Jan 2013
 
@@ -21,8 +21,9 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _KUL_FILE_HPP_
-#define _KUL_FILE_HPP_
+
+#ifndef _KUL_IO_HPP_
+#define _KUL_IO_HPP_
 
 #include <time.h>
 #include <fstream>
@@ -33,7 +34,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/os.hpp"
 #include "kul/except.hpp"
 
-namespace kul{  namespace file {
+namespace kul{  namespace io {
 
 class Exception : public kul::Exception{
 	public:
@@ -73,5 +74,22 @@ class Writer{
 		}
 };
 
+class LineTrimmer{
+	public:
+		LineTrimmer(const char*f){
+			std::fstream fs;
+			fs.open(f);
+			std::string line;
+			while(std::getline(fs, line)) {
+				std::cout << line << std::endl;
+				fs.seekp(-std::ios::off_type(line.size()) - 1, std::ios_base::cur);
+				fs << 'x';
+				fs.close();
+			}
+		}
+};
+
+
 };};
-#endif /* _KUL_FILE_HPP_ */
+#endif /* _KUL_IO_HPP_ */
+

@@ -31,8 +31,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <memory>
 #include <stdexcept>
 
+#include "kul/io.hpp"
 #include "kul/hash.hpp"
-#include "kul/file.hpp"
 #include "kul/smart.hpp"
 #include "kul/except.hpp"
 
@@ -61,7 +61,7 @@ class NodeFactory{
 		static std::vector<const Node*>* validate(Node** p, std::vector<const Node*>* ns, const pugi::xml_node& n, const NodeValidator& v);
 		static void validateAttributes(const std::vector<const Node*>& n, const NodeAttributeValidator& v);
 		static void validateAttributes(const Node& n, const NodeValidator& v);
-		static void writeToFile(const char*n, const NodeValidator& v, kul::file::Writer& w, int t);
+		static void writeToFile(const char*n, const NodeValidator& v, kul::io::Writer& w, int t);
 	public:
 		static const Node* create(const char*f, const char*r, const NodeValidator& v);
 		static void writeToFile(const char*n, const char*f,  const NodeValidator& v);		

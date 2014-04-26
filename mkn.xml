@@ -91,7 +91,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				<include>./../win/master/ext/msinttypes-r26</include>
 				<!--include>boost\makewin\include\boost-1_53</include-->
 				<!--include>boost\makewin\include\boost-1_53\boost\tr1</include-->
-				<!--include>C:\apps\MVS2012\VC\include</include> <!-- MAKE LAST INCLUDE! -->
+				<!--include>C:\apps\MVS2012\VC\include</include> <!-- MAKE LAST INCLUDE! -->				
 			</includes>
 			<build type="lib" mode="static" lang="cpp">
 				<files>

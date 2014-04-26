@@ -26,7 +26,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/cli.hpp"
 #include "kul/string.hpp"
 
-
 void kul::cli::Args::process(int argc, char* argv[]){
 	std::string cliArg = "";
 	for(int i = 1; i < argc; i++)
@@ -51,7 +50,7 @@ void kul::cli::Args::process(int argc, char* argv[]){
 		}
 
 	Arg* arg = 0;
-	bool valExpected = false;
+	int valExpected = 0;
 	std::string valExpectedFor, c, t;
 
 	for(int i = 1; i < argc; i++){
@@ -63,31 +62,31 @@ void kul::cli::Args::process(int argc, char* argv[]){
 		if(c.compare("---") == 0)				KEXCEPT(Exception, "Illegal argument ---");
 		if(c.compare("--") == 0)				KEXCEPT(Exception, "Illegal argument --");
 		if(c.compare("-") == 0) 				KEXCEPT(Exception, "Illegal argument -");
-		if((c.find("--") == 0 || c.find("-") == 0) && valExpected)
+		if((c.find("--") == 0 || c.find("-") == 0) && valExpected == 1)
 			KEXCEPT(Exception, "Value expected for argument: \""+ valExpectedFor + "\"");
 
-		if(valExpected){
-			valExpected = !valExpected;
+		if(valExpected == 1 || valExpected == 2 && !c.find("-") == 0){
+			valExpected = 0;
 			vals[arg->dashdash()] = c;
 			arg = 0;
 			continue;
-		}
+		}else if(valExpected == 2) valExpected = 0;
 
 		if(c.find("--") == 0){
 			c = c.substr(c.find("--") + 2);
 			valExpectedFor = c;
 			if(c.find("=") == std::string::npos){
 				arg = const_cast<Arg*>(&doubleDashes(c.c_str()));
-				valExpected = arg->valueExpected();
+				valExpected = arg->type();
 				if(!valExpected) vals[arg->dashdash()] = "";
 				continue;
 			}
 			valExpectedFor = c.substr(0, c.find("="));
 			arg = const_cast<Arg*>(&doubleDashes(valExpectedFor.c_str()));
-			valExpected = arg->valueExpected();
-			if(!valExpected) KEXCEPT(Exception, "Found = when no value is expected for arg " + valExpectedFor);
-
-			c = c.substr(c.find("=") + 1);			
+			valExpected = arg->type();
+			if(valExpected == 0) 
+				KEXCEPT(Exception, "Found = when no value is expected for arg " + valExpectedFor);
+			c = c.substr(c.find("=") + 1);
 			vals[arg->dashdash()] = c;
 		}
 		else if(c.find("-") == 0){
@@ -103,26 +102,24 @@ void kul::cli::Args::process(int argc, char* argv[]){
 				for(unsigned int i = 0; i < c.length(); i++){
 					char ch = c[i];
 					arg = const_cast<Arg*>(&dashes(&ch));
-					if(arg->valueExpected())
+					if(arg->type())
 						KEXCEPT(Exception, "Cannot mix flag and non-flag arguments");
 					vals[arg->dashdash()] = "";
 				}
 			}else{
 				arg = const_cast<Arg*>(&dashes(c.c_str()));
-
-				valExpected = arg->valueExpected();
-				if(!valExpected)
-					vals[arg->dashdash()] = "";
+				valExpected = arg->type();
+				vals[arg->dashdash()] = "";
 			}
 			continue;
 		}
-		if(valExpected){
-			valExpected = !valExpected;
+		if(valExpected == 1){
+			valExpected = 0;
 			continue;
 		}
 		commands(c.c_str());
 		vals[c] = "";
 	}
-	if(valExpected)
+	if(valExpected == 1)
 		KEXCEPT(Exception, "Value expected for argument: \""+ valExpectedFor + "\"");
 }

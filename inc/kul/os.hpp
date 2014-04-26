@@ -54,8 +54,6 @@ bool mkDir(const std::string& s);
 
 bool mv(const std::string& a, const std::string& b);
 
-
-
 const bool 			dirSet(const std::string& nwd); // set the cwd / USE WITH CAUTION!
 const bool 			dirDel(const std::string& dir); // deletes if exists
 const std::string 	dirExp(const std::string& nwd, const std::string& dir) throw (Exception); // Expand relative directories

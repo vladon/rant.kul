@@ -95,12 +95,9 @@ class test{ public: test(){
 	for(const std::string& arg : kul::cli::CmdLine::asArgs("/path/to \"words in quotes\" words\\ not\\ in\\ quotes end"))
 		KLOG(INFO) << "ARG: " << arg;
 
-
-
 	KLOG(INFO) << "KLOG(INFO) << kul::time::Now::millis(); " << kul::time::Now::millis();
 	KLOG(INFO) << "KLOG(INFO) << kul::time::Now::micros(); " << kul::time::Now::micros();
 	KLOG(INFO) << "KLOG(INFO) << kul::time::Now::nanos();  " << kul::time::Now::nanos();
-
 
 	TestThreadObject tto1;
 	kul::Ref<TestThreadObject> ref(tto1);
@@ -143,6 +140,9 @@ class test{ public: test(){
 	tp.setMax(8);
 	tp.runAndJoinAll();
 	ttpo.print();
+
+	kul::OS::cores();
+	kul::OS::threads();
 }};
 
 

@@ -61,7 +61,7 @@ class GCCompiler : public CCompiler{
 			const std::string& linkerEnd,
 			const std::vector<std::string>& objects, 	
 			const std::vector<std::string>& libs,
-			const hash::set::String& libPaths,
+			const std::vector<std::string>& libPaths,
 			const std::string& out, 
 			const Mode& mode) const throw (kul::Exception) {
 
@@ -82,7 +82,7 @@ class GCCompiler : public CCompiler{
 			for(const std::string& lib : libs)
 				cmd += " -l" + lib + " ";
 			cmd += linkerEnd;
-			KLOG2(COUT, INFO) << cmd;
+			KLOG2(COUT, NONE) << cmd;
 			
 			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build executable");
@@ -99,7 +99,7 @@ class GCCompiler : public CCompiler{
 			std::string cmd = linker + " -shared -o " + lib;
 			for(const std::string& o : objects)
 				cmd += " " + o;
-			KLOG2(COUT, INFO) << cmd;
+			KLOG2(COUT, NONE) << cmd;
 
 			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build shared lib");
@@ -116,7 +116,7 @@ class GCCompiler : public CCompiler{
 			std::string cmd = archiver + " " + lib + " ";
 			for(const std::string& o : objects)
 				cmd += " " + o;
-			KLOG2(COUT, INFO) << cmd;
+			KLOG2(COUT, NONE) << cmd;
 
 			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build static lib");
@@ -126,7 +126,7 @@ class GCCompiler : public CCompiler{
 		const std::string compileSource(
 			const std::string& compiler, 
 			const std::vector<std::string>& args, 
-			const hash::set::String& incs, 
+			const std::vector<std::string>& incs,
 			const std::string& in, 
 			const std::string& out) const throw (kul::Exception){ 
 
@@ -141,7 +141,7 @@ class GCCompiler : public CCompiler{
 
 			if(!os::isDir(os::dirDotDot(out))) os::mkDir(os::dirDotDot(out));
 			cmd += " -o " + obj + " -c " + in;
-			KLOG2(COUT, INFO) << cmd;
+			KLOG2(COUT, NONE) << cmd;
 
 			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to compile source");
@@ -149,7 +149,7 @@ class GCCompiler : public CCompiler{
 			return obj;
 		}
 		virtual void preCompileHeader(			
-			const hash::set::String& incs, 
+			const std::vector<std::string>& incs,
 			const hash::set::String& args, 
 			const std::string& in, 
 			const std::string& out) 	const throw (kul::Exception) {
@@ -177,7 +177,7 @@ class GCCompiler : public CCompiler{
 
 			if(!os::isDir(os::dirDotDot(out))) os::mkDir(os::dirDotDot(out));
 			cmd += " -o " + out;
-			KLOG2(COUT, INFO) << cmd;
+			KLOG2(COUT, NONE) << cmd;
 
 			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to pre-compile header");
@@ -222,7 +222,7 @@ class WINCompiler : public CCompiler{
 			const std::string& linkerEnd,
 			const std::vector<std::string>& objects,
 			const std::vector<std::string>& libs,
-			const hash::set::String& libPaths,
+			const std::vector<std::string>& libPaths,
 			const std::string& out, 
 			const Mode& mode) const throw (kul::Exception){ 
 
@@ -249,12 +249,10 @@ class WINCompiler : public CCompiler{
 					cmd += " \"" + getStaticLib(lib) + "\" ";
 
 			cmd += linkerEnd;
-			KLOG2(COUT, INFO) << cmd;
 
-			KLOG2(COUT, INFO) << kul::os::getEnvVar("PATH");
-			if(kul::os::execReturn(cmd) != 0)
+			KLOG2(COUT, NONE) << cmd;
+			if(kul::OS::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build executable");
-
 			return exe; 
 		}
 		const std::string buildSharedLibrary(
@@ -276,7 +274,7 @@ class WINCompiler : public CCompiler{
 			std::string cmd = archiver + " /OUT:\"" + lib + "\" /NOLOGO /LTCG ";
 			for(const std::string& o : objects)
 				cmd += " \"" + o + "\" ";
-			KLOG2(COUT, INFO) << cmd;
+			KLOG2(COUT, NONE) << cmd;
 
 			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to build static lib");
@@ -286,7 +284,7 @@ class WINCompiler : public CCompiler{
 		const std::string compileSource(
 			const std::string& compiler, 
 			const std::vector<std::string>& args, 
-			const hash::set::String& incs, 
+			const std::vector<std::string>& incs,
 			const std::string& in, 
 			const std::string& out) const throw (kul::Exception){ 
 
@@ -301,7 +299,7 @@ class WINCompiler : public CCompiler{
 
 			if(!os::isDir(os::dirDotDot(os::localPath(out)))) os::mkDir(os::dirDotDot(os::localPath(out)));
 			cmd += " -c \"/Fo" + obj + "\" \"" + in + "\"";			
-			KLOG2(COUT, INFO) << cmd;
+			KLOG2(COUT, NONE) << cmd;
 			
 			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to compile source");
@@ -309,7 +307,7 @@ class WINCompiler : public CCompiler{
 			return obj;
 		}
 		virtual void preCompileHeader(			
-			const hash::set::String& incs, 
+			const std::vector<std::string>& incs,
 			const hash::set::String& args, 
 			const std::string& in, 
 			const std::string& out) 	const throw (kul::Exception) {
@@ -317,9 +315,6 @@ class WINCompiler : public CCompiler{
 			KEXCEPT(Exception, "Method is not implemented");
 		}
 };
-
-
-
 
 };};};
 #endif /* _KUL_CODE_CPP_HPP_ */
