@@ -29,7 +29,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/xml.hpp"
 #include "kul/time.hpp"
 #include "kul/proc.hpp"
-#include "kul/smart.hpp"
+#include "kul/array.hpp"
 #include "kul/threads.hpp"
 
 namespace kul {
@@ -67,7 +67,7 @@ class TestThreadPoolObject{
 };
 
 class test{ public: test(){
-	kul::smart::Array<int> a;
+	kul::Array<int> a;
 	a.add()(new int(1)) (new int(2)) (new int(3));
 	for(const int& ii : a) KLOG(INFO) << ii;
 	for(int i = 0; i < a.size(); i++) KLOG(INFO) << a[i];
