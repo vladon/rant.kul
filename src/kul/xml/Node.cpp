@@ -36,7 +36,7 @@ const kul::xml::Node& kul::xml::Node::operator()(const std::string& c, const std
 			if(c.compare(n->name()) == 0){
 				try{
 					if(n->att(a).compare(v) == 0) return *n;
-				}catch(const Exception& e){ KLOG(ERROR) << e.what();}
+				}catch(const Exception& e){ }
 			}
 	KEXCEPT(Exception, "XML Exception: No Element " + c + " contains attribute " + a + " with value " + v + " under node " + this->name());
 }

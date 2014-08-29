@@ -1,0 +1,8 @@
+
+
+# Finish logging options - controlled through command e.g. "KLOG=1/INFO mkn clean build" 
+# Finish cmd line args - allow multiple flags and args without params together and the last may or may not have a value
+eg valid commands
+mkn clean build -dut 2 
+mkn clean build -dut 
+should be identical on a two core machine
