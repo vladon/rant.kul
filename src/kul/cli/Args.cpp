@@ -99,12 +99,14 @@ void kul::cli::Args::process(int argc, char* argv[]){
 				vals[arg->dashdash()] = c.substr(c.find("=") + 1);
 				valExpected = 0;
 			}else if(c.length() > 1){
+				std::string a = c;
 				for(unsigned int i = 0; i < c.length(); i++){
-					char ch = c[i];
-					arg = const_cast<Arg*>(&dashes(&ch));
-					if(arg->type())
+					std::string s(a.substr(0, 1));
+					arg = const_cast<Arg*>(&dashes(s.c_str()));
+					if(arg->type() == ArgType::STRING)
 						KEXCEPT(Exception, "Cannot mix flag and non-flag arguments");
 					vals[arg->dashdash()] = "";
+					if(a.length() > 1) a = a.substr(1);
 				}
 			}else{
 				arg = const_cast<Arg*>(&dashes(c.c_str()));
