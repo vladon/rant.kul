@@ -39,13 +39,13 @@ class TestThreadObject{
 	public:
 		TestThreadObject() : i(0){}
 		void operator()(){
-		   	KLOG(INFO) << "THREAD RUNNING";
+		   	KLOG(INF) << "THREAD RUNNING";
 			i++;
 		}
 		void operator()() const{
-			KLOG(INFO) << "CONST THREAD RUNNING";
+			KLOG(INF) << "CONST THREAD RUNNING";
 		}
-		void print(){ KLOG(INFO) << "i = " << i;}
+		void print(){ KLOG(INF) << "i = " << i;}
 };
 
 class TestThreadPoolObject{
@@ -55,49 +55,49 @@ class TestThreadPoolObject{
 	public:
 		TestThreadPoolObject(Mutex& mutex) : i(0), mutex(mutex){}
 		void operator()(){
-		   	KLOG(INFO) << "THREAD RUNNING";
+		   	KLOG(INF) << "THREAD RUNNING";
 			kul::ScopeLock lock(mutex);
 			i++;
-			KLOG(INFO) << "THREAD FINISHED";
+			KLOG(INF) << "THREAD FINISHED";
 		}
 		void operator()() const{
-			KLOG(INFO) << "CONST THREAD RUNNING";
+			KLOG(INF) << "CONST THREAD RUNNING";
 		}
-		void print(){ KLOG(INFO) << "i = " << i;}
+		void print(){ KLOG(INF) << "i = " << i;}
 };
 
 class test{ public: test(){
 	kul::Array<int> a;
 	a.add()(new int(1)) (new int(2)) (new int(3));
-	for(const int& ii : a) KLOG(INFO) << ii;
-	for(int i = 0; i < a.size(); i++) KLOG(INFO) << a[i];
+	for(const int& ii : a) KLOG(INF) << ii;
+	for(int i = 0; i < a.size(); i++) KLOG(INF) << a[i];
 
-	KLOG(INFO);
-	KLOG(INFO) << os::dirSep();
-	KLOG(INFO) << os::pwd();
-	KLOG(INFO) << os::userDir();
-	KLOG(INFO) << os::userAppDir("maiken");
+	KLOG(INF);
+	KLOG(INF) << os::dirSep();
+	KLOG(INF) << os::pwd();
+	KLOG(INF) << os::userDir();
+	KLOG(INF) << os::userAppDir("maiken");
 	for(std::string s : os::dirs()){
-		KLOG(INFO) << s;
+		KLOG(INF) << s;
 	}
 	for(std::string s : os::files(os::pwd(), true)){
-		KLOG(INFO) << s;
+		KLOG(INF) << s;
 	}
 
 	std::shared_ptr<kul::Process> p(kul::Process::create("echo"));
 	try{
 		(*p).addArg("Hello").addArg("World").start();
 	}catch(const kul::proc::Exception& e){ 
-		KLOG(INFO) << e.debug()<< " : " << typeid(e).name();
-		KLOG(INFO) << "Error expected on windows without echo on path";
+		KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+		KLOG(INF) << "Error expected on windows without echo on path";
 	}
 
 	for(const std::string& arg : kul::cli::CmdLine::asArgs("/path/to \"words in quotes\" words\\ not\\ in\\ quotes end"))
-		KLOG(INFO) << "ARG: " << arg;
+		KLOG(INF) << "ARG: " << arg;
 
-	KLOG(INFO) << "KLOG(INFO) << kul::time::Now::millis(); " << kul::time::Now::millis();
-	KLOG(INFO) << "KLOG(INFO) << kul::time::Now::micros(); " << kul::time::Now::micros();
-	KLOG(INFO) << "KLOG(INFO) << kul::time::Now::nanos();  " << kul::time::Now::nanos();
+	KLOG(INF) << "KLOG(INF) << kul::time::Now::millis(); " << kul::time::Now::millis();
+	KLOG(INF) << "KLOG(INF) << kul::time::Now::micros(); " << kul::time::Now::micros();
+	KLOG(INF) << "KLOG(INF) << kul::time::Now::nanos();  " << kul::time::Now::nanos();
 
 	TestThreadObject tto1;
 	kul::Ref<TestThreadObject> ref(tto1);
@@ -133,7 +133,7 @@ class test{ public: test(){
 		kul::ScopeLock lock(mutex);
 	}
 
-	KLOG(INFO) << "CANONBALL";
+	KLOG(INF) << "CANONBALL";
 	TestThreadPoolObject ttpo(mutex);
 	kul::Ref<TestThreadPoolObject> ref2(ttpo);
 	kul::ThreadPool<std::queue<int> > tp(ref2);

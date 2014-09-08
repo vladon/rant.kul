@@ -23,20 +23,4 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "kul/log.hpp"
 
-const kul::xml::NodeValidator kul::log::LogNodeUser::validator(){
-	using namespace kul::xml;
-
-	std::vector<std::pair<std::string, NodeValidator> > rootMap;
-	
-	return NodeValidator(rootMap, 1, 1, false);
-}
-
-kul::log::LogNodeUser* kul::log::LogNodeUser::get(){
-	if(!this->root()){
-		this->reset(kul::xml::NodeFactory::create(this->file().c_str(), "kul-log", validator()));
-	}
-	using namespace kul::xml;
-	//for(const Node* node : this->root()->children()){}
-
-	return this;
-}
+kul::LogMan* kul::LogMan::instance(0);

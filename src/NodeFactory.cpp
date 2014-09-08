@@ -26,9 +26,9 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 void kul::xml::NodeFactory::log(const Node* node){
 	if(node->children().empty()) return;
-	KLOG(INFO) << "printing children for node " << node->name();
+	KLOG(INF) << "printing children for node " << node->name();
 	for(const Node* n : node->children())
-		KLOG(INFO) << n->name() <<  " is a child of node " << node->name();	
+		KLOG(INF) << n->name() <<  " is a child of node " << node->name();	
 	for(const Node* n : node->children())
 		log(n);
 }
@@ -48,7 +48,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 							if(attFound) break;
 						}	
 						if(!attFound) {
-							KLOG(ERROR) << "Attribute \"" << a.name() << "\" for Element : \"" << n.name() << "\" is unknown";
+							KLOG(ERR) << "Attribute \"" << a.name() << "\" for Element : \"" << n.name() << "\" is unknown";
 							KEXCEPT(Exception, "XML Exception: Attribute: \"" + std::string(a.name()) + "\" for Element : \"" + std::string(n.name()) + "\" is unknown");
 						}
 					}
@@ -57,7 +57,7 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 			}
 		}
 		if(!found){
-			KLOG(ERROR) << "Element \"" << n.name() << "\" is unknown";
+			KLOG(ERR) << "Element \"" << n.name() << "\" is unknown";
 			KEXCEPT(Exception, "XML Exception: Element " + std::string(n.name()) + " is unknown");
 		}
 	}
@@ -65,13 +65,13 @@ std::vector<const kul::xml::Node*>* kul::xml::NodeFactory::validate(Node** p, st
 	for(std::pair<std::string, NodeValidator> pair  : v.getChildren()){
 		const int i = node.select_nodes(pugi::xpath_query(pair.first.c_str(), 0)).size();
 		if(pair.second.minimum() != 0 && i < pair.second.minimum()){
-			KLOG(ERROR) << "Invalid minimum number of Element: " << pair.first;
-			KLOG(ERROR) << "Minimum number expected: " << pair.second.minimum();
+			KLOG(ERR) << "Invalid minimum number of Element: " << pair.first;
+			KLOG(ERR) << "Minimum number expected: " << pair.second.minimum();
 			KEXCEPT(Exception, "XML Exception: Invalid minimum number of Element: " + pair.first);
 		}
 		if(pair.second.maximum() != 0 && i > pair.second.maximum()){
-			KLOG(ERROR) << "Invalid maximum number of Element: " << pair.first;
-			KLOG(ERROR) << "Maximum number expected: " << pair.second.maximum();
+			KLOG(ERR) << "Invalid maximum number of Element: " << pair.first;
+			KLOG(ERR) << "Maximum number expected: " << pair.second.maximum();
 			KEXCEPT(Exception, "XML Exception: Invalid maximum number of Element: " + pair.first);
 		}
 	}

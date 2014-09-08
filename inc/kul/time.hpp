@@ -26,13 +26,26 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <chrono>
 
-namespace kul { namespace time{
+namespace kul {
+namespace date{
+namespace time{
+class Now{
+	private:
 
+	public:
+		static const std::string GET(const std::string f = "") {
+			return "";
+		}
+};
+};
+};
+
+namespace time{
 class Now{
 	public:
-		static int64_t millis()	{ return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
-		static int64_t micros()	{ return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
-		static int64_t nanos()	{ return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
+		static int64_t millis()		{ return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
+		static int64_t micros()		{ return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
+		static int64_t nanos()		{ return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
 };
 
 
