@@ -25,6 +25,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define _KUL_TEST_HPP_
 
 #include "kul/os.hpp"
+#include "kul/cli.hpp"
 #include "kul/log.hpp"
 #include "kul/xml.hpp"
 #include "kul/time.hpp"
@@ -77,27 +78,25 @@ class test{ public: test(){
 	KLOG(INF) << os::pwd();
 	KLOG(INF) << os::userDir();
 	KLOG(INF) << os::userAppDir("maiken");
-	for(std::string s : os::dirs()){
-		KLOG(INF) << s;
-	}
-	for(std::string s : os::files(os::pwd(), true)){
-		KLOG(INF) << s;
-	}
+	for(std::string s : os::dirs()) 				KLOG(INF) << s;
+	for(std::string s : os::files(os::pwd(), true)) KLOG(INF) << s;
 
 	std::shared_ptr<kul::Process> p(kul::Process::create("echo"));
 	try{
 		(*p).addArg("Hello").addArg("World").start();
 	}catch(const kul::proc::Exception& e){ 
 		KLOG(INF) << e.debug()<< " : " << typeid(e).name();
-		KLOG(INF) << "Error expected on windows without echo on path";
+		KLOG(INF) << "Error expected on windows without echo on path"; //it's a built in command in cmd
 	}
 
 	for(const std::string& arg : kul::cli::CmdLine::asArgs("/path/to \"words in quotes\" words\\ not\\ in\\ quotes end"))
 		KLOG(INF) << "ARG: " << arg;
 
-	KLOG(INF) << "KLOG(INF) << kul::time::Now::millis(); " << kul::time::Now::millis();
-	KLOG(INF) << "KLOG(INF) << kul::time::Now::micros(); " << kul::time::Now::micros();
-	KLOG(INF) << "KLOG(INF) << kul::time::Now::nanos();  " << kul::time::Now::nanos();
+	KLOG(INF) << "kul::time::Now::millis(); " << kul::time::Now::millis();
+	KLOG(INF) << "kul::time::Now::micros(); " << kul::time::Now::micros();
+	KLOG(INF) << "kul::time::Now::nanos();  " << kul::time::Now::nanos();
+
+	KLOG(INF) << "kul::DateTime::NOW();  " << kul::DateTime::NOW();
 
 	TestThreadObject tto1;
 	kul::Ref<TestThreadObject> ref(tto1);

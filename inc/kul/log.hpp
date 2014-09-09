@@ -31,6 +31,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/os.hpp"
 #include "kul/xml.hpp"
 #include "kul/defs.hpp"
+#include "kul/time.hpp"
 #include "kul/array.hpp"
 #include "kul/except.hpp"
 
@@ -60,7 +61,7 @@ class NullLogger : public ALogger{
 class ConsoleLogger : public ALogger{
 	public:
 		void log(const char* f, const int& l, const std::string& s) const{
-			std::cout << /* date time << " " << */ f << " : " << l << " - " << s << std::endl;
+			std::cout << kul::DateTime::NOW() << " " << f << " : " << l << " - " << s << std::endl;
 		}
 		const logger type(){ return CONSOLE; }
 };
@@ -91,7 +92,7 @@ class LogMan{
 					if(s.compare("1") == 0 || s.compare("INF") == 0)      lM = log::mode::INF;
 					else if(s.compare("2") == 0 || s.compare("ERR") == 0) lM = log::mode::ERR;
 					else if(s.compare("3") == 0 || s.compare("DBG") == 0) lM = log::mode::DBG;
-					else {std::cerr << "KLOG OPTION UNKNOWN"; exit(1);}
+					else {std::cerr << "KLOG OPTION UNKNOWN" << std::endl; exit(1);}
 				}
 				instance = new LogMan(lM);
 			}

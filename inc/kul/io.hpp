@@ -32,6 +32,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdexcept>
 
 #include "kul/os.hpp"
+#include "kul/string.hpp"
 #include "kul/except.hpp"
 
 namespace kul{  namespace io {
@@ -73,22 +74,6 @@ class Writer{
 			else	ofs << c;
 		}
 };
-
-class LineTrimmer{
-	public:
-		LineTrimmer(const char*f){
-			std::fstream fs;
-			fs.open(f);
-			std::string line;
-			while(std::getline(fs, line)) {
-				std::cout << line << std::endl;
-				fs.seekp(-std::ios::off_type(line.size()) - 1, std::ios_base::cur);
-				fs << 'x';
-				fs.close();
-			}
-		}
-};
-
 
 };};
 #endif /* _KUL_IO_HPP_ */
