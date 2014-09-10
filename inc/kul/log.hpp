@@ -65,8 +65,8 @@ class NullLogger : public ALogger{
 class ConsoleLogger : public ALogger{
 	public:
 		void log(const char* f, const int& l, const std::string& s, const mode& m) const{
-			if(m == ERR) 	std::cerr << kul::DateTime::NOW() << " " << f << " : " << l << " " << modeTxt(m) << " " << s << std::endl;
-			else 			std::cout << kul::DateTime::NOW() << " " << f << " : " << l << " " << modeTxt(m) << " " << s << std::endl;
+			if(m == ERR) 	std::cerr << "[" << modeTxt(m) << "] " << kul::DateTime::NOW() << " " << f << " : " << l << " " << s << std::endl;
+			else 			std::cout << "[" << modeTxt(m) << "] " << kul::DateTime::NOW() << " " << f << " : " << l << " " << s << std::endl;
 		}
 };
 
