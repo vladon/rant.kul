@@ -37,7 +37,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace kul{ namespace log{
 
-enum logger { CONSOLE = 0, FILE, NONE};
+enum mode { NON = 0, INF, ERR, DBG};
 
 class Exception : public kul::Exception{
 	public:
@@ -47,35 +47,35 @@ class Exception : public kul::Exception{
 class ALogger{
 	public:
 		virtual ~ALogger(){}
-		virtual void log(const char* f, const int& l, const std::string& s) const{}
-		virtual const logger type(){ return NONE; }
-
+		virtual void log(const char* f, const int& l, const std::string& s, const mode& m) const{}
+		const std::string modeTxt(const mode& m) const{
+			std::string s("NONE");
+			if(m == 1)		s = "INFO";
+			else if(m == 2)	s = "ERROR";
+			else if(m == 3) s = "DEBUG";
+			return s;
+		}
 };
 
 class NullLogger : public ALogger{
 	public:
-		void log(const char* f, const int& l, const std::string& s) const{}
-		const logger type(){ return NONE; }
+		void log(const char* f, const int& l, const std::string& s, const mode& m) const{}
 };
 
 class ConsoleLogger : public ALogger{
 	public:
-		void log(const char* f, const int& l, const std::string& s) const{
-			std::cout << kul::DateTime::NOW() << " " << f << " : " << l << " - " << s << std::endl;
+		void log(const char* f, const int& l, const std::string& s, const mode& m) const{
+			if(m == ERR) 	std::cerr << kul::DateTime::NOW() << " " << f << " : " << l << " " << modeTxt(m) << " " << s << std::endl;
+			else 			std::cout << kul::DateTime::NOW() << " " << f << " : " << l << " " << modeTxt(m) << " " << s << std::endl;
 		}
-		const logger type(){ return CONSOLE; }
 };
 
 class FileLogger : public ALogger{
 	public:
-		void log(const char* f, const int& l, const std::string& s) const{}
-		const logger type(){ return FILE; }
+		void log(const char* f, const int& l, const std::string& s, const mode& m) const{}
 };
 
-enum mode { NON = 0, INF, ERR, DBG};
-
 };
-
 
 class LogMan{
 	private:
@@ -103,8 +103,10 @@ class LogMan{
 			loggers.push_back(&l);
 		}
 		void log(const char* f, const int& l, const log::mode& m, const std::string& s){
+			if(loggers.size() == 0 && m == log::mode::ERR)
+				std::cerr << kul::DateTime::NOW() << " " << f << " : " << l << " - " << s << std::endl;
 			for(const log::ALogger* logger : loggers)
-				if(this->m >= m) logger->log(f, l, s);			
+				if(this->m >= m) logger->log(f, l, s, m);			
 		}
 };
 
