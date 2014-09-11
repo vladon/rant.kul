@@ -21,8 +21,8 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _KUL_SMART_HPP_
-#define _KUL_SMART_HPP_
+#ifndef _KUL_ARRAY_HPP_
+#define _KUL_ARRAY_HPP_
 
 #include <vector>
 
@@ -85,4 +85,4 @@ template <class T> class Vector{
 
 
 };
-#endif /* _KUL_SMART_HPP_ */
+#endif /* _KUL_ARRAY_HPP_ */

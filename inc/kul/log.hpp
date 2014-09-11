@@ -24,9 +24,10 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_LOG_HPP_
 #define _KUL_LOG_HPP_
 
+
+#include <memory>
 #include <string>
 #include <string.h>
-#include <memory>
 
 #include "kul/os.hpp"
 #include "kul/xml.hpp"
@@ -65,8 +66,12 @@ class NullLogger : public ALogger{
 class ConsoleLogger : public ALogger{
 	public:
 		void log(const char* f, const int& l, const std::string& s, const mode& m) const{
-			if(m == ERR) 	std::cerr << "[" << modeTxt(m) << "] " << kul::DateTime::NOW() << " " << f << " : " << l << " " << s << std::endl;
-			else 			std::cout << "[" << modeTxt(m) << "] " << kul::DateTime::NOW() << " " << f << " : " << l << " " << s << std::endl;
+			if(m == NON)
+				std::cout << s << std::endl;
+			else if(m == ERR)
+				std::cerr << "[" << modeTxt(m) << "] " << kul::DateTime::NOW() << " " << f << " : " << l << " " << s << std::endl;
+			else 
+				std::cout << "[" << modeTxt(m) << "] " << kul::DateTime::NOW() << " " << f << " : " << l << " " << s << std::endl;
 		}
 };
 
@@ -143,7 +148,7 @@ class LogMessageToFile : public LogMessage{
 		LogMessageToFile(const char* f, const int& l, const log::mode& m) : LogMessage(f, l, m){}
 };
 
-
+#define KLOG_NON 	kul::LogMessage(__FILE__, __LINE__, kul::log::mode::NON)
 #define KLOG_INF 	kul::LogMessage(__FILE__, __LINE__, kul::log::mode::INF)
 #define KLOG_ERR 	kul::LogMessage(__FILE__, __LINE__, kul::log::mode::ERR)
 #define KLOG_DBG 	kul::LogMessage(__FILE__, __LINE__, kul::log::mode::DBG)
