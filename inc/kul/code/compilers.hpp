@@ -41,6 +41,7 @@ class Compilers{
 			// add compilers to map
 			cpp::GCCompiler* 	gcc		= new cpp::GCCompiler();
 			cpp::ClangCompiler* clang	= new cpp::ClangCompiler();
+			cpp::IntelCompiler* intel	= new cpp::IntelCompiler();
 			cpp::WINCompiler* 	winc	= new cpp::WINCompiler();
 
 			csharp::WINCompiler* wincs 	= new csharp::WINCompiler();
@@ -50,6 +51,8 @@ class Compilers{
 			compilers.insert(std::pair<std::string, Compiler*>("nvcc"		, gcc));
 			compilers.insert(std::pair<std::string, Compiler*>("clang"		, clang));
 			compilers.insert(std::pair<std::string, Compiler*>("clang++"	, clang));
+			compilers.insert(std::pair<std::string, Compiler*>("icc"		, intel));
+			compilers.insert(std::pair<std::string, Compiler*>("icpc"		, intel));
 			compilers.insert(std::pair<std::string, Compiler*>("cl"			, winc));
 			compilers.insert(std::pair<std::string, Compiler*>("csc"		, wincs));
 		}

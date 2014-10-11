@@ -231,6 +231,16 @@ class ClangCompiler : public GCCompiler{
 		}
 };
 
+class IntelCompiler : public GCCompiler{
+	public:
+		IntelCompiler(const int& v = 0) : GCCompiler(v){}
+		virtual const std::string cc() const {
+			return "icc";
+		}
+		virtual const std::string cxx() const {
+			return "icpc";
+		}
+};
 
 class WINCompiler : public CCompiler{
 	public:
