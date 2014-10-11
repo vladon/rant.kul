@@ -36,6 +36,27 @@ namespace kul{ namespace code{
 
 enum Mode { NONE = 0, STAT, SHAR};
 
+class CompilerProcessCapture : public kul::ProcessCapture{
+	private:
+		std::string f;
+		bool s;
+	public:
+		CompilerProcessCapture(kul::Process& p, const std::string& f) : kul::ProcessCapture(p), f(f), s(1){}
+		CompilerProcessCapture(const std::string& f) : f(f), s(1){}
+		CompilerProcessCapture(const CompilerProcessCapture& cp) : kul::ProcessCapture(cp), f(cp.f), s(cp.s){}
+
+		const CompilerProcessCapture& operator=(const CompilerProcessCapture& cpc){
+			this->f = cpc.f;
+			this->s = cpc.s;
+			for(const std::string& s : cpc.outs()) this->out(s);
+			for(const std::string& s : cpc.errs()) this->err(s);
+			return *this;
+		}
+		const std::string& file() const {return f;}
+		void failed(){ s = 0;}
+		const bool& successful() const { return s;}
+};
+
 class Compiler{	
 	protected:
 		Compiler(const int& v) : version(v){}
@@ -43,7 +64,7 @@ class Compiler{
 	public:
 		virtual ~Compiler(){}		
 		virtual bool sourceIsBin()		const = 0;
-		virtual const std::string buildExecutable(
+		virtual const CompilerProcessCapture buildExecutable(
 			const std::string& linker,
 			const std::string& linkerEnd,
 			const std::vector<std::string>& objects, 	
@@ -51,17 +72,17 @@ class Compiler{
 			const std::vector<std::string>& libPaths,
 			const std::string& out, 
 			const Mode& mode) 			const throw (kul::Exception) = 0;
-		virtual const std::string buildSharedLibrary(
+		virtual const CompilerProcessCapture buildSharedLibrary(
 			const std::string& linker, 
 			const std::vector<std::string>& objects, 	
 			const std::string& outDir,
 			const std::string& outFile) const throw (kul::Exception) = 0;
-		virtual const std::string buildStaticLibrary(
+		virtual const CompilerProcessCapture buildStaticLibrary(
 			const std::string& archiver,
 			const std::vector<std::string>& objects, 	
 			const std::string& outDir,
 			const std::string& outFile) const throw (kul::Exception) = 0;
-		virtual const std::string compileSource	(
+		virtual const CompilerProcessCapture compileSource	(
 			const std::string& compiler,
 			const std::vector<std::string>& args, 		
 			const std::vector<std::string>& incs, 

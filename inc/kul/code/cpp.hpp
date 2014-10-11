@@ -41,8 +41,8 @@ class CCompiler : public Compiler{
 		virtual ~CCompiler(){}
 		virtual const std::string cc() 	const = 0;
 		virtual const std::string cxx() const = 0;
-		virtual const std::string getSharedLib(const std::string& lib) const = 0;
-		virtual const std::string getStaticLib(const std::string& lib) const = 0;
+		virtual const std::string sharedLib(const std::string& lib) const = 0;
+		virtual const std::string staticLib(const std::string& lib) const = 0;
 		bool sourceIsBin() const{ return false; }
 };
 
@@ -50,13 +50,13 @@ class CCompiler : public Compiler{
 class GCCompiler : public CCompiler{
 	public:
 		GCCompiler(const int& v = 0) : CCompiler(v){}
-		const std::string getSharedLib(const std::string& lib) const {
+		const std::string sharedLib(const std::string& lib) const {
 			return "lib" + lib + ".so";
 		}
-		const std::string getStaticLib(const std::string& lib) const {
+		const std::string staticLib(const std::string& lib) const {
 			return "lib" + lib + ".a";
 		}
-		const std::string buildExecutable(
+		const CompilerProcessCapture buildExecutable(
 			const std::string& linker,
 			const std::string& linkerEnd,
 			const std::vector<std::string>& objects, 	
@@ -65,65 +65,88 @@ class GCCompiler : public CCompiler{
 			const std::string& out, 
 			const Mode& mode) const throw (kul::Exception) {
 
-			std::string exe = out;
-			std::string cmd = linker + " ";
+			std::string cmd = linker;
+			std::vector<std::string> bits;
+			if(linker.find(" ") != std::string::npos){
+				bits = kul::String::split(linker, ' ');
+				cmd = bits[0];
+			}
+			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			CompilerProcessCapture pc(*p, out);
+			for(const std::string& path : libPaths)	(*p).addArg("-L").addArg(path);
+			if(mode == Mode::SHAR)		(*p).addArg("-shared");
+			else if(mode == Mode::STAT) (*p).addArg("-static");
+			(*p).addArg("-o").addArg(out);
+			for(const std::string& o : objects)	(*p).addArg(o);
+			for(const std::string& lib : libs)	(*p).addArg("-l").addArg(lib);
+			for(const std::string& s: kul::String::split(linkerEnd, ' ')) (*p).addArg(s);
 			
-			for(const std::string& path : libPaths)
-				cmd += "-L" + path + " ";
-			
-			if(mode == Mode::SHAR)
-				cmd += " -shared ";
-			else if(mode == Mode::STAT)
-				cmd += " -static ";
+			try{
+				(*p).start();
+			}catch(const kul::proc::Exception& e){ 
+				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				pc.failed();
+			}
 
-			cmd += " -o " + exe;
-			for(const std::string& o : objects)
-				cmd += " " + o;
-			for(const std::string& lib : libs)
-				cmd += " -l" + lib + " ";
-			cmd += linkerEnd;
-			KLOG(INF) << cmd;
-			
-			if(kul::os::execReturn(cmd) != 0)
-				KEXCEPT(Exception, "Failed to build executable");
-
-			return exe; 
+			return pc; 
 		}
-		const std::string buildSharedLibrary(
+		const CompilerProcessCapture buildSharedLibrary(
 			const std::string& linker, 
 			const std::vector<std::string>& objects, 
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
-			const std::string lib(kul::os::dirJoin(outDir, "lib" + outFile) + ".so");			
-			std::string cmd = linker + " -shared -o " + lib;
-			for(const std::string& o : objects)
-				cmd += " " + o;
-			KLOG(INF) << cmd;
+			const std::string lib(kul::os::dirJoin(outDir, "lib" + outFile) + ".so");
 
-			if(kul::os::execReturn(cmd) != 0)
-				KEXCEPT(Exception, "Failed to build shared lib");
+			std::string cmd = linker;
+			std::vector<std::string> bits;
+			if(linker.find(" ") != std::string::npos){
+				bits = kul::String::split(linker, ' ');
+				cmd = bits[0];
+			}
+			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			CompilerProcessCapture pc(*p, lib);
+			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			(*p).addArg("-shared").addArg("-o").addArg(lib);
+			for(const std::string& o : objects)	(*p).addArg(o);	
+			try{
+				(*p).start();
+			}catch(const kul::proc::Exception& e){ 
+				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				pc.failed();
+			}
 
-			return lib; 
+			return pc; 
 		}
-		const std::string buildStaticLibrary(
+		const CompilerProcessCapture buildStaticLibrary(
 			const std::string& archiver, 
 			const std::vector<std::string>& objects, 
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
-			const std::string lib(kul::os::dirJoin(outDir, "lib" + outFile) + ".a"); 
-			std::string cmd = archiver + " " + lib + " ";
-			for(const std::string& o : objects)
-				cmd += " " + o;
-			KLOG(INF) << cmd;
+			const std::string lib(kul::os::dirJoin(outDir, "lib" + outFile) + ".a");
+			std::string cmd = archiver;
+			std::vector<std::string> bits;
+			if(archiver.find(" ") != std::string::npos){
+				bits = kul::String::split(archiver, ' ');
+				cmd = bits[0];
+			}
+			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			CompilerProcessCapture pc(*p, lib);
+			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			(*p).addArg(lib).addArg("-c");
+			for(const std::string& o : objects)	(*p).addArg(o);	
+			try{
+				(*p).start();
+			}catch(const kul::proc::Exception& e){ 
+				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				pc.failed();
+			}
 
-			if(kul::os::execReturn(cmd) != 0)
-				KEXCEPT(Exception, "Failed to build static lib");
-
-			return lib; 
+			return pc; 
 		}
-		const std::string compileSource(
+		const CompilerProcessCapture compileSource(
 			const std::string& compiler, 
 			const std::vector<std::string>& args, 
 			const std::vector<std::string>& incs,
@@ -131,22 +154,29 @@ class GCCompiler : public CCompiler{
 			const std::string& out) const throw (kul::Exception){ 
 
 			using namespace kul;
-			std::string cmd = compiler + " ";
 			std::string obj = out + ".o";
-
-			for(const std::string& s : incs)
-				cmd += "-I" + s + " ";
-			for(const std::string& s : args)
-				cmd += s + " ";
-
-			if(!os::isDir(os::dirDotDot(out))) os::mkDir(os::dirDotDot(out));
-			cmd += " -o " + obj + " -c " + in;
-			KLOG(INF) << cmd;
-
-			if(kul::os::execReturn(cmd) != 0)
-				KEXCEPT(Exception, "Failed to compile source");
 			
-			return obj;
+			std::string cmd = compiler;
+			std::vector<std::string> bits;
+			if(compiler.find(" ") != std::string::npos){
+				bits = kul::String::split(compiler, ' ');
+				cmd = bits[0];
+			}
+			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			CompilerProcessCapture pc(*p, obj);
+			
+			for(const std::string& s : incs)	(*p).addArg("-I").addArg(s);
+			for(const std::string& s : args)	(*p).addArg(s);
+			(*p).addArg("-o").addArg(obj).addArg("-c").addArg(in);
+			try{
+				(*p).start();			
+			}catch(const kul::proc::Exception& e){
+				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				pc.failed();
+			}
+
+			return pc;
 		}
 		virtual void preCompileHeader(			
 			const std::vector<std::string>& incs,
@@ -211,13 +241,13 @@ class WINCompiler : public CCompiler{
 		virtual const std::string cxx() const {
 			return "cl";
 		}
-		const std::string getSharedLib(const std::string& lib) const {
+		const std::string sharedLib(const std::string& lib) const {
 			return lib + ".dll";
 		}
-		const std::string getStaticLib(const std::string& lib) const {
+		const std::string staticLib(const std::string& lib) const {
 			return lib + ".lib";
 		}
-		const std::string buildExecutable(
+		const CompilerProcessCapture buildExecutable(
 			const std::string& linker, 
 			const std::string& linkerEnd,
 			const std::vector<std::string>& objects,
@@ -226,62 +256,93 @@ class WINCompiler : public CCompiler{
 			const std::string& out, 
 			const Mode& mode) const throw (kul::Exception){ 
 
-			std::string exe = out + ".exe"; 
-			std::string cmd = linker + " /NOLOGO /LTCG ";
-			
-			for(const std::string& path : libPaths)
-				cmd += " /LIBPATH:\"" + path + "\" ";
-			/*
-			if(mode == Mode::SHAR)
-				cmd += " /MD ";
-			else if(mode == Mode::STAT)
-				cmd += " /MT ";		*/
+			std::string exe = out + ".exe";
 
-			cmd += " /OUT:\"" + exe + "\" ";
-			for(const std::string& o : objects)
-				cmd += " \"" + o + "\" ";
+			std::string cmd = linker;
+			std::vector<std::string> bits;
+			if(linker.find(" ") != std::string::npos){
+				bits = kul::String::split(linker, ' ');
+				cmd = bits[0];
+			}
+			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			CompilerProcessCapture pc(*p, exe);
+			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			(*p).addArg("/NOLOGO").addArg("/LTCG");			
+			for(const std::string& path : libPaths)	(*p).addArg("/LIBPATH:").addArg(path);
+			//if(mode == Mode::SHAR)		(*p).addArg("-shared");
+			//else if(mode == Mode::STAT)	(*p).addArg("-static");
+			(*p).addArg("/OUT:").addArg(exe);
+			for(const std::string& o : objects)	(*p).addArg(o);
+			for(const std::string& lib : libs)
+				if(mode == Mode::SHAR) (*p).addArg(sharedLib(lib));
+				else
+				if(mode == Mode::STAT) (*p).addArg(staticLib(lib));
+			for(const std::string& s: kul::String::split(linkerEnd, ' ')) (*p).addArg(s);
 
-			if(mode == Mode::SHAR)
-				for(const std::string& lib : libs)
-					cmd += " \"" + getSharedLib(lib) + "\" ";
-			else if(mode == Mode::STAT)
-				for(const std::string& lib : libs)
-					cmd += " \"" + getStaticLib(lib) + "\" ";
+			try{
+				(*p).start();
+			}catch(const kul::proc::Exception& e){ 
+				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				pc.failed();
+			}
 
-			cmd += linkerEnd;
-
-			KLOG(INF) << cmd;
-			if(kul::os::execReturn(cmd) != 0)
-				KEXCEPT(Exception, "Failed to build executable");
-			return exe; 
+			return pc; 
 		}
-		const std::string buildSharedLibrary(
+		const CompilerProcessCapture buildSharedLibrary(
 			const std::string& linker, 
 			const std::vector<std::string>& objects, 
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
 			const std::string lib(kul::os::dirJoin(outDir, outFile) + ".dll"); 
-			return lib;
+
+			std::string cmd = linker;
+			std::vector<std::string> bits;
+			if(linker.find(" ") != std::string::npos){
+				bits = kul::String::split(linker, ' ');
+				cmd = bits[0];
+			}
+			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			CompilerProcessCapture pc(*p, lib);
+			(*p).addArg("/OUT:").addArg(lib).addArg("/NOLOGO").addArg("/LTCG");
+			for(const std::string& o : objects)	(*p).addArg(o);	
+			try{
+				(*p).start();
+			}catch(const kul::proc::Exception& e){ 
+				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				pc.failed();
+			}
+
+			return pc;
 		}
-		const std::string buildStaticLibrary(
+		const CompilerProcessCapture buildStaticLibrary(
 			const std::string& archiver, 
 			const std::vector<std::string>& objects, 
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
 			const std::string lib(kul::os::dirJoin(outDir, outFile) + ".lib"); 
-			std::string cmd = archiver + " /OUT:\"" + lib + "\" /NOLOGO /LTCG ";
-			for(const std::string& o : objects)
-				cmd += " \"" + o + "\" ";
-			KLOG(INF) << cmd;
-
-			if(kul::os::execReturn(cmd) != 0)
-				KEXCEPT(Exception, "Failed to build static lib");
-
-			return lib;
+			std::string cmd = archiver;
+			std::vector<std::string> bits;
+			if(archiver.find(" ") != std::string::npos){
+				bits = kul::String::split(archiver, ' ');
+				cmd = bits[0];
+			}
+			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			CompilerProcessCapture pc(*p, lib);
+			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			(*p).addArg("/OUT:").addArg(lib).addArg("/NOLOGO").addArg("/LTCG");
+			for(const std::string& o : objects)	(*p).addArg(o);	
+			try{
+				(*p).start();
+			}catch(const kul::proc::Exception& e){ 
+				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				pc.failed();
+			}
+			return pc;
 		}
-		const std::string compileSource(
+		const CompilerProcessCapture compileSource(
 			const std::string& compiler, 
 			const std::vector<std::string>& args, 
 			const std::vector<std::string>& incs,
@@ -289,22 +350,30 @@ class WINCompiler : public CCompiler{
 			const std::string& out) const throw (kul::Exception){ 
 
 			using namespace kul;
-			std::string cmd = compiler + " ";
+			
 			std::string obj = out + ".o";
-
-			for(const std::string& s : incs)
-				cmd += "\"/I" + s + "\" ";
-			for(const std::string& s : args)
-				cmd += s + " ";
-
 			if(!os::isDir(os::dirDotDot(os::localPath(out)))) os::mkDir(os::dirDotDot(os::localPath(out)));
-			cmd += " -c \"/Fo" + obj + "\" \"" + in + "\"";	
-			KLOG(INF) << cmd;
-			
-			if(kul::os::execReturn(cmd) != 0)
-				KEXCEPT(Exception, "Failed to compile source");
-			
-			return obj;
+
+			std::string cmd = compiler;
+			std::vector<std::string> bits;
+			if(compiler.find(" ") != std::string::npos){
+				bits = kul::String::split(compiler, ' ');
+				cmd = bits[0];
+			}
+			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			CompilerProcessCapture pc(*p, obj);
+			(*p).addArg("-c").addArg("/Fo").addArg(obj).addArg(in);
+			for(const std::string& s : incs)	(*p).addArg("/I").addArg(s);
+			for(const std::string& s : args)	(*p).addArg(s);
+			try{
+				(*p).start();
+			}catch(const kul::proc::Exception& e){ 
+				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				pc.failed();
+			}
+
+			return pc;
 		}
 		virtual void preCompileHeader(			
 			const std::vector<std::string>& incs,

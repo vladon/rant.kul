@@ -116,13 +116,18 @@ class ProcessCapture{
 			eV.push_back(s);
 		}
 	public:
+		ProcessCapture(){}
 		ProcessCapture(Process& p){
 			p.setOut(std::bind(&ProcessCapture::out, std::ref(*this), std::placeholders::_1));
 			p.setErr(std::bind(&ProcessCapture::err, std::ref(*this), std::placeholders::_1));
 		}
+		ProcessCapture(const ProcessCapture& pc){
+			for(const std::string& s : pc.outs()) this->out(s);
+			for(const std::string& s : pc.errs()) this->err(s);
+		}
 		virtual ~ProcessCapture(){}
-		const std::vector<std::string> outs(){return oV;}
-		const std::vector<std::string> errs(){return eV;}
+		const std::vector<std::string> outs() const {return oV;}
+		const std::vector<std::string> errs() const {return eV;}
 };
 
 

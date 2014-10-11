@@ -38,7 +38,7 @@ class WINCompiler : public Compiler{
 	public:
 		WINCompiler(const int& v = 0) : Compiler(v){}
 		bool sourceIsBin()	const{ return true; }
-		const std::string buildExecutable(
+		const CompilerProcessCapture buildExecutable(
 			const std::string& linker, 
 			const std::string& linkerEnd,
 			const std::vector<std::string>& objects,
@@ -47,37 +47,45 @@ class WINCompiler : public Compiler{
 			const std::string& out, 
 			const Mode& mode) const throw (kul::Exception){
 			
-			std::string exe = out + ".exe"; 
-			std::string cmd = linker + " /NOLOGO ";
-			
-			for(const std::string& path : libPaths)
-				cmd += " /LIBPATH:\"" + path + "\" ";
+			std::string exe = out + ".exe";
+			std::string cmd = linker;
+			std::vector<std::string> bits;
+			if(linker.find(" ") != std::string::npos){
+				bits = kul::String::split(linker, ' ');
+				cmd = bits[0];
+			}
+			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));			
+			CompilerProcessCapture pc(*p, exe);
+			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			(*p).addArg("/NOLOGO").addArg("/OUT:").addArg(exe);
+			for(const std::string& path : libPaths)	(*p).addArg("/LIBPATH:").addArg(path);			
+			for(const std::string& o : objects)	(*p).addArg(o);
+			for(const std::string& lib : libs)	(*p).addArg("/REFERENCE:").addArg(lib + ".dll");
+			if(linkerEnd.find(" ") != std::string::npos)
+				for(const std::string& s: kul::String::split(linkerEnd, ' '))
+					(*p).addArg(s);
+			else (*p).addArg(linkerEnd);
 
-			cmd += " /out:\"" + exe + "\" ";
-			for(const std::string& o : objects)
-				cmd += " " + o + " ";
+			try{
+				(*p).start();
+			}catch(const kul::proc::Exception& e){ 
+				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				pc.failed();
+			}
 
-			for(const std::string& lib : libs)
-				cmd += " /reference:" + lib + ".dll ";			
-
-			cmd += linkerEnd;
-			KLOG(INF) << cmd;
-			
-			if(kul::os::execReturn(cmd) != 0)
-				KEXCEPT(Exception, "Failed to build executable");
-
-			return exe; 
+			return pc;
 		}
-		const std::string buildSharedLibrary(
+		const CompilerProcessCapture buildSharedLibrary(
 			const std::string& linker, 
 			const std::vector<std::string>& objects, 
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
-			const std::string lib(kul::os::dirJoin(outDir, outFile) + ".dll"); 
-			return lib;
+			const std::string lib(kul::os::dirJoin(outDir, outFile) + ".dll");
+
+			return CompilerProcessCapture(lib);
 		}
-		const std::string buildStaticLibrary(
+		const CompilerProcessCapture buildStaticLibrary(
 			const std::string& archiver, 
 			const std::vector<std::string>& objects, 
 			const std::string& outDir, 
@@ -85,14 +93,14 @@ class WINCompiler : public Compiler{
 
 			KEXCEPT(Exception, "No static libraries in C Sharp");
 		}
-		const std::string compileSource(
+		const CompilerProcessCapture compileSource(
 			const std::string& compiler, 
 			const std::vector<std::string>& args, 
 			const std::vector<std::string>& incs, 
 			const std::string& in, 
 			const std::string& out) const throw (kul::Exception){
 
-			return in;
+			return CompilerProcessCapture(in);
 		}
 		virtual void preCompileHeader(			
 			const std::vector<std::string>& incs,
