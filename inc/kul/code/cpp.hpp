@@ -155,7 +155,8 @@ class GCCompiler : public CCompiler{
 
 			using namespace kul;
 			std::string obj = out + ".o";
-			
+			if(!os::isDir(os::dirDotDot(out))) os::mkDir(os::dirDotDot(out));
+
 			std::string cmd = compiler;
 			std::vector<std::string> bits;
 			if(compiler.find(" ") != std::string::npos){
