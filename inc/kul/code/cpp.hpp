@@ -74,12 +74,12 @@ class GCCompiler : public CCompiler{
 			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
 			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			CompilerProcessCapture pc(*p, out);
-			for(const std::string& path : libPaths)	(*p).addArg("-L").addArg(path);
+			for(const std::string& path : libPaths)	(*p).addArg("-L" + path);
 			if(mode == Mode::SHAR)		(*p).addArg("-shared");
 			else if(mode == Mode::STAT) (*p).addArg("-static");
 			(*p).addArg("-o").addArg(out);
 			for(const std::string& o : objects)	(*p).addArg(o);
-			for(const std::string& lib : libs)	(*p).addArg("-l").addArg(lib);
+			for(const std::string& lib : libs)	(*p).addArg("-l" + lib);
 			for(const std::string& s: kul::String::split(linkerEnd, ' ')) (*p).addArg(s);
 			
 			try{
@@ -166,11 +166,11 @@ class GCCompiler : public CCompiler{
 			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			CompilerProcessCapture pc(*p, obj);
 			
-			for(const std::string& s : incs)	(*p).addArg("-I").addArg(s);
+			for(const std::string& s : incs)	(*p).addArg("-I"+s);
 			for(const std::string& s : args)	(*p).addArg(s);
 			(*p).addArg("-o").addArg(obj).addArg("-c").addArg(in);
 			try{
-				(*p).start();			
+				(*p).start();
 			}catch(const kul::proc::Exception& e){
 				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
 				pc.failed();
