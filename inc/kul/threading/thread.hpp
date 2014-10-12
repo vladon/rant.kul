@@ -95,7 +95,7 @@ class AThreader{
 		virtual void interrupt() throw(kul::threading::InterruptionException) 	= 0;
 		virtual void run() throw(kul::threading::Exception) 					= 0;
 		void setFinished()									{ f = true;}
-		const bool finished() 						const 	{ return f;}
+		bool finished(	)	 						const 	{ return f;}
 		const std::exception_ptr& exceptionPointer()const	{ return eP; }		
 
 	public:
@@ -129,9 +129,9 @@ class Mutex{
 	private:
 		std::atomic<bool> l;
 		
-		const bool  locked(){ return this->l.load(); }
-		void  lock()		{ this->l.exchange(1); }
-		void  unlock()		{ this->l.exchange(0); }
+		bool  locked()	{ return this->l.load(); }
+		void  lock()	{ this->l.exchange(1); }
+		void  unlock()	{ this->l.exchange(0); }
 		
 	public:
 		Mutex() : l(0) {}

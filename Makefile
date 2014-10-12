@@ -1,8 +1,9 @@
 
 CXX=g++
 CXXFLAGS=-std=c++11 -O3 -g0 -Wall -c -fmessage-length=0 
-#CLANGFLAGS=-stdlib=libc++
-CLANGFLAGS=
+CLANG=clang++
+INTEL=icpc
+//CLANGFLAGS=-stdlib=libc++
 INCS = 	-I$(CURDIR)/inc \
 		-I$(CURDIR)/ext/pugixml/trunk/src \
 		-I$(CURDIR)/ext/sparsehash/make/include
@@ -31,8 +32,12 @@ libs:
 	$(MAKE) pugi
 
 clang:
-	$(MAKE) hash	 
+	$(MAKE) hash
 	$(MAKE) pugi CXX=$(CLANG)
+
+intel:
+	$(MAKE) hash
+	$(MAKE) pugi CXX=$(INTEL)
 
 hash:
 	@if [ ! -d "$(CURDIR)/ext/sparsehash/make" ]; then \

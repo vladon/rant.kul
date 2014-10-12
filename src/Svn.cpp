@@ -42,7 +42,7 @@ const std::string kul::scm::Svn::origin(const std::string& d) {
 	KEXCEPT(Exception, "SCM ERROR - SVN NOT YET IMPLEMENTED");
 }
 
-const bool kul::scm::Svn::hasChanges(const std::string& d) const{
+bool kul::scm::Svn::hasChanges(const std::string& d) const{
 	KEXCEPT(Exception, "SCM ERROR - SVN NOT YET IMPLEMENTED");
 }
 

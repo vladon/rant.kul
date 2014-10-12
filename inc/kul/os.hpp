@@ -54,8 +54,8 @@ bool mkDir(const std::string& s);
 
 bool mv(const std::string& a, const std::string& b);
 
-const bool 			dirSet(const std::string& nwd); // set the cwd / USE WITH CAUTION!
-const bool 			dirDel(const std::string& dir); // deletes if exists
+bool 				dirSet(const std::string& nwd); // set the cwd / USE WITH CAUTION!
+bool	 			dirDel(const std::string& dir); // deletes if exists
 const std::string 	dirExp(const std::string& nwd, const std::string& dir) throw (Exception); // Expand relative directories
 const std::string 	dirSep();
 const std::string 	dirJoin(const std::string& a, const std::string& b);
@@ -73,8 +73,8 @@ std::string userAppDir(const std::string& app);
 
 std::string newLine();
 
-const unsigned int cores();
-const unsigned int threads();
+unsigned int cores();
+unsigned int threads();
 
 };};
 #endif /* _KUL_OS_HPP_ */

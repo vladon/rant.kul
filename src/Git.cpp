@@ -95,7 +95,7 @@ const std::string kul::scm::Git::origin(const std::string& d) {
 	return kul::String::split(kul::String::split(pc.outs()[0], "	")[1], " ")[0];
 }
 
-const bool kul::scm::Git::hasChanges(const std::string& d) const{
+bool kul::scm::Git::hasChanges(const std::string& d) const{
 	std::shared_ptr<kul::Process> p(kul::Process::create("git"));
 	kul::ProcessCapture pc(*p.get());
 	p->addArg("status").addArg("-sb");

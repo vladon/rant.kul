@@ -85,7 +85,7 @@ class GCCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
 				pc.failed();
 			}
 
@@ -113,7 +113,7 @@ class GCCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
 				pc.failed();
 			}
 
@@ -140,7 +140,7 @@ class GCCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
 				pc.failed();
 			}
 
@@ -172,7 +172,7 @@ class GCCompiler : public CCompiler{
 			try{
 				(*p).start();			
 			}catch(const kul::proc::Exception& e){
-				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
 				pc.failed();
 			}
 
@@ -292,7 +292,7 @@ class WINCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
 				pc.failed();
 			}
 
@@ -320,7 +320,7 @@ class WINCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
 				pc.failed();
 			}
 
@@ -347,7 +347,7 @@ class WINCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
 				pc.failed();
 			}
 			return pc;
@@ -379,7 +379,7 @@ class WINCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
 				pc.failed();
 			}
 

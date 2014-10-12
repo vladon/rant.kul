@@ -123,8 +123,8 @@ class NodeUser{
 	protected:
 		std::shared_ptr<const Node> rootNode;
 		const std::string f;
-		const void 						reset(const Node* node)	{ rootNode.reset(node);}
-		const void						reset() 				{ rootNode.reset(); }
+		void reset(const Node* node)	{ rootNode.reset(node);}
+		void reset() 					{ rootNode.reset(); }
 
 	public:
 		NodeUser(std::string f) : rootNode(0), f(f) {}
@@ -185,10 +185,10 @@ class NodeAttributeValidator{
 		NodeAttributeValidator(const hash::map::S2VT<std::string> a, const bool c, const bool u, const bool m) : avs(a), checked(c), unique(u), mandatory(m){}
 		NodeAttributeValidator(const hash::map::S2VT<std::string> a, const bool u, const bool m) : avs(a), checked(0), unique(u), mandatory(m){}
 		NodeAttributeValidator(const NodeAttributeValidator& n) : avs(n.allowedValues()), checked(n.isChecked()), unique(n.isUnique()), mandatory(n.isMandatory()){}
-		const bool 								isChecked() 		const { return checked; }
-		const bool 								isUnique() 			const { return unique; }
-		const bool 								isMandatory() 		const { return mandatory; }
-		const hash::map::S2VT<std::string>& 	allowedValues() 	const { return avs;}
+		bool 								isChecked() 	const { return checked; }
+		bool 								isUnique() 		const { return unique; }
+		bool	 							isMandatory() 	const { return mandatory; }
+		const hash::map::S2VT<std::string>& allowedValues()	const { return avs;}
 };
 
 

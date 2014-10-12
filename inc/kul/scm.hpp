@@ -52,7 +52,7 @@ class Scm{
 		virtual const std::string localVersion(const std::string& d) = 0;
 		virtual const std::string remoteVersion(const std::string& d, const std::string& url, const std::string branch = "")  throw(Exception) = 0;
 
-		virtual const bool hasChanges(const std::string& d) const = 0;
+		virtual bool hasChanges(const std::string& d) const = 0;
 
 		virtual void setOrigin(const std::string& d, const std::string& r) = 0;
 		virtual void status(const std::string& d) = 0;
@@ -67,7 +67,7 @@ class Git : public Scm{
 		const std::string localVersion(const std::string& d);
 		const std::string remoteVersion(const std::string& d, const std::string& url, const std::string branch = "") throw(Exception);
 
-		const bool hasChanges(const std::string& d) const;
+		bool hasChanges(const std::string& d) const;
 
 		void setOrigin(const std::string& d, const std::string& r);
 		void status(const std::string& d);
@@ -83,7 +83,7 @@ class Svn : public Scm{
 		const std::string localVersion(const std::string& d);
 		const std::string remoteVersion(const std::string& d, const std::string& url, const std::string branch = "") throw(Exception);
 
-		const bool hasChanges(const std::string& d) const;
+		bool hasChanges(const std::string& d) const;
 
 		void setOrigin(const std::string& d, const std::string& r);
 		void status(const std::string& d);

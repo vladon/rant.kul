@@ -74,7 +74,7 @@ class CmdIn{
 			if(!inst.get()) inst.reset(new CmdIn());
 			return inst.get();
 		}
-		virtual const bool receiveBool(const std::string txt) {
+		virtual bool receiveBool(const std::string txt) {
 			std::string t = receive(txt);
 			kul::String::trim(t);
 			std::vector<std::string> pos; 
@@ -119,7 +119,7 @@ class EnvVar{
 		EnvVar(const std::string n, const std::string v, const EnvVarMode m) : n(n), v(v), m(m){}
 		const char* 		name() 		const { return n.c_str(); }
 		const char* 		value() 	const { return v.c_str(); }
-		const EnvVarMode 	mode() 		const { return m; }
+		EnvVarMode		 	mode() 		const { return m; }
 		const std::string 	toString() 	const {
 			std::string var(value());
 			kul::String::replaceAll(var, kul::os::newLine(), "");
@@ -173,7 +173,7 @@ class Args{
 		const std::vector<Cmd>& commands()	const { return cmds;}
 		const std::vector<Arg>& arguments() const { return args;}
 		const hash::map::S2S& 	values() 	const { return vals; }
-		const bool contains(const std::string& s) { 
+		bool contains(const std::string& s) { 
 			return vals.count(s);
 		}
 };

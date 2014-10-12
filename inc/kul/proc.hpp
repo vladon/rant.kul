@@ -64,7 +64,7 @@ class Process{
 		virtual void 		finish()		{}
 		virtual void 		tearDown()		{}
 		virtual void 		run() throw (kul::proc::Exception) = 0;
-		const bool			waitForExit()	const { return wfe; }
+		bool				waitForExit()	const { return wfe; }
 
 		const std::vector<std::string>&		 									arguments()				const { return argv; };
 		const std::vector<std::pair<const std::string, const std::string> >& 	environmentVariables()	const { return evs; }
