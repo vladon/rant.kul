@@ -56,8 +56,8 @@ class TestThreadPoolObject{
 	public:
 		TestThreadPoolObject(Mutex& mutex) : i(0), mutex(mutex){}
 		void operator()(){
-		   	KLOG(INF) << "THREAD RUNNING";
-			kul::ScopeLock lock(mutex);
+		   	kul::ScopeLock lock(mutex);
+		   	KLOG(INF) << "THREAD RUNNING";			
 			i++;
 			KLOG(INF) << "THREAD FINISHED";
 		}
@@ -78,8 +78,8 @@ class test{ public: test(){
 	KLOG(INF) << os::pwd();
 	KLOG(INF) << os::userDir();
 	KLOG(INF) << os::userAppDir("maiken");
-	for(std::string s : os::dirs()) 				KLOG(INF) << s;
-	for(std::string s : os::files(os::pwd(), true)) KLOG(INF) << s;
+	for(std::string d : os::dirs()) 				
+		for(std::string s : os::files(d, false)) KLOG(INF) << s;
 
 	std::shared_ptr<kul::Process> p(kul::Process::create("echo"));
 	try{
@@ -132,7 +132,7 @@ class test{ public: test(){
 		kul::ScopeLock lock(mutex);
 	}
 
-	KLOG(INF) << "CANONBALL";
+	KLOG(INF) << "LAUNCHING THREAD POOL";
 	TestThreadPoolObject ttpo(mutex);
 	kul::Ref<TestThreadPoolObject> ref2(ttpo);
 	kul::ThreadPool<std::queue<int> > tp(ref2);
@@ -140,8 +140,8 @@ class test{ public: test(){
 	tp.runAndJoinAll();
 	ttpo.print();
 
-	kul::os::cores();
-	kul::os::threads();
+	KLOG(INF) << "CPU CORES: " << kul::os::cores();
+	KLOG(INF) << "MAX THREADS: " << kul::os::threads();
 }};
 
 

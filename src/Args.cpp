@@ -65,7 +65,7 @@ void kul::cli::Args::process(int argc, char* argv[]){
 		if((c.find("--") == 0 || c.find("-") == 0) && valExpected == 1)
 			KEXCEPT(Exception, "Value expected for argument: \""+ valExpectedFor + "\"");
 
-		if(valExpected == 1 || (valExpected == 2 && !c.find("-") == 0)){
+		if(valExpected == 1 || (valExpected == 2 && c.find("-") != 0)){
 			valExpected = 0;
 			vals[arg->dashdash()] = c;
 			arg = 0;

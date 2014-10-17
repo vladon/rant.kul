@@ -56,10 +56,8 @@ class AServer{
 		const short& 	port()	{ return p; }
 };
 class AClient{
-	private:
-		bool c;
 	public:
-		AClient() : c(0){}
+		AClient(){}
 		virtual ~AClient(){}
 		virtual void start(const std::string& u, const short& p) = 0;
 		virtual void send(const ARequest& r) const = 0;
