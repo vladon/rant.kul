@@ -56,7 +56,7 @@ class WINCompiler : public Compiler{
 			}
 			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));			
 			CompilerProcessCapture pc(*p, exe);
-			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			(*p).addArg("/NOLOGO").addArg("/OUT:").addArg(exe);
 			for(const std::string& path : libPaths)	(*p).addArg("/LIBPATH:").addArg(path);			
 			for(const std::string& o : objects)	(*p).addArg(o);

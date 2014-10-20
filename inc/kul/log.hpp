@@ -69,9 +69,9 @@ class ConsoleLogger : public ALogger{
 			if(m == NON)
 				std::cout << s << std::endl;
 			else if(m == ERR)
-				std::cerr << "[" << modeTxt(m) << "] " << kul::DateTime::NOW() << " " << f << " : " << l << " " << s << std::endl;
+				std::cerr << "[" << modeTxt(m) << "] " << kul::DateTime::NOW() << " : " << f << " : " << l << " " << s << std::endl;
 			else 
-				std::cout << "[" << modeTxt(m) << "] " << kul::DateTime::NOW() << " " << f << " : " << l << " " << s << std::endl;
+				std::cout << "[" << modeTxt(m) << "] " << kul::DateTime::NOW() << " : " << f << " : " << l << " " << s << std::endl;
 		}
 };
 
