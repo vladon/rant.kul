@@ -72,7 +72,7 @@ class GCCompiler : public CCompiler{
 				cmd = bits[0];
 			}
 			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
-			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			CompilerProcessCapture pc(*p, out);
 			for(const std::string& path : libPaths)	(*p).addArg("-L" + path);
 			if(mode == Mode::SHAR)		(*p).addArg("-shared");
@@ -107,13 +107,13 @@ class GCCompiler : public CCompiler{
 			}
 			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
 			CompilerProcessCapture pc(*p, lib);
-			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			(*p).addArg("-shared").addArg("-o").addArg(lib);
 			for(const std::string& o : objects)	(*p).addArg(o);	
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
+				KLOG(DBG) << e.debug() << " : " << typeid(e).name();
 				pc.failed();
 			}
 
@@ -134,7 +134,7 @@ class GCCompiler : public CCompiler{
 			}
 			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
 			CompilerProcessCapture pc(*p, lib);
-			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			(*p).addArg(lib).addArg("-c");
 			for(const std::string& o : objects)	(*p).addArg(o);	
 			try{
@@ -164,7 +164,7 @@ class GCCompiler : public CCompiler{
 				cmd = bits[0];
 			}
 			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
-			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			CompilerProcessCapture pc(*p, obj);
 			
 			for(const std::string& s : incs)	(*p).addArg("-I"+s);
@@ -277,12 +277,11 @@ class WINCompiler : public CCompiler{
 			}
 			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
 			CompilerProcessCapture pc(*p, exe);
-			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
-			(*p).addArg("/NOLOGO").addArg("/LTCG");			
-			for(const std::string& path : libPaths)	(*p).addArg("/LIBPATH:").addArg(path);
+			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			for(const std::string& path : libPaths)	(*p).addArg("/LIBPATH:\"" + path + "\"");
 			//if(mode == Mode::SHAR)		(*p).addArg("-shared");
 			//else if(mode == Mode::STAT)	(*p).addArg("-static");
-			(*p).addArg("/OUT:").addArg(exe);
+			(*p).addArg("/OUT:\"" + exe + "\"").addArg("/NOLOGO");	
 			for(const std::string& o : objects)	(*p).addArg(o);
 			for(const std::string& lib : libs)
 				if(mode == Mode::SHAR) (*p).addArg(sharedLib(lib));
@@ -314,9 +313,9 @@ class WINCompiler : public CCompiler{
 				cmd = bits[0];
 			}
 			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
-			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			CompilerProcessCapture pc(*p, lib);
-			(*p).addArg("/OUT:").addArg(lib).addArg("/NOLOGO").addArg("/LTCG");
+			(*p).addArg("/OUT:\"" + lib + "\"").addArg("/NOLOGO");
 			for(const std::string& o : objects)	(*p).addArg(o);	
 			try{
 				(*p).start();
@@ -342,13 +341,13 @@ class WINCompiler : public CCompiler{
 			}
 			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
 			CompilerProcessCapture pc(*p, lib);
-			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
-			(*p).addArg("/OUT:").addArg(lib).addArg("/NOLOGO").addArg("/LTCG");
+			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			(*p).addArg("/OUT:\"" + lib + "\"").addArg("/NOLOGO").addArg("/LTCG");
 			for(const std::string& o : objects)	(*p).addArg(o);	
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
+				KLOG(DBG) << e.debug() << " : " << typeid(e).name();
 				pc.failed();
 			}
 			return pc;
@@ -372,11 +371,11 @@ class WINCompiler : public CCompiler{
 				cmd = bits[0];
 			}
 			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
-			for(uint i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
+			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			CompilerProcessCapture pc(*p, obj);
-			(*p).addArg("-c").addArg("/Fo").addArg(obj).addArg(in);
-			for(const std::string& s : incs)	(*p).addArg("/I").addArg(s);
+			for(const std::string& s : incs)	(*p).addArg("/I\"" + s + "\"");
 			for(const std::string& s : args)	(*p).addArg(s);
+			(*p).addArg("/c").addArg("/Fo\"" + obj + "\"").addArg("\"" + in + "\"");
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
