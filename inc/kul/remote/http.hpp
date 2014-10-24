@@ -80,6 +80,6 @@ class GetResponse  : public Response{};
 class PostResponse : public Response{};
 
 
-};};
+}}
 
 #endif /* _KUL_HTTP_HPP_ */

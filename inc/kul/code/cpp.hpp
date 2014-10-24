@@ -395,5 +395,5 @@ class WINCompiler : public CCompiler{
 		}
 };
 
-};};};
+}}}
 #endif /* _KUL_CODE_CPP_HPP_ */

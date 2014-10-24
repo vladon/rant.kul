@@ -39,7 +39,7 @@ class ExitException : public Exception{
 	public:
 		ExitException(const char*f, const int l, std::string s) : Exception(f, l, s){}
 };
-};
+}
 
 class Process{
 	private:
@@ -130,7 +130,5 @@ class ProcessCapture{
 		const std::vector<std::string> errs() const {return eV;}
 };
 
-
-
-};
+}
 #endif /* _KUL_PROC_HPP_ */

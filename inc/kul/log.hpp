@@ -48,7 +48,12 @@ class Exception : public kul::Exception{
 class ALogger{
 	public:
 		virtual ~ALogger(){}
-		virtual void log(const char* f, const int& l, const std::string& s, const mode& m) const{}
+		virtual void log(const char* f, const int& l, const std::string& s, const mode& m) const = 0;
+		const std::string line(const char* f, const int& l, const std::string& s, const mode& m) const{
+			std::stringstream ss;
+			ss << "[" << modeTxt(m) << "] " << kul::DateTime::NOW() << " : " << f << " : " << l << " " << s;
+			return ss.str();
+		}
 		const std::string modeTxt(const mode& m) const{
 			std::string s("NONE");
 			if(m == 1)		s = "INFO";
@@ -58,20 +63,15 @@ class ALogger{
 		}
 };
 
-class NullLogger : public ALogger{
-	public:
-		void log(const char* f, const int& l, const std::string& s, const mode& m) const{}
-};
-
 class ConsoleLogger : public ALogger{
 	public:
 		void log(const char* f, const int& l, const std::string& s, const mode& m) const{
 			if(m == NON)
 				std::cout << s << std::endl;
 			else if(m == ERR)
-				std::cerr << "[" << modeTxt(m) << "] " << kul::DateTime::NOW() << " : " << f << " : " << l << " " << s << std::endl;
+				std::cerr << line(f, l, s, m) << std::endl;
 			else 
-				std::cout << "[" << modeTxt(m) << "] " << kul::DateTime::NOW() << " : " << f << " : " << l << " " << s << std::endl;
+				std::cout << line(f, l, s, m) << std::endl;
 		}
 };
 
@@ -87,10 +87,13 @@ class FileLogger : public ALogger{
 							+ " IS NOT A VALID DIRECTORY - ABORTING!");
 			}
 		}
-		void log(const char* f, const int& l, const std::string& s, const mode& m) const{}
+		void log(const char* f, const int& l, const std::string& s, const mode& m) const{
+			//TODO finish
+			line(f, l, s, m);			
+		}
 };
 
-};
+}
 
 class LogMan{
 	private:
@@ -138,7 +141,7 @@ class LogMessage{
 		LogMessage(const char* f, const int& l, const log::mode& m) : f(f), l(l), m(m){}
 		template<class T> LogMessage& operator<<(const T& s){			
 			std::stringstream ss;
-			ss << s;			
+			ss << s;
 			msg += ss.str();
 			return *this;
 		}
@@ -148,11 +151,6 @@ class LogMessageToCOut : public LogMessage{
 	public:
 		LogMessageToCOut(const char* f, const int& l, const log::mode& m) : LogMessage(f, l, m){}
 };
-class LogMessageToCErr : public LogMessage{
-	public:
-		LogMessageToCErr(const char* f, const int& l, const log::mode& m) : LogMessage(f, l, m){}
-};
-
 class LogMessageToFile : public LogMessage{
 	public:
 		LogMessageToFile(const char* f, const int& l, const log::mode& m) : LogMessage(f, l, m){}
@@ -168,14 +166,11 @@ class LogMessageToFile : public LogMessage{
 #define KLOG2_COUT_INF		kul::LogMessageToCOut(__FILE__, __LINE__, kul::log::mode::INF)
 #define KLOG2_COUT_ERR		kul::LogMessageToCOut(__FILE__, __LINE__, kul::log::mode::ERR)
 #define KLOG2_COUT_DBG		kul::LogMessageToCOut(__FILE__, __LINE__, kul::log::mode::DBG)
-#define KLOG2_CERR_INF		kul::LogMessageToCErr(__FILE__, __LINE__, kul::log::mode::INF)
-#define KLOG2_CERR_ERR		kul::LogMessageToCErr(__FILE__, __LINE__, kul::log::mode::ERR)
-#define KLOG2_CERR_DBG		kul::LogMessageToCErr(__FILE__, __LINE__, kul::log::mode::DBG)
+#define KLOG2_FILE_NON		kul::LogMessageToFile(__FILE__, __LINE__, kul::log::mode::NON)
 #define KLOG2_FILE_INF		kul::LogMessageToFile(__FILE__, __LINE__, kul::log::mode::INF)
 #define KLOG2_FILE_ERR		kul::LogMessageToFile(__FILE__, __LINE__, kul::log::mode::ERR)
 #define KLOG2_FILE_DBG		kul::LogMessageToFile(__FILE__, __LINE__, kul::log::mode::DBG)
 #define KLOG2(logger, sev) KLOG2_ ## logger ## _ ## sev
 
-};
-
+}
 #endif /* _KUL_LOG_HPP_ */

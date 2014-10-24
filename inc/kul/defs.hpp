@@ -28,6 +28,10 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 	#define uint unsigned int
 #endif /*  uint */
 
+#ifndef ulong
+	#define ulong unsigned long
+#endif /*  ulong */
+
 #ifndef KLOG_LVL
 	#define KLOG_LVL 0
 #endif /*  KLOG_LVL */

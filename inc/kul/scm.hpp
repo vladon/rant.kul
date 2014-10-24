@@ -111,5 +111,5 @@ class Manager{
 
 
 
-};};
+}}
 #endif /* _KUL_SCM_HPP_ */

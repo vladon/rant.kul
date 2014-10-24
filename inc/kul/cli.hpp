@@ -189,5 +189,5 @@ class AWriter{
 };
 
 
-};};
+}}
 #endif /* _KUL_CLI_HPP_ */

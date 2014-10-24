@@ -76,5 +76,5 @@ std::string newLine();
 unsigned int cores();
 unsigned int threads();
 
-};};
+}}
 #endif /* _KUL_OS_HPP_ */

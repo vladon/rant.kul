@@ -38,7 +38,7 @@ class Now{
 		static int64_t micros()	{ return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
 		static int64_t nanos()	{ return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
 };
-};
+}
 class DateTime{
 	private:
 		static const std::string millis(){
@@ -48,7 +48,7 @@ class DateTime{
 			return s.substr(s.length() - 3);
 		}
 	public:
-		static const std::string NOW(const std::string f = "") {
+		static const std::string NOW() {
 			std::time_t result = std::time(NULL);
 			std::string s(std::asctime(std::localtime(&result)));
 			s = s.substr(0, 19) + ":" + millis() + " " + s.substr(20);
@@ -56,5 +56,5 @@ class DateTime{
 			return s;
 		}
 };
-};
+}
 #endif /* _KUL_TIME_HPP_ */

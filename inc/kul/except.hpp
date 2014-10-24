@@ -34,7 +34,6 @@ class Exception : public std::runtime_error{
 	private:
 		const char* f;
 		const int l;
-		Exception& operator=(const Exception& e){ return *this;}
 	public:
 #if defined(_WIN32) || defined(_WIN64)	// delete when M$ supports noexcept
 		~Exception() /*noexcept*/{} 	// delete
@@ -43,16 +42,15 @@ class Exception : public std::runtime_error{
 		~Exception() noexcept{}
 		const char* what() const noexcept{ return std::runtime_error::what();}
 #endif									// delete when M$ supports noexcept
-		Exception(const char*file, const int& line, std::string s) : std::runtime_error(s), f(file), l(line){}
-		Exception(const Exception& e) : std::runtime_error(e.what()), f(e.f),  l(e.l){}
+		Exception(const char*f, const int& l, std::string s) : std::runtime_error(s), f(f), l(l){}
+		Exception(const Exception& e) : std::runtime_error(e.what()), f(e.file()),  l(e.line()){}
 
 		const std::string debug() 	const { return std::string(std::string(f) + " : " + kul::String::toString(l) + " : " + std::string(std::runtime_error::what()));}
 		const char* file() 			const { return f;}
 		const int& line() 			const { return l;}
 };
 
-
 #define KEXCEPT(c, m) throw c(__FILE__, __LINE__, m)
 
-};
+}
 #endif /* _KUL_EXCEPT_HPP_ */

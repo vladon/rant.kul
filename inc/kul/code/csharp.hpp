@@ -112,5 +112,5 @@ class WINCompiler : public Compiler{
 		}
 };
 
-};};};
+}}}
 #endif /* _KUL_CODE_CSHARP_HPP_ */

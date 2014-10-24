@@ -71,7 +71,7 @@ class Set : google::sparse_hash_set<T, HashFcn, EqualKey>{
 
 namespace set{
 typedef Set<std::string, std::tr1::hash<std::string>, StdStringComparator> String;
-};
+}
 
 template <class K, class V, class HashFcn, class EqualKey, class Alloc = libc_allocator_with_realloc<std::pair<K, V> > >
 class Map : google::sparse_hash_map<K, V, HashFcn, EqualKey>{
@@ -163,7 +163,7 @@ class S2S2T : google::sparse_hash_map<std::string, S2T<T>, HashFcn, EqualKey>{
 		const_iterator 				end() 												const   { return s2T2T::end(); }
 		const_iterator 				find(const key_type& key) 							const 	{ return s2T2T::find(key); }
 };
-};
+}
 
-};};
+}}
 #endif /* _KUL_HASH_HPP_ */

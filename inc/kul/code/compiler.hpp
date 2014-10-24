@@ -95,5 +95,5 @@ class Compiler{
 			const std::string& out) 	const throw (kul::Exception) = 0;
 };
 
-};};
+}}
 #endif /* _KUL_CODE_COMPILER_HPP_ */

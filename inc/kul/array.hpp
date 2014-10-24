@@ -83,6 +83,5 @@ template <class T> class Vector{
 		const std::vector<T*>* 	operator->() 				const { return ts; }
 };
 
-
-};
+}
 #endif /* _KUL_ARRAY_HPP_ */

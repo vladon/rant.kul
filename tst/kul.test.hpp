@@ -144,6 +144,6 @@ class test{ public: test(){
 }};
 
 
-};
+}
 #endif /* _KUL_TEST_HPP_ */
 	

@@ -50,14 +50,14 @@ class AThread{
 		virtual void run()			throw(kul::threading::Exception) 				= 0;
 		virtual void join()															= 0;
 		virtual void detach()														= 0;
-		virtual void sleep(const long& millis)										= 0;
+		virtual void sleep(const ulong& millis)										= 0;
 		virtual bool finished()														= 0;
 		virtual void interrupt()	throw(kul::threading::InterruptionException) 	= 0;
 	public:		
 		virtual ~AThread(){}
 };
 
-};
+}
 
 template <class T>
 class Ref{
@@ -103,12 +103,12 @@ class AThreader{
 		friend class kul::Thread;
 		template <class PRED> friend class kul::ThreadPool;
 };
-};};
+}}
 
 namespace this_thread{	
 	void uSleep(const unsigned long& nanos); // linux needs a wait as the threads are loaded too fast - TODO look into - if it is resolved, it should be safely removed
 	void sleep(const unsigned long& millis);	
-};
+}
 
 namespace threading{
 class ThreaderService{
@@ -117,7 +117,7 @@ class ThreaderService{
 		template <class T> static kul::osi::threading::AThreader* getRefThreader(const Ref<T>& ref);
 		template <class T> static kul::osi::threading::AThreader* getCRefThreader(const CRef<T>& ref);
 };
-};
+}
 class ScopeLock;
 
 class ALock{
@@ -172,7 +172,7 @@ class Thread : public threading::AThread{
 		void join(){ 			
 			if(started()) th->join();
 		}
-		void sleep(const long& millis){
+		void sleep(const ulong& millis){
 			this_thread::sleep(millis);
 		}
 		void detach(){ 			
@@ -247,7 +247,7 @@ class PooledCRefThreader : public APooledThreader{
 		kul::osi::threading::AThreader* getThreader() const { return ThreaderService::getCRefThreader(r);}
 		template <class PRED> friend class kul::ThreadPool;
 };
-};
+}
 
 template <class PRED>
 class ThreadPool{
@@ -318,7 +318,7 @@ class ThreadPool{
 
 
 
-};
+}
 #endif /* _KUL_THREADING_THREAD_HPP_ */
 
 

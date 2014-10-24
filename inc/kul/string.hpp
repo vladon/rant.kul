@@ -154,5 +154,5 @@ class WString{
 		}		
 };
 
-};
+}
 #endif /* _KUL_STRING_HPP_ */

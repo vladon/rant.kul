@@ -86,5 +86,5 @@ class Compilers{
 };
 
 
-};};
+}}
 #endif /* _KUL_CODE_COMPILERS_HPP_ */

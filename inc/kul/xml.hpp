@@ -167,7 +167,7 @@ class NodeValidator{
 			children(v.getChildren())	, attributeValidators(v.attributeValidators),
 			mi(v.minimum())			, ma(v.maximum())					, text(v.isText()){}
 
-		const NodeValidator 	operator=(const NodeValidator& n)					const { return *this; }
+//		const NodeValidator 	operator=(const NodeValidator& n)					const { return *this; }
 		const std::vector<std::pair<std::string, NodeValidator> >&	getChildren() 	const { return this->children; }
 		const std::vector<NodeAttributeValidator>& 					getAtVals()		const { return attributeValidators; }
 		const int& 													minimum() 		const { return this->mi; }
@@ -192,5 +192,5 @@ class NodeAttributeValidator{
 };
 
 
-};};
+}}
 #endif /* _KUL_XML_HPP_ */

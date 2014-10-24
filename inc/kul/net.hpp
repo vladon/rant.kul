@@ -81,6 +81,6 @@ class Endian{
 
 };
 
-};};
+}}
 
 #endif /* _KUL_NET_HPP_ */

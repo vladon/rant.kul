@@ -75,6 +75,6 @@ class Writer{
 		}
 };
 
-};};
+}}
 #endif /* _KUL_IO_HPP_ */
 
