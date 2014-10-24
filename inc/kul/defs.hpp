@@ -24,6 +24,10 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_DEFS_HPP_
 #define _KUL_DEFS_HPP_
 
+#ifndef uint
+	#define uint unsigned int
+#endif /*  uint */
+
 #ifndef KLOG_LVL
 	#define KLOG_LVL 0
 #endif /*  KLOG_LVL */

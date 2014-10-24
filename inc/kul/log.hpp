@@ -76,7 +76,17 @@ class ConsoleLogger : public ALogger{
 };
 
 class FileLogger : public ALogger{
+	private:
+		const char* fi;
 	public:
+		FileLogger(const char* fi) : fi(fi){
+			if(!kul::os::isFile(fi)){
+				if(!kul::os::isDir(kul::os::dirDotDot(fi)))
+					if(!kul::os::mkDir(kul::os::dirDotDot(fi)))
+						KEXCEPT(kul::os::Exception, kul::os::dirDotDot(fi) 
+							+ " IS NOT A VALID DIRECTORY - ABORTING!");
+			}
+		}
 		void log(const char* f, const int& l, const std::string& s, const mode& m) const{}
 };
 

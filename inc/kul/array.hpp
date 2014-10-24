@@ -44,17 +44,17 @@ template <class T> class ArrayHelper;
 template <class T> class Array{
 	private:
 		T* ts;
-		int cap, siz;
+		uint cap, siz;
 		Array& swap(const Array& a)		{ T* ots = ts; T* nts = new T[a.siz]; 		std::copy(&a.ts[0]	, &a.ts[a.siz]	, nts); 			ts = nts; delete[] ots; siz=a.siz; cap=a.cap; return *this;}
 		void add(T* p){ if(siz == cap)	{ T* ots = ts; T* nts = new T[cap + 10]; 	std::copy(&ts[0]	, &ts[siz]		, nts); cap += 10; 	ts = nts; delete[] ots;} T& r = *p;  ts[siz++] = r; }
 	public:
-		Array() : ts(new T[1]), cap(1), siz(0)					{}
+		Array() : ts(new T[1]{}), cap(1), siz(0)				{}
 		Array(const Array& a) : ts(0), cap(0), siz(0)			{ swap(a); }
 		~Array()												{ if(ts) delete[] ts; }
 		T&					operator[](const int& i)	const	{ return ts[i];}
 		Array&				operator=(const Array& a)			{ return swap(a); }
 		ArrayHelper<T>		add()								{ return ArrayHelper<T>(this); }
-		const int& 			size() 						const	{ return this->siz; }
+		const uint& 			size() 						const	{ return this->siz; }
 		Iterator<T> 		begin()						const	{ return Iterator<T>(ts, 0); }
 		Iterator<T> 		end()						const	{ return Iterator<T>(ts, this->size()); }
 		friend class ArrayHelper<T>;

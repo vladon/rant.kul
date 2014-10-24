@@ -71,15 +71,14 @@ class test{ public: test(){
 	kul::Array<int> a;
 	a.add()(new int(1)) (new int(2)) (new int(3));
 	for(const int& ii : a) KLOG(INF) << ii;
-	for(int i = 0; i < a.size(); i++) KLOG(INF) << a[i];
+	for(unsigned int i = 0; i < a.size(); i++) KLOG(INF) << a[i];
 
 	KLOG(INF);
 	KLOG(INF) << os::dirSep();
 	KLOG(INF) << os::pwd();
 	KLOG(INF) << os::userDir();
 	KLOG(INF) << os::userAppDir("maiken");
-	for(std::string d : os::dirs()) 				
-		for(std::string s : os::files(d, false)) KLOG(INF) << s;
+	for(std::string d : os::dirs()) for(std::string s : os::files(d, false)) KLOG(INF) << s;
 
 	std::shared_ptr<kul::Process> p(kul::Process::create("echo"));
 	try{
