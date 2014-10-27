@@ -110,7 +110,7 @@ class LogMan{
 					if(s.compare("1") == 0 || s.compare("INF") == 0)      lM = log::mode::INF;
 					else if(s.compare("2") == 0 || s.compare("ERR") == 0) lM = log::mode::ERR;
 					else if(s.compare("3") == 0 || s.compare("DBG") == 0) lM = log::mode::DBG;
-					else {std::cerr << "KLOG OPTION UNKNOWN" << std::endl; exit(1);}
+					else if(s.size() > 0) {std::cerr << "KLOG OPTION UNKNOWN" << std::endl; exit(1);}
 				}
 				instance = new LogMan(lM);
 			}

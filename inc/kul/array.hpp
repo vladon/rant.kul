@@ -25,6 +25,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define _KUL_ARRAY_HPP_
 
 #include <vector>
+#include "kul/defs.hpp"
 
 namespace kul { 
 
