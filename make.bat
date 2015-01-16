@@ -1,5 +1,6 @@
 
 
+@ECHO off
 
 if "%1"=="" GOTO blank
 if "%1"=="init" GOTO init
