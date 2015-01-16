@@ -4,7 +4,7 @@ if "%1"=="" GOTO blank
 if "%1"=="init" GOTO init
 else GOTO eof
 
-init:
+:init
 SET PWD=%CD%
 IF NOT EXIST %PWD%\ext\sparsehash\trunk (
 	svn co http://sparsehash.googlecode.com/svn/trunk %PWD%\ext\sparsehash\trunk
