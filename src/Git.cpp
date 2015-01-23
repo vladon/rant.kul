@@ -111,7 +111,7 @@ bool kul::scm::Git::hasChanges(const std::string& d) const{
 void kul::scm::Git::setOrigin(const std::string& d, const std::string& r){
 
 	std::shared_ptr<kul::Process> p(kul::Process::create("git"));
-	p->addArg("remote").addArg("set-url").addArg("r");
+	p->addArg("remote").addArg("set-url").addArg(r);
 	try{
 		p->setDir(d.c_str());
 		p->start();
