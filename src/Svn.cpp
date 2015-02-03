@@ -24,12 +24,12 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/scm.hpp"
 #include "kul/log.hpp"
 
-void kul::scm::Svn::co(const std::string& l, const std::string& r, const std::string&) const throw(Exception){
+void kul::scm::Svn::co(const std::string& d, const std::string& r, const std::string& v) const throw(Exception){
 	KEXCEPT(Exception, "SCM ERROR - SVN NOT YET IMPLEMENTED");
 };
-void kul::scm::Svn::up(const std::string& l, const std::string& r, const std::string&) const throw(Exception){
+void kul::scm::Svn::up(const std::string& d, const std::string& r, const std::string& v) const throw(Exception){
 	KEXCEPT(Exception, "SCM ERROR - SVN NOT YET IMPLEMENTED");
-	if(!kul::os::isDir(l)) co(l, r);
+	if(!Dir(d).is()) co(d, r);
 	else{}
 };
 const std::string kul::scm::Svn::localVersion(const std::string& d) {

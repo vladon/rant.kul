@@ -74,13 +74,13 @@ class test{ public: test(){
 	for(unsigned int i = 0; i < a.size(); i++) KLOG(INF) << a[i];
 
 	KLOG(INF);
-	KLOG(INF) << os::dirSep();
-	KLOG(INF) << os::pwd();
-	KLOG(INF) << os::userDir();
-	KLOG(INF) << os::userAppDir("maiken");
-	for(std::string d : os::dirs()) for(std::string s : os::files(d, false)) KLOG(INF) << s;
+	KLOG(INF) << Dir::SEP();
+	KLOG(INF) << Env::CWD();
+	KLOG(INF) << os::userDir().real();
+	KLOG(INF) << os::userAppDir("maiken").real();
+	for(kul::Dir d : kul::Dir(Env::CWD()).dirs()) for(kul::File f : d.files()) KLOG(INF) << f.real();
 
-	std::shared_ptr<kul::Process> p(kul::Process::create("echo"));
+	std::unique_ptr<kul::Process> p(kul::Process::create("echo"));
 	try{
 		(*p).addArg("Hello").addArg("World").start();
 	}catch(const kul::proc::Exception& e){ 
@@ -91,9 +91,9 @@ class test{ public: test(){
 	for(const std::string& arg : kul::cli::CmdLine::asArgs("/path/to \"words in quotes\" words\\ not\\ in\\ quotes end"))
 		KLOG(INF) << "ARG: " << arg;
 
-	KLOG(INF) << "kul::time::Now::millis(); " << kul::time::Now::millis();
-	KLOG(INF) << "kul::time::Now::micros(); " << kul::time::Now::micros();
-	KLOG(INF) << "kul::time::Now::nanos();  " << kul::time::Now::nanos();
+	KLOG(INF) << "kul::Now::MILLIS(); " << kul::Now::MILLIS();
+	KLOG(INF) << "kul::Now::MICROS(); " << kul::Now::MICROS();
+	KLOG(INF) << "kul::Now::NANOS();  " << kul::Now::NANOS();
 
 	KLOG(INF) << "kul::DateTime::NOW();  " << kul::DateTime::NOW();
 
@@ -139,8 +139,8 @@ class test{ public: test(){
 	tp.runAndJoinAll();
 	ttpo.print();
 
-	KLOG(INF) << "CPU CORES: " << kul::os::cores();
-	KLOG(INF) << "MAX THREADS: " << kul::os::threads();
+	KLOG(INF) << "CPU CORES: " << kul::cpu::cores();
+	KLOG(INF) << "MAX THREADS: " << kul::cpu::threads();
 }};
 
 

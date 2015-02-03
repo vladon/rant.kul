@@ -71,7 +71,7 @@ class GCCompiler : public CCompiler{
 				bits = kul::String::split(linker, ' ');
 				cmd = bits[0];
 			}
-			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			std::unique_ptr<kul::Process> p(kul::Process::create(cmd));
 			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			CompilerProcessCapture pc(*p, out);
 			for(const std::string& path : libPaths)	(*p).addArg("-L" + path);
@@ -97,7 +97,7 @@ class GCCompiler : public CCompiler{
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
-			const std::string lib(kul::os::dirJoin(outDir, "lib" + outFile) + ".so");
+			const std::string lib(kul::Dir(outDir).join("lib" + outFile) + ".so");
 
 			std::string cmd = linker;
 			std::vector<std::string> bits;
@@ -105,7 +105,7 @@ class GCCompiler : public CCompiler{
 				bits = kul::String::split(linker, ' ');
 				cmd = bits[0];
 			}
-			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			std::unique_ptr<kul::Process> p(kul::Process::create(cmd));
 			CompilerProcessCapture pc(*p, lib);
 			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			(*p).addArg("-shared").addArg("-o").addArg(lib);
@@ -125,14 +125,14 @@ class GCCompiler : public CCompiler{
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
-			const std::string lib(kul::os::dirJoin(outDir, "lib" + outFile) + ".a");
+			const std::string lib(kul::Dir(outDir).join("lib" + outFile) + ".a");
 			std::string cmd = archiver;
 			std::vector<std::string> bits;
 			if(archiver.find(" ") != std::string::npos){
 				bits = kul::String::split(archiver, ' ');
 				cmd = bits[0];
 			}
-			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			std::unique_ptr<kul::Process> p(kul::Process::create(cmd));
 			CompilerProcessCapture pc(*p, lib);
 			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			(*p).addArg(lib).addArg("-c");
@@ -155,15 +155,13 @@ class GCCompiler : public CCompiler{
 
 			using namespace kul;
 			std::string obj = out + ".o";
-			if(!os::isDir(os::dirDotDot(out))) os::mkDir(os::dirDotDot(out));
-
 			std::string cmd = compiler;
 			std::vector<std::string> bits;
 			if(compiler.find(" ") != std::string::npos){
 				bits = kul::String::split(compiler, ' ');
 				cmd = bits[0];
 			}
-			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			std::unique_ptr<kul::Process> p(kul::Process::create(cmd));
 			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			CompilerProcessCapture pc(*p, obj);
 			
@@ -206,10 +204,7 @@ class GCCompiler : public CCompiler{
 			for(const std::string& s : incs)
 				cmd += "-I" + s + " ";
 
-			if(!os::isDir(os::dirDotDot(out))) os::mkDir(os::dirDotDot(out));
 			cmd += " -o " + out;
-			KLOG(INF) << cmd;
-
 			if(kul::os::execReturn(cmd) != 0)
 				KEXCEPT(Exception, "Failed to pre-compile header");
 		}
@@ -275,7 +270,7 @@ class WINCompiler : public CCompiler{
 				bits = kul::String::split(linker, ' ');
 				cmd = bits[0];
 			}
-			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			std::unique_ptr<kul::Process> p(kul::Process::create(cmd));
 			CompilerProcessCapture pc(*p, exe);
 			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			for(const std::string& path : libPaths)	(*p).addArg("/LIBPATH:\"" + path + "\"");
@@ -304,7 +299,7 @@ class WINCompiler : public CCompiler{
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
-			const std::string lib(kul::os::dirJoin(outDir, outFile) + ".dll"); 
+			const std::string lib(kul::Dir(outDir).join(outFile) + ".dll"); 
 
 			std::string cmd = linker;
 			std::vector<std::string> bits;
@@ -312,7 +307,7 @@ class WINCompiler : public CCompiler{
 				bits = kul::String::split(linker, ' ');
 				cmd = bits[0];
 			}
-			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			std::unique_ptr<kul::Process> p(kul::Process::create(cmd));
 			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			CompilerProcessCapture pc(*p, lib);
 			(*p).addArg("/OUT:\"" + lib + "\"").addArg("/NOLOGO");
@@ -332,14 +327,14 @@ class WINCompiler : public CCompiler{
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
-			const std::string lib(kul::os::dirJoin(outDir, outFile) + ".lib"); 
+			const std::string lib(kul::Dir(outDir).join(outFile) + ".lib"); 
 			std::string cmd = archiver;
 			std::vector<std::string> bits;
 			if(archiver.find(" ") != std::string::npos){
 				bits = kul::String::split(archiver, ' ');
 				cmd = bits[0];
 			}
-			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			std::unique_ptr<kul::Process> p(kul::Process::create(cmd));
 			CompilerProcessCapture pc(*p, lib);
 			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			(*p).addArg("/OUT:\"" + lib + "\"").addArg("/NOLOGO").addArg("/LTCG");
@@ -362,15 +357,13 @@ class WINCompiler : public CCompiler{
 			using namespace kul;
 			
 			std::string obj = out + ".o";
-			if(!os::isDir(os::dirDotDot(os::localPath(out)))) os::mkDir(os::dirDotDot(os::localPath(out)));
-
 			std::string cmd = compiler;
 			std::vector<std::string> bits;
 			if(compiler.find(" ") != std::string::npos){
 				bits = kul::String::split(compiler, ' ');
 				cmd = bits[0];
 			}
-			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));
+			std::unique_ptr<kul::Process> p(kul::Process::create(cmd));
 			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			CompilerProcessCapture pc(*p, obj);
 			for(const std::string& s : incs)	(*p).addArg("/I\"" + s + "\"");

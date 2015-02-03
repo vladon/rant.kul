@@ -78,25 +78,26 @@ class Process{
 		}
 		void error(const int line, std::string s) throw (kul::proc::Exception){
 			tearDown();
-			throw kul::proc::Exception(__FILE__, line,  s);
+			KEXCEPT(kul::proc::Exception, s);
 		}
 	public:
 		virtual ~Process(){}
-		static Process* create(const std::string& cmd, const bool wfe = true);
-		static Process* create(const std::string& p, const std::string& cmd, const bool wfe = true);
+		static std::unique_ptr<kul::Process> create(const std::string& cmd, const bool wfe = true);
+		static std::unique_ptr<kul::Process> create(const std::string& p, const std::string& cmd, const bool wfe = true);
 
 		Process& addArg(const std::string& arg) { if(arg.size()) argv.push_back(arg); return *this; }
 		Process& setDir(const std::string& dir) { this->d = dir; return *this; }
 		Process& addEnvVar(const std::string& n, const std::string& v) { evs.push_back(std::pair<const std::string, const std::string>(n, v)); return *this;}
 		virtual void start() throw(kul::proc::Exception){
-			if(started()) throw kul::proc::Exception(__FILE__, __LINE__, "Process is already started");
+			if(started()) KEXCEPT(kul::proc::Exception, "Process is already started");
 			setStarted();
 			this->run();
 		}
 		virtual std::string	toString(){
 			std::string s(argv[0]);
-			if(d.size())
-				s = kul::os::dirJoin(d, argv[0]);
+			if(d.size()){
+				s = kul::Dir(d.c_str()).join(argv[0]);
+			}
 			for(unsigned int i = 1; i < argv.size(); i++) s += " " + argv[i];
 			return s;
 		}

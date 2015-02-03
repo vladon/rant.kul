@@ -65,12 +65,12 @@ class Writer{
 	public:
 		Writer(const char*f)  {
 			if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(f) + "\" not found");
-			if(!kul::os::isDir(kul::os::dirDotDot(f))) kul::os::mkDir(kul::os::dirDotDot(f));
+			Dir d(f, true);
 			ofs.open(f);
 		}
 		~Writer() { ofs.close();}
 		void write(const char*c, bool nl = false){ 
-			if(nl) 	ofs << c << "\n";
+			if(nl) 	ofs << c << kul::os::newLine();
 			else	ofs << c;
 		}
 };

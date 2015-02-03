@@ -54,7 +54,7 @@ class WINCompiler : public Compiler{
 				bits = kul::String::split(linker, ' ');
 				cmd = bits[0];
 			}
-			std::shared_ptr<kul::Process> p(kul::Process::create(cmd));			
+			std::unique_ptr<kul::Process> p(kul::Process::create(cmd));
 			CompilerProcessCapture pc(*p, exe);
 			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			(*p).addArg("/NOLOGO").addArg("/OUT:\"" + exe + "\"");
@@ -81,7 +81,7 @@ class WINCompiler : public Compiler{
 			const std::string& outDir, 
 			const std::string& outFile) const throw (kul::Exception){ 
 
-			const std::string lib(kul::os::dirJoin(outDir, outFile) + ".dll");
+			const std::string lib(kul::Dir(outDir).join(outFile) + ".dll");
 
 			return CompilerProcessCapture(lib);
 		}

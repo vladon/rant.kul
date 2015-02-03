@@ -63,57 +63,51 @@ class ALogger{
 		}
 };
 
-class ConsoleLogger : public ALogger{
+}
+
+class ConsoleLogger : public kul::log::ALogger{
 	public:
-		void log(const char* f, const int& l, const std::string& s, const mode& m) const{
-			if(m == NON)
+		void log(const char* f, const int& l, const std::string& s, const log::mode& m) const{
+			if(m == log::NON)
 				std::cout << s << std::endl;
-			else if(m == ERR)
+			else if(m == log::ERR)
 				std::cerr << line(f, l, s, m) << std::endl;
 			else 
 				std::cout << line(f, l, s, m) << std::endl;
 		}
 };
 
-class FileLogger : public ALogger{
+class FileLogger : public kul::log::ALogger{
 	private:
 		const char* fi;
 	public:
 		FileLogger(const char* fi) : fi(fi){
-			if(!kul::os::isFile(fi)){
-				if(!kul::os::isDir(kul::os::dirDotDot(fi)))
-					if(!kul::os::mkDir(kul::os::dirDotDot(fi)))
-						KEXCEPT(kul::os::Exception, kul::os::dirDotDot(fi) 
-							+ " IS NOT A VALID DIRECTORY - ABORTING!");
-			}
+			kul::File(fi, true);
 		}
-		void log(const char* f, const int& l, const std::string& s, const mode& m) const{
+		void log(const char* f, const int& l, const std::string& s, const log::mode& m) const{
 			//TODO finish
 			line(f, l, s, m);			
 		}
 };
 
-}
-
 class LogMan{
 	private:
-		const log::mode m;
-		static LogMan* instance;
+		log::mode m;
 		std::vector<const log::ALogger*> loggers;
-		LogMan(const log::mode& m) : m(m){}
-	public:
-		static LogMan* INSTANCE(){
-			if(!instance) {
-				kul::log::mode lM = kul::log::mode::NON;
-				if(kul::os::getEnvVar("KLOG")){
-					std::string s(kul::os::getEnvVar("KLOG"));
-					if(s.compare("1") == 0 || s.compare("INF") == 0)      lM = log::mode::INF;
-					else if(s.compare("2") == 0 || s.compare("ERR") == 0) lM = log::mode::ERR;
-					else if(s.compare("3") == 0 || s.compare("DBG") == 0) lM = log::mode::DBG;
-					else if(s.size() > 0) {std::cerr << "KLOG OPTION UNKNOWN" << std::endl; exit(1);}
-				}
-				instance = new LogMan(lM);
+		LogMan() : m(kul::log::mode::NON){
+			kul::log::mode lM = kul::log::mode::NON;
+			if(kul::Env::GET("KLOG")){
+				std::string s(kul::Env::GET("KLOG"));
+				if(s.compare("1") == 0 || s.compare("INF") == 0)      lM = log::mode::INF;
+				else if(s.compare("2") == 0 || s.compare("ERR") == 0) lM = log::mode::ERR;
+				else if(s.compare("3") == 0 || s.compare("DBG") == 0) lM = log::mode::DBG;
+				else if(s.size() > 0) {std::cerr << "KLOG OPTION UNKNOWN" << std::endl; exit(1);}
 			}
+			m = lM;
+		}
+	public:
+		static LogMan& INSTANCE(){
+			static LogMan instance;
 			return instance;
 		};
 		virtual ~LogMan(){}
@@ -136,7 +130,7 @@ class LogMessage{
 		std::string msg;
 	public:		
 		~LogMessage(){
-			LogMan::INSTANCE()->log(f, l, m, msg);
+			LogMan::INSTANCE().log(f, l, m, msg);
 		}
 		LogMessage(const char* f, const int& l, const log::mode& m) : f(f), l(l), m(m){}
 		template<class T> LogMessage& operator<<(const T& s){			

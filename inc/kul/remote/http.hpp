@@ -29,6 +29,11 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace kul{ namespace http{
 
+class Exception : public kul::Exception{
+	public:
+		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+};
+
 class ARequest{
 	private:
 		const std::string m;

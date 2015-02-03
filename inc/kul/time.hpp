@@ -31,19 +31,19 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/string.hpp"
 
 namespace kul {
-namespace time{ 
+
 class Now{
 	public:
-		static int64_t millis()	{ return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
-		static int64_t micros()	{ return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
-		static int64_t nanos()	{ return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
+		static int64_t MILLIS()	{ return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
+		static int64_t MICROS()	{ return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
+		static int64_t NANOS()	{ return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
 };
-}
+
 class DateTime{
 	private:
 		static const std::string millis(){
 			std::stringstream ss;
-			ss << time::Now::millis();
+			ss << Now::MILLIS();
 			std::string s(ss.str());
 			return s.substr(s.length() - 3);
 		}

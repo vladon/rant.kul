@@ -61,27 +61,27 @@ class Compilers{
 	public:
 		static Compilers* INSTANCE(){ if(instance == 0) instance = new Compilers(); return instance;}
 		const Compiler* get(const std::string& c) throw(CompilerNotFoundException){
-			std::string compiler = c;
-			kul::String::replaceAll(compiler, ".exe", "");
+			std::string comp = c;
+			kul::String::replaceAll(comp, ".exe", "");
 
-			if(Compilers::compilers.count(compiler) > 0)
-				return (*Compilers::compilers.find(compiler)).second;
+			if(Compilers::compilers.count(comp) > 0)
+				return (*Compilers::compilers.find(comp)).second;
 
-			if(compiler.find(" ") != std::string::npos)
-				for(const std::string& s :kul::String::split(compiler, ' ')){
+			if(comp.find(" ") != std::string::npos)
+				for(const std::string& s :kul::String::split(comp, ' ')){
 					if(Compilers::compilers.count(s) > 0)
 						return (*Compilers::compilers.find(s)).second;
 
-					if(kul::os::localPath(s).find(kul::os::dirSep()) != std::string::npos)
-						if(Compilers::compilers.count(s.substr(s.rfind(kul::os::dirSep()) + 1)) > 0)
-							return (*Compilers::compilers.find(s.substr(s.rfind(kul::os::dirSep()) + 1))).second;
+					if(std::string(kul::Dir(s).locl()).find(kul::Dir::SEP()) != std::string::npos)
+						if(Compilers::compilers.count(s.substr(s.rfind(kul::Dir::SEP()) + 1)) > 0)
+							return (*Compilers::compilers.find(s.substr(s.rfind(kul::Dir::SEP()) + 1))).second;
 				}
 			
-			if(kul::os::localPath(compiler).find(kul::os::dirSep()) != std::string::npos)
-				if(Compilers::compilers.count(compiler.substr(compiler.rfind(kul::os::dirSep()) + 1)) > 0)
-					return (*Compilers::compilers.find(compiler.substr(compiler.rfind(kul::os::dirSep()) + 1))).second;
+			if(std::string(kul::Dir(comp).locl()).find(kul::Dir::SEP()) != std::string::npos)
+				if(Compilers::compilers.count(comp.substr(comp.rfind(kul::Dir::SEP()) + 1)) > 0)
+					return (*Compilers::compilers.find(comp.substr(comp.rfind(kul::Dir::SEP()) + 1))).second;
 			
-			throw CompilerNotFoundException(__FILE__, __LINE__, "Compiler for " + compiler + " is not implemented");
+			throw CompilerNotFoundException(__FILE__, __LINE__, "Compiler for " + comp + " is not implemented");
 		}
 };
 
