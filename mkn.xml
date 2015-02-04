@@ -46,7 +46,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				<files>
 					<file type="cpp">
 						<args>
-							<arg>-std=c++11</arg>
+							<arg>-std=c++1y</arg>
 							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
 						</args>
 					</file>
@@ -89,10 +89,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				<include>./tst</include>
 				<include>./ext/sparsehash/trunk/src</include>
 				<include>./ext/sparsehash/trunk/src/windows</include>
-				<include>./../win/master/ext/msinttypes-r26</include>
-				<!--include>boost\makewin\include\boost-1_53</include-->
-				<!--include>boost\makewin\include\boost-1_53\boost\tr1</include-->
-				<!--include>C:\apps\MVS2012\VC\include</include> <!-- MAKE LAST INCLUDE! -->				
+				<include>./../win/master/ext/msinttypes-r26</include>			
 			</includes>
 			<build type="lib" mode="static" lang="cpp">
 				<files>
