@@ -42,7 +42,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				<files>
 					<file type="cpp">
 						<args>		
-							<arg>-std=c++11</arg>
+							<arg>-std=c++1y</arg>
 							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
 							<arg>-O0</arg><arg>-g3</arg>
 						</args>
