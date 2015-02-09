@@ -61,6 +61,6 @@ pugi:
 clean:
 	rm -rf bin
 
-clean-all: clean
+clean-all:
 	rm -rf $(CURDIR)/ext/sparsehash/make
 	rm -rf $(CURDIR)/ext/pugixml/bin
