@@ -65,7 +65,7 @@ class Writer{
 	public:
 		Writer(const char*f)  {
 			if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(f) + "\" not found");
-			Dir d(f, true);
+			File fi(f, true);
 			ofs.open(f);
 		}
 		~Writer() { ofs.close();}
