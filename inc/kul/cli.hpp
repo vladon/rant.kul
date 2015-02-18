@@ -63,16 +63,10 @@ class CmdLine{
 };
 
 class CmdIn{
-	private:
-		static std::shared_ptr<CmdIn> inst;
 	public:
-		static CmdIn* SET(CmdIn* cin){
-			inst.reset(cin); 
-			return inst.get();
-		}
-		static CmdIn* INSTANCE(){
-			if(!inst.get()) inst.reset(new CmdIn());
-			return inst.get();
+		static CmdIn& INSTANCE(){
+			static CmdIn instance;
+			return instance;
 		}
 		virtual bool receiveBool(const std::string txt) {
 			std::string t = receive(txt);
@@ -157,18 +151,18 @@ class Args{
 		Args();
 	public:
 		Args(const std::vector<Cmd>& cmds, const std::vector<Arg>& args) : cmds(cmds), args(args){}
-		void process(int argc, char* argv[]);
+		void process(int argc, char* argv[]) throw(ArgNotFoundException);
 		const Cmd& commands(const char* c){
 			for(const Cmd& cmd : cmds) if(strcmp(cmd.command(), c) == 0) return cmd;
-			throw ArgNotFoundException(__FILE__, __LINE__, "No command " + std::string(c) + " found");
+			KEXCEPT(ArgNotFoundException, "No command " + std::string(c) + " found");
 		}
 		const Arg& dashes(const char* c){
 			for(const Arg& a : arguments()) if(strcmp(a.dash(), c) == 0) return a;
-			throw ArgNotFoundException(__FILE__, __LINE__, "No argument " + std::string(c) + " found");
+			KEXCEPT(ArgNotFoundException, "No argument " + std::string(c) + " found");
 		}
 		const Arg& doubleDashes(const char* c){
 			for(const Arg& a : arguments()) if(strcmp(a.dashdash(), c) == 0) return a;
-			throw ArgNotFoundException(__FILE__, __LINE__, "No argument " + std::string(c) + " found");
+			KEXCEPT(ArgNotFoundException, "No argument " + std::string(c) + " found");
 		}
 		const std::vector<Cmd>& commands()	const { return cmds;}
 		const std::vector<Arg>& arguments() const { return args;}
@@ -189,5 +183,6 @@ class AWriter{
 };
 
 
-}}
+} // END NAMESPACE cli
+} // END NAMESPACE kul
 #endif /* _KUL_CLI_HPP_ */

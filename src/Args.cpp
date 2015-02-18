@@ -26,7 +26,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/cli.hpp"
 #include "kul/string.hpp"
 
-void kul::cli::Args::process(int argc, char* argv[]){
+void kul::cli::Args::process(int argc, char* argv[]) throw(ArgNotFoundException) {
 	std::string cliArg = "";
 	for(int i = 1; i < argc; i++)
 		cliArg += std::string(argv[i]) + " ";
@@ -62,8 +62,8 @@ void kul::cli::Args::process(int argc, char* argv[]){
 		if(c.compare("---") == 0)				KEXCEPT(Exception, "Illegal argument ---");
 		if(c.compare("--") == 0)				KEXCEPT(Exception, "Illegal argument --");
 		if(c.compare("-") == 0) 				KEXCEPT(Exception, "Illegal argument -");
-		if((c.find("--") == 0 || c.find("-") == 0) && valExpected == 1)
-			KEXCEPT(Exception, "Value expected for argument: \""+ valExpectedFor + "\"");
+		// if((c.find("--") == 0 || c.find("-") == 0) && valExpected == 1)
+		// 	KEXCEPT(Exception, "Value expected for argument: \""+ valExpectedFor + "\"");
 
 		if(valExpected == 1 || (valExpected == 2 && c.find("-") != 0)){
 			valExpected = 0;
