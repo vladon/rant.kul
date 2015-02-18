@@ -154,7 +154,7 @@ class GCCompiler : public CCompiler{
 			const std::string& out) const throw (kul::Exception){ 
 
 			using namespace kul;
-			std::string obj = out + ".o";
+			std::string obj = out + ".obj";
 			std::string cmd = compiler;
 			std::vector<std::string> bits;
 			if(compiler.find(" ") != std::string::npos){
@@ -356,7 +356,7 @@ class WINCompiler : public CCompiler{
 
 			using namespace kul;
 			
-			std::string obj = out + ".o";
+			std::string obj = out + ".obj";
 			std::string cmd = compiler;
 			std::vector<std::string> bits;
 			if(compiler.find(" ") != std::string::npos){
