@@ -58,14 +58,14 @@ class PugiXMLService{
 
 class NodeFactory{
 	private:
-		static std::vector<const Node*>* validate(Node** p, std::vector<const Node*>* ns, const pugi::xml_node& n, const NodeValidator& v);
-		static void validateAttributes(const std::vector<const Node*>& n, const NodeAttributeValidator& v);
+		static std::vector<const Node> validate(std::vector<const Node> ns, const pugi::xml_node& n, const NodeValidator& v);
+		static void validateAttributes(const std::vector<const Node>& n, const NodeAttributeValidator& v);
 		static void validateAttributes(const Node& n, const NodeValidator& v);
 		static void writeToFile(const char*n, const NodeValidator& v, kul::io::Writer& w, int t);
 	public:
-		static const Node* create(const char*f, const char*r, const NodeValidator& v);
+		static const std::shared_ptr<const Node> create(const char*f, const char*r, const NodeValidator& v);
 		static void writeToFile(const char*n, const char*f,  const NodeValidator& v);		
-		static void log(const Node* n);
+		static void log(const Node& n);
 };
 
 class XPather{
@@ -82,56 +82,42 @@ class XPather{
 
 class Node{
 	private:
-		Node**const prev;
-		const Vector<const Node> kinder;
+		const std::vector<const Node> c;
 		const hash::map::S2S atts;
 		const std::string n;
-	public:
-		Node(Node**const p, const std::vector<const Node*>* c, const hash::map::S2S atts, const std::string n) :
-			prev(p),
-			kinder(Vector<const Node>(c)), atts(atts),
-			n(n){}
-		Node(Node**const p, const std::vector<const Node*>* c, std::string n) :
-			prev(p),
-			kinder(Vector<const Node>(c)), atts(),
-			n(n){}
-		const Node& 					operator[](const std::string& s) const throw (Exception);
-		const Node&				 		operator()(const std::string& c, const std::string& a, const std::string& v) const throw (Exception);
-		const Node*						parent() 		const { return *prev; }
-		const std::string		 		txt() 			const throw (Exception);
-		const std::string		 		att(const std::string& s) const throw (Exception);
-		const std::vector<const Node*>&	children()		const { return *this->kinder.get(); }
-		const hash::map::S2S&			attributes()	const { return atts; }
-		const std::string&				name() 			const { return this->n; }
-};
-
-class TextNode : public Node{
-	private:
 		const std::string t;
 	public:
-		TextNode(Node**const p, const hash::map::S2S atts, const std::string n, const std::string t) :
-			Node(p, new std::vector<const Node*>(), atts, n), t(t){}
-		TextNode(Node**const p, const std::string n, const std::string t) :
-			Node(p, new std::vector<const Node*>(), n), t(t){}
-		const std::string txt() const { return t; }
+		Node(const std::vector<const Node> c, const hash::map::S2S atts, const std::string n) :
+			c(c), atts(atts), n(n){}
+		Node(const std::vector<const Node> c, std::string n) :
+			c(c), n(n){}
+		Node(const hash::map::S2S atts, const std::string& n, const std::string& t) :
+			atts(atts), n(n), t(t){}
+		const Node& 					operator[](const std::string& s) const throw (Exception);
+		const Node&				 		operator()(const std::string& c, const std::string& a, const std::string& v) const throw (Exception);
+		const std::string		 		att(const std::string& s) const throw (Exception);
+		const std::vector<const Node>&	children()		const { return c; }
+		const hash::map::S2S&			attributes()	const { return atts; }
+		const std::string&				name() 			const { return this->n; }
+		const std::string&				txt() 			const { return t; }
 };
 
 template <class T>
 class NodeUser{
 	private:
 		NodeUser();
+		std::shared_ptr<const Node> rn;
 	protected:
-		std::shared_ptr<const Node> rootNode;
 		const std::string f;
-		void reset(const Node* node)	{ rootNode.reset(node);}
-		void reset() 					{ rootNode.reset(); }
+		void reset(std::shared_ptr<const Node> node){ rn = node;}
+		void reset() 								{ rn.reset(); }
 
 	public:
-		NodeUser(std::string f) : rootNode(0), f(f) {}
+		NodeUser(std::string f) : rn(0), f(f) {}
 		virtual ~NodeUser(){}
 		virtual T* 						get() = 0;
 		const virtual NodeValidator 	validator() = 0;
-		const Node* 					root() 			const 	{ return rootNode.get(); }
+		const Node* 					root() 			const 	{ return rn.get(); }
 		const std::string& 				file() 			const	{ return f; }
 };
 

@@ -26,7 +26,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "kul/cli.hpp"
 #include "kul/string.hpp"
-#include "kul/array.hpp"
 
 std::vector<std::string> kul::cli::CmdLine::asArgs(const std::string& cmd) throw (ArgParsingException){
 	std::vector<std::string> args;
@@ -89,9 +88,9 @@ void kul::cli::CmdLine::print(const std::vector<std::string>& ss, bool tab){
 			unsigned int c = kul::String::split(s, '\t').size();
 			if(c > cols) cols = c;
 		}		
-		kul::Array<unsigned int> p;
+		std::vector<unsigned int> p;
 		for(unsigned int i = 0; i < cols; i++)
-			p.add()(new unsigned int(0));
+			p.push_back(i);
 
 		for(const std::string& s : ss){
 			unsigned int c = 0;

@@ -22,29 +22,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "kul/xml.hpp"
-#include "kul/log.hpp"
 
 const kul::xml::Node& kul::xml::Node::operator[](const std::string& s) const  throw (Exception){
-	for(const Node* n : this->children())
-		if(s.compare(n->name()) == 0)
-			return *n;
+	for(const Node& n : this->children())
+		if(s.compare(n.name()) == 0)
+			return n;
 	KEXCEPT(Exception, "XML Exception: Element " + s + " doesn't exist under node " + this->name());
 }
 
 const kul::xml::Node& kul::xml::Node::operator()(const std::string& c, const std::string& a, const std::string& v) const throw (Exception){
-	for(const Node* n : this->children())
-			if(c.compare(n->name()) == 0){
-				try{
-					if(n->att(a).compare(v) == 0) return *n;
-				}catch(const Exception& e){ }
-			}
+	for(const Node& n : this->children())
+		if(c.compare(n.name()) == 0){
+			try{
+				if(n.att(a).compare(v) == 0) return n;
+			}catch(const Exception& e){ }
+		}
 	KEXCEPT(Exception, "XML Exception: No Element " + c + " contains attribute " + a + " with value " + v + " under node " + this->name());
-}
-
-const std::string kul::xml::Node::txt() const throw (Exception){
-	const TextNode* txt = static_cast<const TextNode*>(this);
-	if(txt) return txt->txt();
-	KEXCEPT(Exception, "XML Exception: " + std::string(this->name()) + " is not a text node");
 }
 
 const std::string kul::xml::Node::att(const std::string& s) const throw (Exception){
