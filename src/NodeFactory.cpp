@@ -23,7 +23,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "kul/xml.hpp"
 
-std::vector<const kul::xml::Node> kul::xml::NodeFactory::validate(std::vector<const Node> ns, const pugi::xml_node& node, const NodeValidator& v){
+std::vector<kul::xml::Node> kul::xml::NodeFactory::validate(std::vector<Node> ns, const pugi::xml_node& node, const NodeValidator& v){
 	for(const pugi::xml_node& n : node.children()){
 		bool found = false;
 		for(std::pair<std::string, NodeValidator> pair  : v.getChildren()){
@@ -70,7 +70,7 @@ std::vector<const kul::xml::Node> kul::xml::NodeFactory::validate(std::vector<co
 				if(pair.second.isText() && n.text().empty())
 					ns.push_back(Node(atts, n.name(), ""));
 				else if(n.text().empty()){
-					ns.push_back(Node(validate(std::vector<const Node>(), n, pair.second) , atts, pair.first.c_str()));
+					ns.push_back(Node(validate(std::vector<Node>(), n, pair.second) , atts, pair.first.c_str()));
 				}else if(!pair.second.isText())
 					KEXCEPT(Exception, "XML Exception: text not expected in node " + std::string(n.name()));
 				else
@@ -85,7 +85,7 @@ std::vector<const kul::xml::Node> kul::xml::NodeFactory::validate(std::vector<co
 				if(pair.second.isText() && n.text().empty())
 					ns.push_back(Node(atts, pair.first, ""));
 				else if(n.text().empty()){
-					ns.push_back(Node(validate(std::vector<const Node>(), n, pair.second), atts, pair.first.c_str()));
+					ns.push_back(Node(validate(std::vector<Node>(), n, pair.second), atts, pair.first.c_str()));
 				}else if(!pair.second.isText())
 					KEXCEPT(Exception, "XML Exception: text not expected in node " + std::string(n.name()));
 				else
@@ -97,7 +97,7 @@ std::vector<const kul::xml::Node> kul::xml::NodeFactory::validate(std::vector<co
 	return ns;
 }
 
-void kul::xml::NodeFactory::validateAttributes(const std::vector<const Node>& nodes, const NodeAttributeValidator& v){
+void kul::xml::NodeFactory::validateAttributes(const std::vector<Node>& nodes, const NodeAttributeValidator& v){
 	for(std::pair<std::string, std::vector<std::string> > valPair  : v.allowedValues()){
 		if(!valPair.second.empty()){
 			for(const Node& n : nodes){
@@ -143,7 +143,7 @@ void kul::xml::NodeFactory::validateAttributes(const Node& node, const NodeValid
 		for(std::pair<std::string, NodeValidator> pair  : v.getChildren()){
 			if(pair.first.compare(n.name()) == 0){
 				for(NodeAttributeValidator nav : pair.second.getAtVals()){
-					std::vector<const Node> ns;
+					std::vector<Node> ns;
 					for(const Node& in : node.children())
 						if(n.name().compare(in.name()) == 0)
 							ns.push_back(in);
@@ -155,7 +155,6 @@ void kul::xml::NodeFactory::validateAttributes(const Node& node, const NodeValid
 	}
 }
 
-#include "kul/log.hpp"
 const std::shared_ptr<const kul::xml::Node> kul::xml::NodeFactory::create(const char*f, const char* root, const NodeValidator& v){
 	pugi::xml_document doc;	
 	pugi::xml_parse_result result = doc.load_file(f);
@@ -167,8 +166,8 @@ const std::shared_ptr<const kul::xml::Node> kul::xml::NodeFactory::create(const 
 	}
 	if(doc.child(root).empty())
 		KEXCEPT(Exception, "root element \"" + std::string(root) + "\" not found, malformed document");
-	std::shared_ptr<const kul::xml::Node> n = std::make_unique<const kul::xml::Node>(validate(std::vector<const kul::xml::Node>(), doc.child(root), v), root);
-	std::vector<const Node> rootV; rootV.push_back(*n.get());
+	std::shared_ptr<const kul::xml::Node> n = std::make_unique<const kul::xml::Node>(validate(std::vector<kul::xml::Node>(), doc.child(root), v), root);
+	std::vector<Node> rootV; rootV.push_back(*n.get());
 	for(const NodeAttributeValidator& nav : v.getAtVals()){
 		validateAttributes(rootV, nav);
 	}

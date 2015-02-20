@@ -23,6 +23,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <string.h>
 
+#include "kul/io.hpp"
 #include "kul/cli.hpp"
 #include "kul/string.hpp"
 

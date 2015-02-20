@@ -30,7 +30,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/xml.hpp"
 #include "kul/time.hpp"
 #include "kul/proc.hpp"
-#include "kul/array.hpp"
 #include "kul/threads.hpp"
 
 namespace kul {
@@ -68,12 +67,9 @@ class TestThreadPoolObject{
 };
 
 class test{ public: test(){
-	kul::Array<int> a;
-	a.add()(new int(1)) (new int(2)) (new int(3));
-	for(const int& ii : a) KLOG(INF) << ii;
-	for(unsigned int i = 0; i < a.size(); i++) KLOG(INF) << a[i];
-
 	KLOG(INF);
+	KLOG(ERR);
+	KLOG(DBG);
 	KLOG(INF) << Dir::SEP();
 	KLOG(INF) << Env::CWD();
 	KLOG(INF) << os::userDir().real();

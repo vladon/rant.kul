@@ -33,7 +33,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/xml.hpp"
 #include "kul/defs.hpp"
 #include "kul/time.hpp"
-#include "kul/array.hpp"
 #include "kul/except.hpp"
 
 namespace kul{ namespace log{

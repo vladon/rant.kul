@@ -33,7 +33,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "kul/io.hpp"
 #include "kul/hash.hpp"
-#include "kul/array.hpp"
 #include "kul/except.hpp"
 
 namespace kul{ namespace xml{
@@ -58,14 +57,13 @@ class PugiXMLService{
 
 class NodeFactory{
 	private:
-		static std::vector<const Node> validate(std::vector<const Node> ns, const pugi::xml_node& n, const NodeValidator& v);
-		static void validateAttributes(const std::vector<const Node>& n, const NodeAttributeValidator& v);
+		static std::vector<Node> validate(std::vector<Node> ns, const pugi::xml_node& n, const NodeValidator& v);
+		static void validateAttributes(const std::vector<Node>& n, const NodeAttributeValidator& v);
 		static void validateAttributes(const Node& n, const NodeValidator& v);
 		static void writeToFile(const char*n, const NodeValidator& v, kul::io::Writer& w, int t);
 	public:
 		static const std::shared_ptr<const Node> create(const char*f, const char*r, const NodeValidator& v);
 		static void writeToFile(const char*n, const char*f,  const NodeValidator& v);		
-		static void log(const Node& n);
 };
 
 class XPather{
@@ -82,21 +80,21 @@ class XPather{
 
 class Node{
 	private:
-		const std::vector<const Node> c;
+		const std::vector<Node> c;
 		const hash::map::S2S atts;
 		const std::string n;
 		const std::string t;
 	public:
-		Node(const std::vector<const Node> c, const hash::map::S2S atts, const std::string n) :
+		Node(const std::vector<Node> c, const hash::map::S2S atts, const std::string n) :
 			c(c), atts(atts), n(n){}
-		Node(const std::vector<const Node> c, std::string n) :
-			c(c), n(n){}
+		Node(const std::vector<Node> c, std::string n) :
+			c(c), atts(), n(n){}
 		Node(const hash::map::S2S atts, const std::string& n, const std::string& t) :
 			atts(atts), n(n), t(t){}
 		const Node& 					operator[](const std::string& s) const throw (Exception);
 		const Node&				 		operator()(const std::string& c, const std::string& a, const std::string& v) const throw (Exception);
 		const std::string		 		att(const std::string& s) const throw (Exception);
-		const std::vector<const Node>&	children()		const { return c; }
+		const std::vector<Node>&		children()		const { return c; }
 		const hash::map::S2S&			attributes()	const { return atts; }
 		const std::string&				name() 			const { return this->n; }
 		const std::string&				txt() 			const { return t; }
