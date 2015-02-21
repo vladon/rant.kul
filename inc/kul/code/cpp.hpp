@@ -25,7 +25,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define _KUL_CODE_CPP_HPP_
 
 #include "kul/code/compiler.hpp"
-#include "kul/log.hpp"
 
 namespace kul{ namespace code{ namespace cpp{ 
 
@@ -85,7 +84,7 @@ class GCCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
+				// KLOG(DBG) << e.debug()<< " : " << typeid(e).name(); rethrow
 				pc.failed();
 			}
 
@@ -113,7 +112,7 @@ class GCCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(DBG) << e.debug() << " : " << typeid(e).name();
+				// KLOG(DBG) << e.debug() << " : " << typeid(e).name(); rethrow
 				pc.failed();
 			}
 
@@ -140,7 +139,7 @@ class GCCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
+				// KLOG(DBG) << e.debug()<< " : " << typeid(e).name(); rethrow
 				pc.failed();
 			}
 
@@ -171,7 +170,7 @@ class GCCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){
-				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
+				// KLOG(DBG) << e.debug()<< " : " << typeid(e).name(); rethrow
 				pc.failed();
 			}
 
@@ -274,8 +273,6 @@ class WINCompiler : public CCompiler{
 			CompilerProcessCapture pc(*p, exe);
 			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
 			for(const std::string& path : libPaths)	(*p).addArg("/LIBPATH:\"" + path + "\"");
-			//if(mode == Mode::SHAR)		(*p).addArg("-shared");
-			//else if(mode == Mode::STAT)	(*p).addArg("-static");
 			(*p).addArg("/OUT:\"" + exe + "\"").addArg("/NOLOGO");	
 			for(const std::string& o : objects)	(*p).addArg(o);
 			for(const std::string& lib : libs)
@@ -287,7 +284,7 @@ class WINCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
+				// KLOG(DBG) << e.debug()<< " : " << typeid(e).name();rethrow
 				pc.failed();
 			}
 
@@ -315,7 +312,7 @@ class WINCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
+				// KLOG(DBG) << e.debug()<< " : " << typeid(e).name(); rethrow
 				pc.failed();
 			}
 
@@ -342,7 +339,7 @@ class WINCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(DBG) << e.debug() << " : " << typeid(e).name();
+				// KLOG(DBG) << e.debug() << " : " << typeid(e).name(); rethrow
 				pc.failed();
 			}
 			return pc;
@@ -372,7 +369,7 @@ class WINCompiler : public CCompiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(DBG) << e.debug()<< " : " << typeid(e).name();
+				// KLOG(DBG) << e.debug()<< " : " << typeid(e).name(); rethrow
 				pc.failed();
 			}
 

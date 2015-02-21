@@ -22,7 +22,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "kul/scm.hpp"
-#include "kul/log.hpp"
 
 void kul::scm::Svn::co(const std::string& d, const std::string& r, const std::string& v) const throw(Exception){
 	KEXCEPT(Exception, "SCM ERROR - SVN NOT YET IMPLEMENTED");

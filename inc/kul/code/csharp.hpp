@@ -25,7 +25,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define _KUL_CODE_CSHARP_HPP_
 
 #include "kul/code/compiler.hpp"
-#include "kul/log.hpp"
 
 namespace kul{ namespace code{ namespace csharp{ 
 
@@ -69,7 +68,7 @@ class WINCompiler : public Compiler{
 			try{
 				(*p).start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
+				// KLOG(INF) << e.debug()<< " : " << typeid(e).name(); rethrow
 				pc.failed();
 			}
 

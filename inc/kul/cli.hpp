@@ -29,7 +29,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 
 #include "kul/os.hpp"
-#include "kul/log.hpp"
 #include "kul/hash.hpp"
 #include "kul/except.hpp"
 #include "kul/string.hpp"

@@ -109,7 +109,7 @@ class AThreader{
 }// END NAMESPACE OSI OS Independent
 
 namespace this_thread{	// linux needs a wait as the threads are loaded too fast - TODO look into - if it is resolved, it should be safely removed
-	const size_t id();
+	const std::string id();
 	void uSleep(const unsigned long& nanos);
 	void sleep(const unsigned long& millis);
 }

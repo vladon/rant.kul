@@ -22,7 +22,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "kul/xml.hpp"
-#include "kul/log.hpp"
 
 class NodeWriterService{
  	public:
@@ -114,7 +113,7 @@ void kul::xml::NodeFactory::writeToFile(const char*n, const NodeValidator& v, ku
 			writer.write(s.c_str(), true);
 			int i = 0;			
 			if(v.maximum() > 0 && i == v.maximum()){ // print the remaining possibile attributes values
-				break; KLOG(INF) << "MAX BROKE!";
+				break;
 			}
 		}
 	}

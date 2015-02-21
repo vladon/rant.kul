@@ -47,6 +47,8 @@ class Exception : public kul::Exception{
 };
 
 class ALogger{
+	private:
+		static int tid;
 	public:
 		virtual ~ALogger(){}
 		virtual void log(const char* f, const int& l, const std::string& s, const mode& m) const = 0;
@@ -54,10 +56,9 @@ class ALogger{
 			std::stringstream ss;
 			std::string mode("[" + modeTxt(m) + "]");
 			kul::String::pad(mode, 7);
-			std::stringstream trs;
-			trs << kul::this_thread::id();
-			std::string tr(trs.str());
-			kul::String::pad(tr, 10);
+			std::string tr(kul::this_thread::id());
+			tid = tr.size() > tid ? tr.size() : tid;
+			kul::String::pad(tr, tid);
 			ss << mode << " : " << tr << " - " << kul::DateTime::NOW().substr(4) << " : " << f << " : " << l << " " << s;
 			return ss.str();
 		}

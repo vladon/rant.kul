@@ -27,7 +27,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/code/cpp.hpp"
 #include "kul/code/csharp.hpp"
 
-
 namespace kul{ namespace code{ 
 
 class CompilerNotFoundException : public kul::Exception{
@@ -81,7 +80,7 @@ class Compilers{
 				if(Compilers::compilers.count(comp.substr(comp.rfind(kul::Dir::SEP()) + 1)) > 0)
 					return (*Compilers::compilers.find(comp.substr(comp.rfind(kul::Dir::SEP()) + 1))).second;
 			
-			throw CompilerNotFoundException(__FILE__, __LINE__, "Compiler for " + comp + " is not implemented");
+			KEXCEPT(CompilerNotFoundException, "Compiler for " + comp + " is not implemented");
 		}
 };
 

@@ -49,7 +49,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 					<file type="cpp">
 						<args>
 							<arg>-std=c++1y</arg>
-							<arg>-Wall</arg><arg>-fmessage-length=0</arg>
+							<arg>-Wall</arg>
+							<arg>-fmessage-length=0</arg>
 						</args>
 					</file>
 				</files>
@@ -96,7 +97,9 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			<build type="lib" mode="static" lang="cpp">
 				<files>
 					<file type="cpp">
-						<args><arg>/EHsc</arg></args>
+						<args>
+							<arg>/EHsc</arg>
+						</args>
 					</file>
 				</files>
 			</build>
