@@ -34,6 +34,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/defs.hpp"
 #include "kul/time.hpp"
 #include "kul/except.hpp"
+#include "kul/string.hpp"
+#include "kul/threading/thread.hpp"
 
 namespace kul{ namespace log{
 
@@ -50,7 +52,13 @@ class ALogger{
 		virtual void log(const char* f, const int& l, const std::string& s, const mode& m) const = 0;
 		const std::string line(const char* f, const int& l, const std::string& s, const mode& m) const{
 			std::stringstream ss;
-			ss << "[" << modeTxt(m) << "] " << kul::DateTime::NOW() << " : " << f << " : " << l << " " << s;
+			std::string mode("[" + modeTxt(m) + "]");
+			kul::String::pad(mode, 7);
+			std::stringstream trs;
+			trs << kul::this_thread::id();
+			std::string tr(trs.str());
+			kul::String::pad(tr, 10);
+			ss << mode << " : " << tr << " - " << kul::DateTime::NOW().substr(4) << " : " << f << " : " << l << " " << s;
 			return ss.str();
 		}
 		const std::string modeTxt(const mode& m) const{
