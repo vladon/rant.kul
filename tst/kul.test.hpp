@@ -49,15 +49,33 @@ class TestThreadObject{
 };
 
 class TestThreadPoolObject{
-	private:
+	protected:
 		int i;
 		Mutex& mutex;
 	public:
 		TestThreadPoolObject(Mutex& mutex) : i(0), mutex(mutex){}
 		void operator()(){
-		   	kul::ScopeLock lock(mutex);
-		   	KLOG(INF) << "THREAD RUNNING";			
+			kul::ScopeLock lock(mutex);
+			KLOG(INF) << "THREAD RUNNING";			
 			i++;
+			KLOG(INF) << "THREAD FINISHED";
+		}
+		void operator()() const{
+			KLOG(INF) << "CONST THREAD RUNNING";
+		}
+		void print(){ KLOG(INF) << "i = " << i;}
+};
+
+class TestThreadPoolQObject : public TestThreadPoolObject{
+	private:
+		std::queue<int>& q;
+	public:
+		TestThreadPoolQObject(Mutex& mutex, std::queue<int>& q) : TestThreadPoolObject(mutex), q(q){}
+		void operator()(){
+		   	KLOG(INF) << "THREAD RUNNING";
+		   	kul::ScopeLock lock(mutex);
+			i++;
+			q.pop();
 			KLOG(INF) << "THREAD FINISHED";
 		}
 		void operator()() const{
@@ -96,27 +114,24 @@ class test{ public: test(){
 	TestThreadObject tto1;
 	kul::Ref<TestThreadObject> ref(tto1);
 	kul::Thread th(ref);
+	th.detach();
 	th.run();
 	th.join();
-	th.detach();
-	th.interrupt();
 	tto1.print();
 
 	TestThreadObject tto2;
 	kul::CRef<TestThreadObject> cref(tto2);
 	kul::Thread th2(cref);
+	th2.detach();
 	th2.run();
 	th2.join();
-	th2.detach();
-	th2.interrupt();
 	tto2.print();
 
 	TestThreadObject tto3;
 	kul::Thread th1(tto3);
+	th1.detach();
 	th1.run();
 	th1.join();
-	th1.detach();
-	th1.interrupt();
 	tto3.print();
 	
 	kul::Mutex mutex;
@@ -128,12 +143,26 @@ class test{ public: test(){
 	}
 
 	KLOG(INF) << "LAUNCHING THREAD POOL";
-	TestThreadPoolObject ttpo(mutex);
-	kul::Ref<TestThreadPoolObject> ref2(ttpo);
-	kul::ThreadPool<std::queue<int> > tp(ref2);
-	tp.setMax(8);
-	tp.runAndJoinAll();
-	ttpo.print();
+	TestThreadPoolObject ttpo1(mutex);
+	kul::Ref<TestThreadPoolObject> ref2(ttpo1);
+	kul::ThreadPool tp1(ref2);
+	tp1.setMax(4);
+	tp1.detach();
+	tp1.run();
+	tp1.join();
+	ttpo1.print();
+
+	std::queue<int> q;
+	for(int i = 0; i < 8; i++) q.push(i);
+	KLOG(INF) << "LAUNCHING PREDICATED THREAD POOL"; //Running expects predicate.size() to eventually = 0
+	TestThreadPoolQObject ttpo2(mutex, q);
+	kul::Ref<TestThreadPoolQObject> ref3(ttpo2);
+	kul::PredicatedThreadPool<std::queue<int> > tp2(ref3, q);
+	tp2.setMax(4);
+	tp2.detach();
+	tp2.run();
+	tp2.join();
+	ttpo2.print();
 
 	KLOG(INF) << "CPU CORES: " << kul::cpu::cores();
 	KLOG(INF) << "MAX THREADS: " << kul::cpu::threads();
