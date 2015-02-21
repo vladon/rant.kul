@@ -54,12 +54,15 @@ class String{
 		static void rightTrim(std::string& s, const char& delim=' '){
 			while(s.rfind(delim) == s.size() - 1)
 				s = s.substr(0, s.size() - 2);			
-		}		
+		}
 		static void trim(std::string& s){
 			while(s.find(' ') == 0 || s.find('	') == 0)
 				s = s.substr(1);
 			while(s.rfind(' ') == s.size() - 1 || s.rfind('	') == s.size() - 1)
 				s = s.substr(0, s.size() - 2);
+		}
+		static void pad(std::string& s, const int p){
+			while(s.size() < p) s += " ";
 		}
 		static std::vector<std::string> split(const std::string& s, const char& delim='\n'){
 			std::vector<std::string> ss;
