@@ -72,8 +72,8 @@ class TestThreadPoolQObject : public TestThreadPoolObject{
 	public:
 		TestThreadPoolQObject(Mutex& mutex, std::queue<int>& q) : TestThreadPoolObject(mutex), q(q){}
 		void operator()(){
-		   	KLOG(INF) << "THREAD RUNNING";
 		   	kul::ScopeLock lock(mutex);
+		   	KLOG(INF) << "THREAD RUNNING";
 			i++;
 			q.pop();
 			KLOG(INF) << "THREAD FINISHED";
