@@ -27,7 +27,9 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 		<name>kul</name>		
 		<version>master</version>
 	</project>
-
+	<scm scm="git">
+		<scr>http://www.github.com/Dekken/kul.git</scr>
+	</scm>
 	<profiles>
 		<profile name="nixc">
 			<includes>
