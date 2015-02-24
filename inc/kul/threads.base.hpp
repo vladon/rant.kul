@@ -32,7 +32,15 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/defs.hpp" 
 #include "kul/except.hpp"
 
-namespace kul{ namespace threading{
+namespace kul{ 
+// linux needs a wait as the threads are loaded too fast - TODO look into - if it is resolved, it should be safely removed
+namespace this_thread{	
+	const std::string id();
+	void uSleep(const unsigned long& nanos);
+	void sleep(const unsigned long& millis);
+}// END NAMESPACE this_thread
+
+namespace threading{
 
 class Exception : public kul::Exception{
 	public:
@@ -46,7 +54,7 @@ class InterruptionException : public Exception{
 
 class AThread{	
 	protected:
-		virtual unsigned long threadID() 									const	= 0;
+		const std::string threadID() const { return this_thread::id(); }
 		virtual void run()			throw(kul::threading::Exception) 				= 0;
 		virtual void join()															= 0;
 		virtual void detach()														= 0;
@@ -108,11 +116,6 @@ class AThreader{
 };
 }// END NAMESPACE OSI OS Independent
 
-namespace this_thread{	// linux needs a wait as the threads are loaded too fast - TODO look into - if it is resolved, it should be safely removed
-	const std::string id();
-	void uSleep(const unsigned long& nanos);
-	void sleep(const unsigned long& millis);
-}
 namespace threading{
 class ThreaderService{
 	public:
