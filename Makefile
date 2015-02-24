@@ -9,24 +9,6 @@ INCS = 	-I$(CURDIR)/inc \
 		-I$(CURDIR)/ext/sparsehash/make/include
 LIB = bin/libkul.a
 
-all:
-	$(MAKE) libs
-	$(MAKE) kul
-
-kul:
-	@@echo "Making libkul.a"
-	@for f in $(shell find src -type f -name '*.cpp'); do \
-		if [ ! -d "$(CURDIR)/bin/$$f" ]; then \
-			mkdir -p $(CURDIR)/bin/$$f; \
-		fi; \
-		$(CXX) $(CXXFLAGS) $(INCS) -o "$(CURDIR)/bin/$$f.o" "$(CURDIR)/$$f"; \
-	done;
-	$(MAKE) kullib
-
-kullib:
-	$(eval FILES := $(foreach dir,$(shell find $(CURDIR)/bin -type f -name *.o),$(dir)))	
-	cd $(CURDIR); ar -r "$(LIB)" $(FILES)
-
 libs:
 	$(MAKE) hash
 	$(MAKE) pugi

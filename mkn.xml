@@ -31,11 +31,13 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 		<scr>http://www.github.com/Dekken/kul.git</scr>
 	</scm>
 	<profiles>
-		<profile name="nixc">
+		<profile name="c">
 			<includes>
 				<include>./inc</include>
 				<include>./ext/sparsehash/make/include</include>
 			</includes>
+		</profile>
+		<profile name="nixc" parent="c">
 			<dependencies>
 				<dependency>
 					<name>pugixml</name>
@@ -78,7 +80,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			</build>
 		</profile>
 
-		<profile name="win">
+		<profile name="win" parent="c">
 			<dependencies>
 				<dependency>
 					<name>pugixml</name>
@@ -86,9 +88,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 					<profile>win</profile>
 					<local>./ext/pugixml</local>
 				</dependency>
-			</dependencies>
+			</dependencies>	
 			<includes>
-				<include>./inc</include>
 				<include>./tst</include>
 				<include>./ext/sparsehash/trunk/src</include>
 				<include>./ext/sparsehash/trunk/src/windows</include>
