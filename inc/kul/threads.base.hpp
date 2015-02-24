@@ -97,7 +97,6 @@ class AThreader{
 		AThreader() : f(0){}
 		std::exception_ptr eP;
 
-		virtual unsigned long threadID() 							const 		= 0;
 		virtual void act() 														= 0;		
 		virtual void join() 													= 0;
 		virtual void detach() 													= 0;
@@ -169,7 +168,6 @@ class Thread : public threading::AThread{
 		template <class T> Thread(T t) 					: s(0), th(threading::ThreaderService::getThreader(t))			{ }
 		template <class T> Thread(const Ref<T>& ref) 	: s(0), th(threading::ThreaderService::getRefThreader(ref))	{ }
 		template <class T> Thread(const CRef<T>& ref) 	: s(0), th(threading::ThreaderService::getCRefThreader(ref))	{ }
-		unsigned long threadID() const { return th->threadID(); }
 		void run() throw(kul::threading::Exception){ 
 			if(started()) KEXCEPT(threading::Exception, "Thread already started");
 			setStarted();
@@ -282,7 +280,7 @@ class ThreadPool{
 		}
 		void join() throw (std::exception) {
 			while(true){
-				for(int i = 0; i < ts.size(); i++){
+				for(unsigned int i = 0; i < ts.size(); i++){
 					std::shared_ptr<kul::osi::AThreader>& at = ts.front();
 					if(at->finished()){
 						if(at->exception() != std::exception_ptr()){
