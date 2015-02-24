@@ -25,15 +25,15 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 void kul::scm::Git::co(const std::string& d, const std::string& r, const std::string& v) const throw(Exception){
 
-	std::unique_ptr<kul::Process> p(kul::Process::create("git"));
+	kul::Process p("git");
 	Dir dr(d, true);
-	p->setDir(d.c_str());
-	p->addArg("clone").addArg(r.c_str());
-	if(v.compare("master") != 0 && v.compare("") != 0) p->addArg("-b").addArg(v.c_str());
+	p.setDir(d.c_str());
+	p.addArg("clone").addArg(r.c_str());
+	if(v.compare("master") != 0 && v.compare("") != 0) p.addArg("-b").addArg(v.c_str());
 	try{
-		p->addArg(".");
-		std::cout << "PERFORMING: " << p->toString() << std::endl;
-		p->start();
+		p.addArg(".");
+		std::cout << "PERFORMING: " << p.toString() << std::endl;
+		p.start();
 	}catch(const kul::proc::ExitException& e){
 		dr.rm();
 		KEXCEPT(Exception, "SCM ERROR - Check remote dependency location / version");
@@ -43,37 +43,37 @@ void kul::scm::Git::up(const std::string& d, const std::string& r, const std::st
 
 	if(!Dir(d).is()) co(d, r);
 	else{
-		std::unique_ptr<kul::Process> p(kul::Process::create("git"));
-		p->setDir(d.c_str());
-		p->addArg("pull");
-		if(v.compare("") != 0) p->addArg("-u").addArg("origin").addArg(v.c_str());
+		kul::Process p("git");
+		p.setDir(d.c_str());
+		p.addArg("pull");
+		if(v.compare("") != 0) p.addArg("-u").addArg("origin").addArg(v.c_str());
 		try{
-			std::cout << "PERFORMING: " << p->toString() << std::endl;
-			p->start();
+			std::cout << "PERFORMING: " << p.toString() << std::endl;
+			p.start();
 		}catch(const kul::proc::ExitException& e){
 			KEXCEPT(Exception, "SCM ERROR - Check remote dependency location / version");
 		}
 	}
 }
 const std::string kul::scm::Git::localVersion(const std::string& d) {
-	std::unique_ptr<kul::Process> p(kul::Process::create("git"));
-	kul::ProcessCapture pc(*p.get());
-	p->addArg("rev-parse").addArg("HEAD");
+	kul::Process p("git");
+	kul::ProcessCapture pc(p);
+	p.addArg("rev-parse").addArg("HEAD");
 	try{
-		p->setDir(d);
-		p->start();
+		p.setDir(d);
+		p.start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR" + std::string(e.what()));
 	}
 	return pc.outs()[0];
 }
 const std::string kul::scm::Git::remoteVersion(const std::string& d, const std::string& url, const std::string branch) throw(Exception){
-	std::unique_ptr<kul::Process> p(kul::Process::create("git"));
-	kul::ProcessCapture pc(*p.get());
-	p->addArg("ls-remote").addArg(url).addArg(branch);
+	kul::Process p("git");
+	kul::ProcessCapture pc(p);
+	p.addArg("ls-remote").addArg(url).addArg(branch);
 	try{		
-		p->setDir(d);
-		p->start();		
+		p.setDir(d);
+		p.start();		
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR" + std::string(e.what()));
 	}
@@ -83,12 +83,12 @@ const std::string kul::scm::Git::remoteVersion(const std::string& d, const std::
 }
 
 const std::string kul::scm::Git::origin(const std::string& d) {
-	std::unique_ptr<kul::Process> p(kul::Process::create("git"));
-	kul::ProcessCapture pc(*p.get());
-	p->addArg("remote").addArg("-v");
+	kul::Process p("git");
+	kul::ProcessCapture pc(p);
+	p.addArg("remote").addArg("-v");
 	try{
-		p->setDir(d.c_str());
-		p->start();
+		p.setDir(d.c_str());
+		p.start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR" + std::string(e.what()));
 	}
@@ -96,12 +96,12 @@ const std::string kul::scm::Git::origin(const std::string& d) {
 }
 
 bool kul::scm::Git::hasChanges(const std::string& d) const{
-	std::unique_ptr<kul::Process> p(kul::Process::create("git"));
-	kul::ProcessCapture pc(*p.get());
-	p->addArg("status").addArg("-sb");
+	kul::Process p("git");
+	kul::ProcessCapture pc(p);
+	p.addArg("status").addArg("-sb");
 	try{
-		p->setDir(d.c_str());
-		p->start();
+		p.setDir(d.c_str());
+		p.start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR" + std::string(e.what()));
 	}
@@ -110,33 +110,33 @@ bool kul::scm::Git::hasChanges(const std::string& d) const{
 
 void kul::scm::Git::setOrigin(const std::string& d, const std::string& r){
 
-	std::unique_ptr<kul::Process> p(kul::Process::create("git"));
-	p->addArg("remote").addArg("set-url").addArg(r);
+	kul::Process p("git");
+	p.addArg("remote").addArg("set-url").addArg(r);
 	try{
-		p->setDir(d.c_str());
-		p->start();
+		p.setDir(d.c_str());
+		p.start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR" + std::string(e.what()));
 	}
 }
 void kul::scm::Git::status(const std::string& d){
 
-	std::unique_ptr<kul::Process> p(kul::Process::create("git"));
-	p->addArg("status");
+	kul::Process p("git");
+	p.addArg("status");
 	try{
-		p->setDir(d.c_str());
-		p->start();
+		p.setDir(d.c_str());
+		p.start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR" + std::string(e.what()));
 	}
 }
 void kul::scm::Git::diff(const std::string& d){
 
-	std::unique_ptr<kul::Process> p(kul::Process::create("git"));
-	p->addArg("diff");
+	kul::Process p("git");
+	p.addArg("diff");
 	try{
-		p->setDir(d.c_str());
-		p->start();
+		p.setDir(d.c_str());
+		p.start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR" + std::string(e.what()));
 	}

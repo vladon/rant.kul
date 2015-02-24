@@ -41,7 +41,7 @@ class CompilerProcessCapture : public kul::ProcessCapture{
 		std::string f;
 		bool s;
 	public:
-		CompilerProcessCapture(kul::Process& p, const std::string& f) : kul::ProcessCapture(p), f(f), s(1){}
+		CompilerProcessCapture(kul::AProcess& p, const std::string& f) : kul::ProcessCapture(p), f(f), s(1){}
 		CompilerProcessCapture(const std::string& f) : f(f), s(1){}
 		CompilerProcessCapture(const CompilerProcessCapture& cp) : kul::ProcessCapture(cp), f(cp.f), s(cp.s){}
 

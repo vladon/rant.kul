@@ -53,20 +53,20 @@ class WINCompiler : public Compiler{
 				bits = kul::String::split(linker, ' ');
 				cmd = bits[0];
 			}
-			std::unique_ptr<kul::Process> p(kul::Process::create(cmd));
-			CompilerProcessCapture pc(*p, exe);
-			for(unsigned int i = 1; i < bits.size(); i++) (*p).addArg(bits[i]);
-			(*p).addArg("/NOLOGO").addArg("/OUT:\"" + exe + "\"");
-			for(const std::string& path : libPaths)	(*p).addArg("/LIB:\"" + path + "\"");
-			for(const std::string& o : objects)	(*p).addArg("\""+ o + "\"");
-			for(const std::string& lib : libs)	(*p).addArg("/REFERENCE:\"" + lib + ".dll\"");
+			kul::Process p(cmd);
+			CompilerProcessCapture pc(p, exe);
+			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
+			p.addArg("/NOLOGO").addArg("/OUT:\"" + exe + "\"");
+			for(const std::string& path : libPaths)	p.addArg("/LIB:\"" + path + "\"");
+			for(const std::string& o : objects)	p.addArg("\""+ o + "\"");
+			for(const std::string& lib : libs)	p.addArg("/REFERENCE:\"" + lib + ".dll\"");
 			if(linkerEnd.find(" ") != std::string::npos)
 				for(const std::string& s: kul::String::split(linkerEnd, ' '))
-					(*p).addArg(s);
-			else (*p).addArg(linkerEnd);
+					p.addArg(s);
+			else p.addArg(linkerEnd);
 
 			try{
-				(*p).start();
+				p.start();
 			}catch(const kul::proc::Exception& e){ 
 				// KLOG(INF) << e.debug()<< " : " << typeid(e).name(); rethrow
 				pc.failed();

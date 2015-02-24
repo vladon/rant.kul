@@ -21,8 +21,8 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _KUL_PROC_HPP_
-#define _KUL_PROC_HPP_
+#ifndef _KUL_PROC_BASE_HPP_
+#define _KUL_PROC_BASE_HPP_
 
 #include <iostream>
 
@@ -41,10 +41,11 @@ class ExitException : public Exception{
 };
 }
 
-class Process{
+class AProcess{
 	private:
 		const bool wfe;
 		bool s;
+		unsigned int pi;
 		std::string d;
 		const std::string p;
 		std::function<void(std::string)> e;
@@ -53,18 +54,18 @@ class Process{
 		std::vector<std::pair<const std::string, const std::string> > evs;
 
 	protected:
-		Process(const std::string& cmd, const bool& wfe) : wfe(wfe), s(0), d(), p(){ argv.push_back(cmd); }
-		Process(const std::string& p, const std::string& cmd, const bool& wfe) : wfe(wfe), s(0), d(), p(p){ argv.push_back(cmd); }
+		AProcess(const std::string& cmd, const bool& wfe) : wfe(wfe), s(0), pi(0), d(), p(){ argv.push_back(cmd); }
+		AProcess(const std::string& p, const std::string& cmd, const bool& wfe) : wfe(wfe), s(0), d(), p(p){ argv.push_back(cmd); }
+		virtual ~AProcess(){}
 
-		const bool& 		started() 		const { return s; }
 		const std::string&	directory()		const { return d; }
 		const std::string&	path()			const { return p; }
-		void 				setStarted() 	{ this->s = true; }
 		virtual void 		preStart() 		{}
 		virtual void 		finish()		{}
 		virtual void 		tearDown()		{}
 		virtual void 		run() throw (kul::proc::Exception) = 0;
-		bool				waitForExit()	const { return wfe; }
+		bool		 		waitForExit()	const { return wfe; }
+		void 				pid(const unsigned int& pi )  { this->pi = pi; }
 
 		const std::vector<std::string>&		 									arguments()				const { return argv; };
 		const std::vector<std::pair<const std::string, const std::string> >& 	environmentVariables()	const { return evs; }
@@ -81,18 +82,16 @@ class Process{
 			KEXCEPT(kul::proc::Exception, s);
 		}
 	public:
-		virtual ~Process(){}
-		static std::unique_ptr<kul::Process> create(const std::string& cmd, const bool wfe = true);
-		static std::unique_ptr<kul::Process> create(const std::string& p, const std::string& cmd, const bool wfe = true);
-
-		Process& addArg(const std::string& arg) { if(arg.size()) argv.push_back(arg); return *this; }
-		Process& setDir(const std::string& dir) { this->d = dir; return *this; }
-		Process& addEnvVar(const std::string& n, const std::string& v) { evs.push_back(std::pair<const std::string, const std::string>(n, v)); return *this;}
+		AProcess& addArg(const std::string& arg) { if(arg.size()) argv.push_back(arg); return *this; }
+		AProcess& setDir(const std::string& dir) { this->d = dir; return *this; }
+		AProcess& addEnvVar(const std::string& n, const std::string& v) { evs.push_back(std::pair<const std::string, const std::string>(n, v)); return *this;}
 		virtual void start() throw(kul::proc::Exception){
-			if(started()) KEXCEPT(kul::proc::Exception, "Process is already started");
-			setStarted();
+			if(this->s) KEXCEPT(kul::proc::Exception, "Process is already started");
+			this->s = true;
 			this->run();
 		}
+		const unsigned int& pid() const { return pi; }
+		const bool started() 	const { return pi > 0; }
 		virtual std::string	toString(){
 			std::string s(argv[0]);
 			if(d.size()){
@@ -118,7 +117,7 @@ class ProcessCapture{
 		}
 	public:
 		ProcessCapture(){}
-		ProcessCapture(Process& p){
+		ProcessCapture(AProcess& p){
 			p.setOut(std::bind(&ProcessCapture::out, std::ref(*this), std::placeholders::_1));
 			p.setErr(std::bind(&ProcessCapture::err, std::ref(*this), std::placeholders::_1));
 		}
@@ -132,4 +131,4 @@ class ProcessCapture{
 };
 
 }
-#endif /* _KUL_PROC_HPP_ */
+#endif /* _KUL_PROC_BASE_HPP_ */

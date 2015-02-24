@@ -35,7 +35,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/time.hpp"
 #include "kul/except.hpp"
 #include "kul/string.hpp"
-#include "kul/threading/thread.hpp"
+#include "kul/threads.base.hpp"
 
 namespace kul{ namespace log{
 

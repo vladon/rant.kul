@@ -28,8 +28,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/cli.hpp"
 #include "kul/log.hpp"
 #include "kul/xml.hpp"
-#include "kul/time.hpp"
 #include "kul/proc.hpp"
+#include "kul/time.hpp"
 #include "kul/threads.hpp"
 
 namespace kul {
@@ -88,15 +88,15 @@ class test{ public: test(){
 	KLOG(INF);
 	KLOG(ERR);
 	KLOG(DBG);
-	KLOG(INF) << Dir::SEP();
-	KLOG(INF) << Env::CWD();
-	KLOG(INF) << os::userDir().real();
-	KLOG(INF) << os::userAppDir("maiken").real();
+	KLOG(INF) << kul::Dir::SEP();
+	KLOG(INF) << kul::Env::CWD();
+	KLOG(INF) << kul::os::userDir().real();
+	KLOG(INF) << kul::os::userAppDir("maiken").real();
 	for(kul::Dir d : kul::Dir(Env::CWD()).dirs()) for(kul::File f : d.files()) KLOG(INF) << f.real();
 
-	std::unique_ptr<kul::Process> p(kul::Process::create("echo"));
+	kul::Process p("echo");
 	try{
-		(*p).addArg("Hello").addArg("World").start();
+		p.addArg("Hello").addArg("World").start();
 	}catch(const kul::proc::Exception& e){ 
 		KLOG(INF) << e.debug()<< " : " << typeid(e).name();
 		KLOG(INF) << "Error expected on windows without echo on path"; //it's a built in command in cmd
