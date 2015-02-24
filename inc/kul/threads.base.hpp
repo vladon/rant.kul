@@ -312,7 +312,7 @@ class PredicatedThreadPool : public ThreadPool{
 			if(started()) KEXCEPT(Exception, "ThreadPool is already started");
 			setStarted();
 			while(p.size() > 0){
-				for(int i = 0; i < ts.size(); i++){
+				for(unsigned int i = 0; i < ts.size(); i++){
 					std::shared_ptr<kul::osi::AThreader>& at = ts.front();
 					if(at->finished()){
 						if(at->exception() != std::exception_ptr()){
