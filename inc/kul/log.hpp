@@ -48,7 +48,7 @@ class Exception : public kul::Exception{
 
 class ALogger{
 	private:
-		static int tid;
+		static unsigned int tid;
 	public:
 		virtual ~ALogger(){}
 		virtual void log(const char* f, const int& l, const std::string& s, const mode& m) const = 0;

@@ -61,7 +61,7 @@ class String{
 			while(s.rfind(' ') == s.size() - 1 || s.rfind('	') == s.size() - 1)
 				s = s.substr(0, s.size() - 2);
 		}
-		static void pad(std::string& s, const int p){
+		static void pad(std::string& s, const unsigned int& p){
 			while(s.size() < p) s += " ";
 		}
 		static std::vector<std::string> split(const std::string& s, const char& delim='\n'){
