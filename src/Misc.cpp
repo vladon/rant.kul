@@ -25,7 +25,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/scm.hpp"
 #include "kul/code/compilers.hpp"
 
-unsigned int kul::log::ALogger::tid(0);
+unsigned int kul::Logger::tid(0);
 
 kul::scm::Manager* kul::scm::Manager::instance(0);
 

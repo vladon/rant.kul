@@ -46,34 +46,10 @@ class Exception : public kul::Exception{
 		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
 };
 
-class ALogger{
+}
+class Logger{
 	private:
 		static unsigned int tid;
-	public:
-		virtual ~ALogger(){}
-		virtual void log(const char* f, const int& l, const std::string& s, const mode& m) const = 0;
-		const std::string line(const char* f, const int& l, const std::string& s, const mode& m) const{
-			std::stringstream ss;
-			std::string mode("[" + modeTxt(m) + "]");
-			kul::String::pad(mode, 7);
-			std::string tr(kul::this_thread::id());
-			tid = tr.size() > tid ? tr.size() : tid;
-			kul::String::pad(tr, tid);
-			ss << mode << " : " << tr << " - " << kul::DateTime::NOW().substr(4) << " : " << f << " : " << l << " " << s;
-			return ss.str();
-		}
-		const std::string modeTxt(const mode& m) const{
-			std::string s("NONE");
-			if(m == 1)		s = "INFO";
-			else if(m == 2)	s = "ERROR";
-			else if(m == 3) s = "DEBUG";
-			return s;
-		}
-};
-
-}
-
-class ConsoleLogger : public kul::log::ALogger{
 	public:
 		void log(const char* f, const int& l, const std::string& s, const log::mode& m) const{
 			if(m == log::NON)
@@ -83,26 +59,30 @@ class ConsoleLogger : public kul::log::ALogger{
 			else 
 				std::cout << line(f, l, s, m) << std::endl;
 		}
-};
-
-class FileLogger : public kul::log::ALogger{
-	private:
-		const char* fi;
-	public:
-		FileLogger(const char* fi) : fi(fi){
-			kul::File(fi, true);
+		const std::string line(const char* f, const int& l, const std::string& s, const log::mode& m) const{
+			std::stringstream ss;
+			std::string mode("[" + modeTxt(m) + "]");
+			kul::String::pad(mode, 7);
+			std::string tr(kul::this_thread::id());
+			tid = tr.size() > tid ? tr.size() : tid;
+			kul::String::pad(tr, tid);
+			ss << mode << " : " << tr << " - " << kul::DateTime::NOW().substr(4) << " : " << f << " : " << l << " " << s;
+			return ss.str();
 		}
-		void log(const char* f, const int& l, const std::string& s, const log::mode& m) const{
-			//TODO finish
-			line(f, l, s, m);			
+		const std::string modeTxt(const log::mode& m) const{
+			std::string s("NONE");
+			if(m == 1)		s = "INFO";
+			else if(m == 2)	s = "ERROR";
+			else if(m == 3) s = "DEBUG";
+			return s;
 		}
 };
 
 class LogMan{
 	private:
 		log::mode m;
-		std::vector<const log::ALogger*> loggers;
-		LogMan() : m(kul::log::mode::NON){
+		const Logger logger;
+		LogMan() : m(kul::log::mode::NON), logger(){
 			kul::log::mode lM = kul::log::mode::NON;
 			if(kul::Env::GET("KLOG")){
 				std::string s(kul::Env::GET("KLOG"));
@@ -118,15 +98,8 @@ class LogMan{
 			static LogMan instance;
 			return instance;
 		};
-		virtual ~LogMan(){}
-		void addLogger(const log::ALogger& l){
-			loggers.push_back(&l);
-		}
 		void log(const char* f, const int& l, const log::mode& m, const std::string& s){
-			if(loggers.size() == 0 && m == log::mode::ERR)
-				std::cerr << kul::DateTime::NOW() << " " << f << " : " << l << " - " << s << std::endl;
-			for(const log::ALogger* logger : loggers)
-				if(this->m >= m) logger->log(f, l, s, m);			
+			if(this->m >= m) logger.log(f, l, s, m);
 		}
 };
 
@@ -153,26 +126,12 @@ class LogMessageToCOut : public LogMessage{
 	public:
 		LogMessageToCOut(const char* f, const int& l, const log::mode& m) : LogMessage(f, l, m){}
 };
-class LogMessageToFile : public LogMessage{
-	public:
-		LogMessageToFile(const char* f, const int& l, const log::mode& m) : LogMessage(f, l, m){}
-};
 
 #define KLOG_NON 	kul::LogMessage(__FILE__, __LINE__, kul::log::mode::NON)
 #define KLOG_INF 	kul::LogMessage(__FILE__, __LINE__, kul::log::mode::INF)
 #define KLOG_ERR 	kul::LogMessage(__FILE__, __LINE__, kul::log::mode::ERR)
 #define KLOG_DBG 	kul::LogMessage(__FILE__, __LINE__, kul::log::mode::DBG)
 #define KLOG(sev) KLOG_ ## sev
-
-#define KLOG2_COUT_NON		kul::LogMessageToCOut(__FILE__, __LINE__, kul::log::mode::NON)
-#define KLOG2_COUT_INF		kul::LogMessageToCOut(__FILE__, __LINE__, kul::log::mode::INF)
-#define KLOG2_COUT_ERR		kul::LogMessageToCOut(__FILE__, __LINE__, kul::log::mode::ERR)
-#define KLOG2_COUT_DBG		kul::LogMessageToCOut(__FILE__, __LINE__, kul::log::mode::DBG)
-#define KLOG2_FILE_NON		kul::LogMessageToFile(__FILE__, __LINE__, kul::log::mode::NON)
-#define KLOG2_FILE_INF		kul::LogMessageToFile(__FILE__, __LINE__, kul::log::mode::INF)
-#define KLOG2_FILE_ERR		kul::LogMessageToFile(__FILE__, __LINE__, kul::log::mode::ERR)
-#define KLOG2_FILE_DBG		kul::LogMessageToFile(__FILE__, __LINE__, kul::log::mode::DBG)
-#define KLOG2(logger, sev) KLOG2_ ## logger ## _ ## sev
 
 }
 #endif /* _KUL_LOG_HPP_ */
