@@ -34,10 +34,11 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 		<profile name="c">
 			<includes>
 				<include>./inc</include>
+				<include>./tst</include>
 				<include>./ext/sparsehash/make/include</include>
 			</includes>
 		</profile>
-		<profile name="nixc" parent="c">
+		<profile name="nix" parent="c">
 			<dependencies>
 				<dependency>
 					<name>pugixml</name>
@@ -58,28 +59,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				</files>
 			</build>
 		</profile>
-		<profile name="nix" parent="nixc">
-			<includes>
-				<include>./tst</include>
-			</includes>
-			<build type="lib" mode="static" lang="cpp"> 
-				<files>
-					<file type="cpp">
-						<args><arg>-O0</arg><arg>-g3</arg></args>
-					</file>
-				</files>
-			</build>
-		</profile>
-		<profile name="nixr" parent="nixc">
-			<build type="lib" mode="static" lang="cpp"> 
-				<files>
-					<file type="cpp">
-						<args><arg>-O3</arg><arg>-g0</arg></args>
-					</file>
-				</files>
-			</build>
-		</profile>
-
 		<profile name="win" parent="c">
 			<dependencies>
 				<dependency>
@@ -90,7 +69,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				</dependency>
 			</dependencies>	
 			<includes>
-				<include>./tst</include>
 				<include>./ext/sparsehash/trunk/src</include>
 				<include>./ext/sparsehash/trunk/src/windows</include>
 				<include>./../win/master/ext/msinttypes-r26</include>			
