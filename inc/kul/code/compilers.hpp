@@ -37,48 +37,54 @@ class CompilerNotFoundException : public kul::Exception{
 class Compilers{
 	private:
 		Compilers(){
-			// add compilers to map
-			cpp::GCCompiler* 	gcc		= new cpp::GCCompiler();
-			cpp::ClangCompiler* clang	= new cpp::ClangCompiler();
-			cpp::IntelCompiler* intel	= new cpp::IntelCompiler();
-			cpp::WINCompiler* 	winc	= new cpp::WINCompiler();
+			gcc		= std::make_shared<cpp::GCCompiler>();
+			clang	= std::make_shared<cpp::ClangCompiler>();
+			intel	= std::make_shared<cpp::IntelCompiler>();
+			winc	= std::make_shared<cpp::WINCompiler>();
 
-			csharp::WINCompiler* wincs 	= new csharp::WINCompiler();
+			wincs 	= std::make_shared<csharp::WINCompiler>();
 
-			compilers.insert(std::pair<std::string, Compiler*>("gcc"		, gcc));
-			compilers.insert(std::pair<std::string, Compiler*>("g++"		, gcc));
-			compilers.insert(std::pair<std::string, Compiler*>("nvcc"		, gcc));
-			compilers.insert(std::pair<std::string, Compiler*>("clang"		, clang));
-			compilers.insert(std::pair<std::string, Compiler*>("clang++"	, clang));
-			compilers.insert(std::pair<std::string, Compiler*>("icc"		, intel));
-			compilers.insert(std::pair<std::string, Compiler*>("icpc"		, intel));
-			compilers.insert(std::pair<std::string, Compiler*>("cl"			, winc));
-			compilers.insert(std::pair<std::string, Compiler*>("csc"		, wincs));
+			cs.insert(std::pair<std::string, Compiler*>("gcc"		, gcc.get()));
+			cs.insert(std::pair<std::string, Compiler*>("g++"		, gcc.get()));
+			cs.insert(std::pair<std::string, Compiler*>("nvcc"		, gcc.get()));
+			cs.insert(std::pair<std::string, Compiler*>("clang"		, clang.get()));
+			cs.insert(std::pair<std::string, Compiler*>("clang++"	, clang.get()));
+			cs.insert(std::pair<std::string, Compiler*>("icc"		, intel.get()));
+			cs.insert(std::pair<std::string, Compiler*>("icpc"		, intel.get()));
+			cs.insert(std::pair<std::string, Compiler*>("cl"			, winc.get()));
+			cs.insert(std::pair<std::string, Compiler*>("csc"		, wincs.get()));
 		}
-		static Compilers* instance;
-		hash::map::S2T<Compiler*> compilers;
+		std::shared_ptr<Compiler> gcc;
+		std::shared_ptr<Compiler> clang;
+		std::shared_ptr<Compiler> intel;
+		std::shared_ptr<Compiler> winc;
+		std::shared_ptr<Compiler> wincs;
+		hash::map::S2T<Compiler*> cs;
 	public:
-		static Compilers* INSTANCE(){ if(instance == 0) instance = new Compilers(); return instance;}
+		static Compilers& INSTANCE(){ 
+			static Compilers instance;
+			return instance;
+		}
 		const Compiler* get(const std::string& c) throw(CompilerNotFoundException){
 			std::string comp = c;
 			kul::String::replaceAll(comp, ".exe", "");
 
-			if(Compilers::compilers.count(comp) > 0)
-				return (*Compilers::compilers.find(comp)).second;
+			if(cs.count(comp) > 0)
+				return (*cs.find(comp)).second;
 
 			if(comp.find(" ") != std::string::npos)
 				for(const std::string& s :kul::String::split(comp, ' ')){
-					if(Compilers::compilers.count(s) > 0)
-						return (*Compilers::compilers.find(s)).second;
+					if(cs.count(s) > 0)
+						return (*cs.find(s)).second;
 
 					if(std::string(kul::Dir(s).locl()).find(kul::Dir::SEP()) != std::string::npos)
-						if(Compilers::compilers.count(s.substr(s.rfind(kul::Dir::SEP()) + 1)) > 0)
-							return (*Compilers::compilers.find(s.substr(s.rfind(kul::Dir::SEP()) + 1))).second;
+						if(cs.count(s.substr(s.rfind(kul::Dir::SEP()) + 1)) > 0)
+							return (*cs.find(s.substr(s.rfind(kul::Dir::SEP()) + 1))).second;
 				}
 			
 			if(std::string(kul::Dir(comp).locl()).find(kul::Dir::SEP()) != std::string::npos)
-				if(Compilers::compilers.count(comp.substr(comp.rfind(kul::Dir::SEP()) + 1)) > 0)
-					return (*Compilers::compilers.find(comp.substr(comp.rfind(kul::Dir::SEP()) + 1))).second;
+				if(cs.count(comp.substr(comp.rfind(kul::Dir::SEP()) + 1)) > 0)
+					return (*cs.find(comp.substr(comp.rfind(kul::Dir::SEP()) + 1))).second;
 			
 			KEXCEPT(CompilerNotFoundException, "Compiler for " + comp + " is not implemented");
 		}

@@ -21,19 +21,18 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #ifndef _KUL_IO_HPP_
 #define _KUL_IO_HPP_
 
+#include <memory>
 #include <time.h>
 #include <fstream>
-#include <memory>
 #include <iostream>
 #include <stdexcept>
 
 #include "kul/os.hpp"
-#include "kul/string.hpp"
 #include "kul/except.hpp"
+#include "kul/string.hpp"
 
 namespace kul{  namespace io {
 
@@ -45,17 +44,17 @@ class Exception : public kul::Exception{
 class Reader{
 	private:
 		std::ifstream f;
-		std::shared_ptr<std::string> string;
+		std::shared_ptr<std::string> str;
 	public:
-		Reader(const char* c) : f(c), string(0) { if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");}
-		std::string* read(){
-			string.reset();
+		Reader(const char* c) : f(c), str(0) { if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");}
+		const std::string* read(){
+			str.reset();
 			std::string s;
 			if(f.good()){
 				getline(f, s);
-				string.reset(new std::string(s));
+				str = std::make_shared<std::string>(s);
 			}
-			return string.get();
+			return str.get();
 		}
 };
 
