@@ -26,20 +26,13 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 #include <vector>
-#include <string.h>
 #include <sstream>
-
-#include "kul/hash.hpp"
+#include <algorithm>
 
 namespace kul { 
 
 class String{
 	public:
-		static std::string toString(const int& i){
-			std::stringstream out;
-			out << i;
-			return out.str();
-		}
 		static void replace(std::string& s, const std::string& f, const std::string& r){
 			s = s.substr(0, s.find(f)) + r + s.substr(s.find(f) + f.size());
 		}
