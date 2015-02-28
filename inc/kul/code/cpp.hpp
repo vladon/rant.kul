@@ -83,8 +83,8 @@ class GCCompiler : public CCompiler{
 			
 			try{
 				p.start();
-			}catch(const kul::proc::Exception& e){ 
-				// KLOG(DBG) << e.debug()<< " : " << typeid(e).name(); rethrow
+			}catch(const kul::proc::Exception& e){
+				pc.exception(std::current_exception());
 				pc.failed();
 			}
 
@@ -111,8 +111,8 @@ class GCCompiler : public CCompiler{
 			for(const std::string& o : objects)	p.addArg(o);	
 			try{
 				p.start();
-			}catch(const kul::proc::Exception& e){ 
-				// KLOG(DBG) << e.debug() << " : " << typeid(e).name(); rethrow
+			}catch(const kul::proc::Exception& e){
+				pc.exception(std::current_exception());
 				pc.failed();
 			}
 
@@ -138,8 +138,8 @@ class GCCompiler : public CCompiler{
 			for(const std::string& o : objects)	p.addArg(o);	
 			try{
 				p.start();
-			}catch(const kul::proc::Exception& e){ 
-				// KLOG(DBG) << e.debug()<< " : " << typeid(e).name(); rethrow
+			}catch(const kul::proc::Exception& e){
+				pc.exception(std::current_exception());
 				pc.failed();
 			}
 
@@ -170,7 +170,7 @@ class GCCompiler : public CCompiler{
 			try{
 				p.start();
 			}catch(const kul::proc::Exception& e){
-				// KLOG(DBG) << e.debug()<< " : " << typeid(e).name(); rethrow
+				pc.exception(std::current_exception());
 				pc.failed();
 			}
 
@@ -283,8 +283,8 @@ class WINCompiler : public CCompiler{
 
 			try{
 				p.start();
-			}catch(const kul::proc::Exception& e){ 
-				// KLOG(DBG) << e.debug()<< " : " << typeid(e).name();rethrow
+			}catch(const kul::proc::Exception& e){
+				pc.exception(std::current_exception());
 				pc.failed();
 			}
 
@@ -311,8 +311,8 @@ class WINCompiler : public CCompiler{
 			for(const std::string& o : objects)	p.addArg(o);	
 			try{
 				p.start();
-			}catch(const kul::proc::Exception& e){ 
-				// KLOG(DBG) << e.debug()<< " : " << typeid(e).name(); rethrow
+			}catch(const kul::proc::Exception& e){
+				pc.exception(std::current_exception());
 				pc.failed();
 			}
 
@@ -338,8 +338,8 @@ class WINCompiler : public CCompiler{
 			for(const std::string& o : objects)	p.addArg(o);	
 			try{
 				p.start();
-			}catch(const kul::proc::Exception& e){ 
-				// KLOG(DBG) << e.debug() << " : " << typeid(e).name(); rethrow
+			}catch(const kul::proc::Exception& e){
+				pc.exception(std::current_exception());
 				pc.failed();
 			}
 			return pc;
@@ -368,8 +368,8 @@ class WINCompiler : public CCompiler{
 			p.addArg("/c").addArg("/Fo\"" + obj + "\"").addArg("\"" + in + "\"");
 			try{
 				p.start();
-			}catch(const kul::proc::Exception& e){ 
-				// KLOG(DBG) << e.debug()<< " : " << typeid(e).name(); rethrow
+			}catch(const kul::Exception& e){
+				pc.exception(std::current_exception());
 				pc.failed();
 			}
 

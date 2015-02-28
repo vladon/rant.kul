@@ -67,8 +67,8 @@ class WINCompiler : public Compiler{
 
 			try{
 				p.start();
-			}catch(const kul::proc::Exception& e){ 
-				// KLOG(INF) << e.debug()<< " : " << typeid(e).name(); rethrow
+			}catch(const kul::proc::Exception& e){
+				pc.exception(std::current_exception());
 				pc.failed();
 			}
 
