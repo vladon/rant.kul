@@ -1,6 +1,6 @@
 /**
 
-./src/kul/cli/Args.cpp
+./src/Args.cpp
 
 Created on: 14 Feb 2013
 
@@ -58,14 +58,9 @@ void kul::cli::Args::process(int argc, char* argv[]) throw(ArgNotFoundException)
 		c = argv[i];
 		t = c;
 
-		kul::String::replaceAll(t, "----", "---");
-		if(t.find("---") != std::string::npos) 	KEXCEPT(Exception, "Illegal argument " + c);
-		if(c.compare("---") == 0)				KEXCEPT(Exception, "Illegal argument ---");
-		if(c.compare("--") == 0)				KEXCEPT(Exception, "Illegal argument --");
-		if(c.compare("-") == 0) 				KEXCEPT(Exception, "Illegal argument -");
-		// if((c.find("--") == 0 || c.find("-") == 0) && valExpected == 1)
-		// 	KEXCEPT(Exception, "Value expected for argument: \""+ valExpectedFor + "\"");
-
+		if(c.compare("---") == 0)	KEXCEPT(Exception, "Illegal argument ---");
+		if(c.compare("--") == 0)	KEXCEPT(Exception, "Illegal argument --");
+		if(c.compare("-") == 0) 	KEXCEPT(Exception, "Illegal argument -");
 		if(valExpected == 1 || (valExpected == 2 && c.find("-") != 0)){
 			valExpected = 0;
 			vals[arg->dashdash()] = c;
@@ -123,6 +118,5 @@ void kul::cli::Args::process(int argc, char* argv[]) throw(ArgNotFoundException)
 		commands(c.c_str());
 		vals[c] = "";
 	}
-	if(valExpected == 1)
-		KEXCEPT(Exception, "Value expected for argument: \""+ valExpectedFor + "\"");
+	if(valExpected == 1) KEXCEPT(Exception, "Value expected for argument: \""+ valExpectedFor + "\"");
 }
