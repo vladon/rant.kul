@@ -1,6 +1,6 @@
 /**
 
-./src/kul/xml/Node.cpp
+./src/Node.cpp
 
 Created on: 14 Jan 2013
 

@@ -1,6 +1,6 @@
 /**
 
-./src/kul/xml/Writer.cpp
+./src/Writer.cpp
 
 Created on: 14 Jan 2013
 
@@ -93,7 +93,7 @@ void kul::xml::NodeFactory::writeToFile(const char*n, const NodeValidator& v, ku
 
 	if(!v.getAtVals().empty()){
 				
-		for(std::vector<std::pair<std::string, std::string> >  vecPairs : NodeWriterService::attributes(v)){
+		for(const std::vector<std::pair<std::string, std::string> >&  vecPairs : NodeWriterService::attributes(v)){
 			s = t + "<" + std::string(n) + ">";
 			if(comment) NodeWriterService::openingComment(s);
 			std::string a;

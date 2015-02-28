@@ -22,11 +22,5 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "kul/log.hpp"
-#include "kul/scm.hpp"
-#include "kul/code/compilers.hpp"
 
 unsigned int kul::Logger::tid(0);
-
-kul::scm::Manager* kul::scm::Manager::instance(0);
-
-kul::code::Compilers* kul::code::Compilers::instance(0);

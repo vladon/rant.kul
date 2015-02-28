@@ -1,6 +1,6 @@
 /**
 
-./src/kul/xml/NodeFactory.cpp
+./src/NodeFactory.cpp
 
 Created on: 14 Jan 2013
 

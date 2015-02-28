@@ -24,7 +24,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_LOG_HPP_
 #define _KUL_LOG_HPP_
 
-
 #include <memory>
 #include <string>
 #include <string.h>

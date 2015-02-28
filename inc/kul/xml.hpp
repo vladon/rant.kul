@@ -26,9 +26,9 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "pugixml.hpp"
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 #include <stdexcept>
 
 #include "kul/io.hpp"
@@ -150,8 +150,6 @@ class NodeValidator{
 		NodeValidator(const NodeValidator& v)  :
 			children(v.getChildren())	, attributeValidators(v.attributeValidators),
 			mi(v.minimum())			, ma(v.maximum())					, text(v.isText()){}
-
-//		const NodeValidator 	operator=(const NodeValidator& n)					const { return *this; }
 		const std::vector<std::pair<std::string, NodeValidator> >&	getChildren() 	const { return this->children; }
 		const std::vector<NodeAttributeValidator>& 					getAtVals()		const { return attributeValidators; }
 		const int& 													minimum() 		const { return this->mi; }

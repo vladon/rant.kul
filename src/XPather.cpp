@@ -1,6 +1,6 @@
 /**
 
-./src/kul/xml/XPather.cpp
+./src/XPather.cpp
 
 Created on: 14 Jan 2013
 

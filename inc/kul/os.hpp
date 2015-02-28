@@ -24,11 +24,10 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_OS_HPP_
 #define _KUL_OS_HPP_
 
-#include <string>
 #include <vector>
-#include <iostream>
 
 #include "kul/except.hpp"
+#include "kul/string.hpp"
 
 namespace kul{
 namespace cpu{

@@ -21,10 +21,9 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _KUL_HTTP_HPP_
-#define _KUL_HTTP_HPP_
+#ifndef _KUL_HTTP_BASE_HPP_
+#define _KUL_HTTP_BASE_HPP_
 
-#include "kul/xml.hpp"
 #include "kul/hash.hpp"
 
 namespace kul{ namespace http{
@@ -87,4 +86,4 @@ class PostResponse : public Response{};
 
 }}
 
-#endif /* _KUL_HTTP_HPP_ */
+#endif /* _KUL_HTTP_BASE_HPP_ */
