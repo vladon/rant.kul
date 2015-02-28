@@ -25,6 +25,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define _KUL_SCM_HPP_
  
 #include "kul/os.hpp"
+#include "kul/hash.hpp"
 #include "kul/proc.hpp"
 #include "kul/string.hpp"
 
@@ -46,64 +47,65 @@ class Scm{
 	public:
 		virtual ~Scm(){}
 		const std::string type() { return typeid(*this).name(); }
-		virtual void co(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception) = 0;
-		virtual void up(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception) = 0;
-		virtual const std::string origin(const std::string& d) = 0;
-		virtual const std::string localVersion(const std::string& d) = 0;
-		virtual const std::string remoteVersion(const std::string& d, const std::string& url, const std::string branch = "")  throw(Exception) = 0;
+		virtual void co(const std::string& l, const std::string& r, const std::string& v) const throw(Exception) = 0;
+		virtual void up(const std::string& l, const std::string& r, const std::string& v) const throw(Exception) = 0;
+		virtual const std::string origin(const std::string& d) const = 0;
+		virtual const std::string localVersion(const std::string& d) const = 0;
+		virtual const std::string remoteVersion(const std::string& d, const std::string& url, const std::string branch) const throw(Exception) = 0;
 
 		virtual bool hasChanges(const std::string& d) const = 0;
 
-		virtual void setOrigin(const std::string& d, const std::string& r) = 0;
-		virtual void status(const std::string& d) = 0;
-		virtual void diff(const std::string& d) = 0;
+		virtual void setOrigin(const std::string& d, const std::string& r) const = 0;
+		virtual void status(const std::string& d) const = 0;
+		virtual void diff(const std::string& d) const = 0;
 };
 
 class Git : public Scm{
 	public:
-		void co(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception);		
-		void up(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception);
-		const std::string origin(const std::string& d);
-		const std::string localVersion(const std::string& d);
-		const std::string remoteVersion(const std::string& d, const std::string& url, const std::string branch = "") throw(Exception);
+		void co(const std::string& l, const std::string& r, const std::string& v) const throw(Exception);
+		void up(const std::string& l, const std::string& r, const std::string& v) const throw(Exception);
+		const std::string origin(const std::string& d) const;
+		const std::string localVersion(const std::string& d) const;
+		const std::string remoteVersion(const std::string& d, const std::string& url, const std::string branch) const throw(Exception);
 
 		bool hasChanges(const std::string& d) const;
 
-		void setOrigin(const std::string& d, const std::string& r);
-		void status(const std::string& d);
-		void diff(const std::string& d);
+		void setOrigin(const std::string& d, const std::string& r) const;
+		void status(const std::string& d) const;
+		void diff(const std::string& d) const;
 };
 
 // SVN URL CHANGE: svn switch –relocate  <from URL> <to URL>
 class Svn : public Scm{
 	public:
-		void co(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception);
-		void up(const std::string& l, const std::string& r, const std::string& v = "") const throw(Exception);
-		const std::string origin(const std::string& d);
-		const std::string localVersion(const std::string& d);
-		const std::string remoteVersion(const std::string& d, const std::string& url, const std::string branch = "") throw(Exception);
+		void co(const std::string& l, const std::string& r, const std::string& v) const throw(Exception);
+		void up(const std::string& l, const std::string& r, const std::string& v) const throw(Exception);
+		const std::string origin(const std::string& d) const;
+		const std::string localVersion(const std::string& d) const;
+		const std::string remoteVersion(const std::string& d, const std::string& url, const std::string branch) const throw(Exception);
 
 		bool hasChanges(const std::string& d) const;
 
-		void setOrigin(const std::string& d, const std::string& r);
-		void status(const std::string& d);
-		void diff(const std::string& d);
+		void setOrigin(const std::string& d, const std::string& r) const;
+		void status(const std::string& d) const;
+		void diff(const std::string& d) const;
 };
 
 class Manager{
 	private:
 		Manager(){
-			// add scms to map
-			scms.insert(std::pair<std::string, Scm*>("git", new Git()));
-			scms.insert(std::pair<std::string, Scm*>("svn", new Svn()));
+			scms.insert(std::pair<std::string, std::shared_ptr<Scm> >("git", std::make_shared<Git>()));
+			scms.insert(std::pair<std::string, std::shared_ptr<Scm> >("svn", std::make_shared<Svn>()));
 		}
-		static Manager* instance;
-		hash::map::S2T<Scm*> scms;
+		hash::map::S2T<std::shared_ptr<Scm> > scms;
 	public:
-		static Manager* INSTANCE(){ if(instance == 0) instance = new Manager(); return instance;}
-		const Scm* get(const std::string& s) throw(ScmNotFoundException){
-			if(Manager::scms.count(s) > 0)
-				return (*Manager::scms.find(s)).second;
+		static Manager& INSTANCE(){ 
+			static Manager instance; 
+			return instance;
+		}
+		const Scm& get(const std::string& s) throw(ScmNotFoundException){
+			if(scms.count(s) > 0)
+				return *(*scms.find(s)).second.get();
 			throw ScmNotFoundException(__FILE__, __LINE__, "Compiler for " + s + " is not implemented");
 		}
 };
