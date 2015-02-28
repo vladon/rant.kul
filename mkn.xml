@@ -35,10 +35,12 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			<includes>
 				<include>./inc</include>
 				<include>./tst</include>
-				<include>./ext/sparsehash/make/include</include>
 			</includes>
 		</profile>
 		<profile name="nix" parent="c">
+			<includes>
+				<include>./ext/sparsehash/make/include</include>
+			</includes>
 			<dependencies>
 				<dependency>
 					<name>pugixml</name>
@@ -71,7 +73,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			<includes>
 				<include>./ext/sparsehash/trunk/src</include>
 				<include>./ext/sparsehash/trunk/src/windows</include>
-				<include>./../win/master/ext/msinttypes-r26</include>			
+				<include>./ext/msinttypes-r26</include>
 			</includes>
 			<build type="lib" mode="static" lang="cpp">
 				<files>
