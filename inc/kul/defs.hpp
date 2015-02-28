@@ -37,7 +37,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #endif /*  KLOG_LVL */
 
 #ifndef __KUL_THREAD_SPAWN_UWAIT__
- 	#define __KUL_THREAD_SPAWN_UWAIT__ 1000000
+ 	#define __KUL_THREAD_SPAWN_UWAIT__ 5000000
 #endif /*  __KUL_THREAD_SPAWN_UWAIT__ */
 
 #define KSTRINGIFY(x) #x
