@@ -1,5 +1,3 @@
-
-
 @ECHO off
 
 if "%1"=="" GOTO blank
@@ -21,8 +19,9 @@ IF NOT EXIST %PWD%\ext\pugixml\trunk (
 GOTO eof
 
 :blank
+SET GIT_VER=master
 SET OWD=%PWD%
-SET PWD=%CD%\ext\kul\master
+SET PWD=%CD%\ext\kul\%GIT_VER%
 
 CALL :get
 

@@ -1,4 +1,6 @@
 
+VER_GIT=master
+
 CXX=g++
 CXXFLAGS=-std=c++11 -O3 -g0 -Wall -c -fmessage-length=0 
 CLANG=clang++
