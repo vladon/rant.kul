@@ -29,8 +29,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/cli.hpp"
 #include "kul/hash.hpp"
 #include "kul/proc.hpp"
-#include "kul/string.hpp"
 #include "kul/except.hpp"
+#include "kul/string.hpp"
 
 namespace kul{ namespace code{ 
 
@@ -40,21 +40,17 @@ class CompilerProcessCapture : public kul::ProcessCapture{
 	private:
 		std::string f;
 		bool s;
+		std::exception_ptr eP;
 	public:
 		CompilerProcessCapture(kul::AProcess& p, const std::string& f) : kul::ProcessCapture(p), f(f), s(1){}
 		CompilerProcessCapture(const std::string& f) : f(f), s(1){}
 		CompilerProcessCapture(const CompilerProcessCapture& cp) : kul::ProcessCapture(cp), f(cp.f), s(cp.s){}
 
-		const CompilerProcessCapture& operator=(const CompilerProcessCapture& cpc){
-			this->f = cpc.f;
-			this->s = cpc.s;
-			for(const std::string& s : cpc.outs()) this->out(s);
-			for(const std::string& s : cpc.errs()) this->err(s);
-			return *this;
-		}
 		const std::string& file() const {return f;}
-		void failed(){ s = 0;}
-		const bool& successful() const { return s;}
+		void failed(){ s = 0; }
+		bool successful() const { return s;}
+		void exception(const std::exception_ptr& e)	{ eP = e; }
+		const std::exception_ptr& exception() const	{ return eP; }
 };
 
 class Compiler{	
