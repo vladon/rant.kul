@@ -27,7 +27,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/os.hpp"
 #include "kul/cli.hpp"
 #include "kul/log.hpp"
-#include "kul/xml.hpp"
 #include "kul/proc.hpp"
 #include "kul/time.hpp"
 #include "kul/threads.hpp"
@@ -39,7 +38,7 @@ class TestThreadObject{
 	public:
 		TestThreadObject() : i(0){}
 		void operator()(){
-		   	KLOG(INF) << "THREAD RUNNING";
+			KLOG(INF) << "THREAD RUNNING";
 			i++;
 		}
 		void operator()() const{
@@ -56,7 +55,7 @@ class TestThreadPoolObject{
 		TestThreadPoolObject(Mutex& mutex) : i(0), mutex(mutex){}
 		void operator()(){
 			kul::ScopeLock lock(mutex);
-			KLOG(INF) << "THREAD RUNNING";			
+			KLOG(INF) << "THREAD RUNNING";
 			i++;
 			KLOG(INF) << "THREAD FINISHED";
 		}
@@ -92,7 +91,7 @@ class test{ public: test(){
 	KLOG(INF) << kul::Env::CWD();
 	KLOG(INF) << kul::os::userDir().real();
 	KLOG(INF) << kul::os::userAppDir("maiken").real();
-	for(kul::Dir d : kul::Dir(Env::CWD()).dirs()) for(kul::File f : d.files()) KLOG(INF) << f.real();
+	for(kul::Dir d : kul::Dir(kul::Env::CWD()).dirs()) for(kul::File f : d.files()) KLOG(INF) << f.real();
 
 	kul::Process p("echo");
 	try{
@@ -120,7 +119,7 @@ class test{ public: test(){
 	tto1.print();
 
 	TestThreadObject tto2;
-	kul::CRef<TestThreadObject> cref(tto2);
+	kul::Ref<const TestThreadObject> cref(tto2);
 	kul::Thread th2(cref);
 	th2.detach();
 	th2.run();
@@ -153,8 +152,8 @@ class test{ public: test(){
 	ttpo1.print();
 
 	std::queue<int> q;
-	for(int i = 0; i < 8; i++) q.push(i);
-	KLOG(INF) << "LAUNCHING PREDICATED THREAD POOL"; //Running expects predicate.size() to eventually = 0
+	for(int i = 0; i < 10; i++) q.push(i);
+	KLOG(INF) << "LAUNCHING PREDICATED THREAD POOL";
 	TestThreadPoolQObject ttpo2(mutex, q);
 	kul::Ref<TestThreadPoolQObject> ref3(ttpo2);
 	kul::PredicatedThreadPool<std::queue<int> > tp2(ref3, q);
