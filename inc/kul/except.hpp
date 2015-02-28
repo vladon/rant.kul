@@ -24,9 +24,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_EXCEPT_HPP_
 #define _KUL_EXCEPT_HPP_
 
+#include <string>
 #include <stdexcept>
-
-#include "kul/string.hpp"
 
 namespace kul{
 
@@ -42,10 +41,10 @@ class Exception : public std::runtime_error{
 		~Exception() noexcept{}
 		const char* what() const noexcept{ return std::runtime_error::what();}
 #endif									// delete when M$ supports noexcept
-		Exception(const char*f, const int& l, std::string s) : std::runtime_error(s), f(f), l(l){}
+		Exception(const char*f, const int& l, const std::string& s) : std::runtime_error(s), f(f), l(l){}
 		Exception(const Exception& e) : std::runtime_error(e.what()), f(e.file()),  l(e.line()){}
 
-		const std::string debug() 	const { return std::string(std::string(f) + " : " + kul::String::toString(l) + " : " + std::string(std::runtime_error::what()));}
+		const std::string debug() 	const { return std::string(std::string(f) + " : " + std::to_string(l) + " : " + std::string(std::runtime_error::what()));}
 		const char* file() 			const { return f;}
 		const int& line() 			const { return l;}
 };
