@@ -63,8 +63,7 @@ class Writer{
 		std::ofstream ofs;
 	public:
 		Writer(const char*f)  {
-			if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(f) + "\" not found");
-			File fi(f, true);
+			if(!f) KEXCEPT(Exception, "FileException: Empty c string used.");
 			ofs.open(f);
 		}
 		~Writer() { ofs.close();}
