@@ -24,6 +24,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_PROC_BASE_HPP_
 #define _KUL_PROC_BASE_HPP_
 
+#include <iostream>
 #include <functional>
 
 #include "kul/except.hpp"
