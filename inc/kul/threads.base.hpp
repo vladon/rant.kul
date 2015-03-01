@@ -240,7 +240,7 @@ class ThreadPool{
 		virtual void join() throw (std::exception){
 			th.join();
 			while(true){
-				int fs = 0;
+				unsigned int fs = 0;
 				for(const std::shared_ptr<kul::osi::AThreader>& at : ts){
 					if(at->finished()){
 						if(at->exception() != std::exception_ptr()){
@@ -271,7 +271,7 @@ template<class P>
 class PredicatedThreadPool : public ThreadPool{
 	private:
 		P& p;
-		int ps;
+		unsigned int ps;
 		std::vector<kul::osi::AThreader*> fin;
 	protected:
 		void start() throw (std::exception) {
