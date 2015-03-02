@@ -85,7 +85,6 @@ class GCCompiler : public CCompiler{
 				p.start();
 			}catch(const kul::proc::Exception& e){
 				pc.exception(std::current_exception());
-				pc.failed();
 			}
 
 			return pc; 
@@ -113,7 +112,6 @@ class GCCompiler : public CCompiler{
 				p.start();
 			}catch(const kul::proc::Exception& e){
 				pc.exception(std::current_exception());
-				pc.failed();
 			}
 
 			return pc; 
@@ -140,7 +138,6 @@ class GCCompiler : public CCompiler{
 				p.start();
 			}catch(const kul::proc::Exception& e){
 				pc.exception(std::current_exception());
-				pc.failed();
 			}
 
 			return pc; 
@@ -171,7 +168,6 @@ class GCCompiler : public CCompiler{
 				p.start();
 			}catch(const kul::proc::Exception& e){
 				pc.exception(std::current_exception());
-				pc.failed();
 			}
 
 			return pc;
@@ -285,7 +281,6 @@ class WINCompiler : public CCompiler{
 				p.start();
 			}catch(const kul::proc::Exception& e){
 				pc.exception(std::current_exception());
-				pc.failed();
 			}
 
 			return pc; 
@@ -313,7 +308,6 @@ class WINCompiler : public CCompiler{
 				p.start();
 			}catch(const kul::proc::Exception& e){
 				pc.exception(std::current_exception());
-				pc.failed();
 			}
 
 			return pc;
@@ -340,7 +334,6 @@ class WINCompiler : public CCompiler{
 				p.start();
 			}catch(const kul::proc::Exception& e){
 				pc.exception(std::current_exception());
-				pc.failed();
 			}
 			return pc;
 		}
@@ -370,9 +363,7 @@ class WINCompiler : public CCompiler{
 				p.start();
 			}catch(const kul::Exception& e){
 				pc.exception(std::current_exception());
-				pc.failed();
 			}
-
 			return pc;
 		}
 		virtual void preCompileHeader(			
