@@ -39,18 +39,15 @@ enum Mode { NONE = 0, STAT, SHAR};
 class CompilerProcessCapture : public kul::ProcessCapture{
 	private:
 		std::string f;
-		bool s;
-		std::exception_ptr eP;
+		std::exception_ptr ep;
 	public:
-		CompilerProcessCapture(kul::AProcess& p, const std::string& f) : kul::ProcessCapture(p), f(f), s(1){}
-		CompilerProcessCapture(const std::string& f) : f(f), s(1){}
-		CompilerProcessCapture(const CompilerProcessCapture& cp) : kul::ProcessCapture(cp), f(cp.f), s(cp.s){}
+		CompilerProcessCapture(kul::AProcess& p, const std::string& f) : kul::ProcessCapture(p), f(f), ep(0){}
+		CompilerProcessCapture(const std::string& f) : f(f), ep(0){}
+		CompilerProcessCapture(const CompilerProcessCapture& cp) : kul::ProcessCapture(cp), f(cp.f), ep(cp.ep){}
 
 		const std::string& file() const {return f;}
-		void failed(){ s = 0; }
-		bool successful() const { return s;}
-		void exception(const std::exception_ptr& e)	{ eP = e; }
-		const std::exception_ptr& exception() const	{ return eP; }
+		void exception(const std::exception_ptr& e)	{ ep = e; }
+		const std::exception_ptr& exception() const	{ return ep; }
 };
 
 class Compiler{	
