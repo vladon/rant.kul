@@ -61,7 +61,7 @@ const std::string kul::scm::Git::localVersion(const std::string& d) const{
 	}
 	return pc.outs()[0];
 }
-const std::string kul::scm::Git::remoteVersion(const std::string& d, const std::string& url, const std::string branch) const throw(Exception){
+const std::string kul::scm::Git::remoteVersion(const std::string& d, const std::string& url, const std::string& branch) const throw(Exception){
 	kul::Process p("git", d);
 	kul::ProcessCapture pc(p);
 	try{		

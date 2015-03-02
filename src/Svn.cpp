@@ -34,7 +34,7 @@ void kul::scm::Svn::up(const std::string& d, const std::string& r, const std::st
 const std::string kul::scm::Svn::localVersion(const std::string& d) const{
 	KEXCEPT(Exception, "SCM ERROR - SVN NOT IMPLEMENTED");
 }
-const std::string kul::scm::Svn::remoteVersion(const std::string& d, const std::string& url, const std::string branch) const throw(Exception){
+const std::string kul::scm::Svn::remoteVersion(const std::string& d, const std::string& url, const std::string& branch) const throw(Exception){
 	KEXCEPT(Exception, "SCM ERROR - SVN NOT IMPLEMENTED");
 }
 const std::string kul::scm::Svn::origin(const std::string& d) const{
