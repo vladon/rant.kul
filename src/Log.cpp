@@ -23,4 +23,4 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "kul/log.hpp"
 
-unsigned int kul::Logger::tid(0);
+unsigned short kul::Logger::tid(0);
