@@ -49,7 +49,7 @@ class File;
 
 class Dir{
 	private:
-		Dir();
+		Dir(){}
 		std::string p;
 
 		static const std::string LOCL(const std::string& a);
@@ -65,12 +65,12 @@ class Dir{
 		void rm() const;
 		bool root() const;
 
-		const std::string join(const std::string& s) const;
-		const std::string locl() const;
-		const std::string& path() const{ return p;}
-		const std::string  real() const;
+		const std::string join(const std::string& s) const{ return path() + SEP() + s; }
+		const std::string locl()  const { return LOCL(path()); }
+		const std::string& path() const { return p;}
+		const std::string  real() const { return REAL(path()); }
 
-		const Dir prnt() const;
+		const Dir prnt() const { return Dir(PRNT(REAL(path()))); }
 
 		const std::vector<Dir> 	dirs(bool incHidden = false) const throw(fs::Exception);
 		const std::vector<File> files(bool recursive = false) const throw(fs::Exception);
@@ -83,17 +83,36 @@ class Dir{
 		Dir& operator=(const Dir& d) = default;
 };
 
+class Env{
+public:
+	static const char*		 	CWD();
+	static bool					CWD(const char* c);
+	static bool					CWD(const Dir& d);
+
+	static const char*			GET(const char* c);
+	static void					SET(const char* var, const char* val);
+
+	static const char*		 	SEP();
+};
+
 class File{
 	private:
 		std::string n;
 		Dir d;
-
 	public:
-		File(const std::string& n, bool m = false) : n(n), d(Dir::PRNT(Dir::REAL(n)), m){
+		File(const std::string& n, bool m = false) : n(n){
+			try{
+				d = Dir(Dir::PRNT(Dir::REAL(n)), m);
+			}catch(const kul::fs::Exception& e){
+				if(File(n, Dir(Env::CWD())).is())
+					d = Dir(Env::CWD());
+				else
+					d = Dir(Dir::PRNT(n), m);
+			}
 			if(n.find(d.path()) != std::string::npos)
 				this->n = n.substr(d.path().size() + 1);
 		}
-		File(const std::string& n, const Dir d) : n(n), d(d){}
+		File(const std::string& n, const Dir& d) : n(n), d(d){}
 		File(const File& f) : n(f.n), d(f.d){}
 
 		bool cp(const File& f) const;
@@ -110,19 +129,6 @@ class File{
 		const Dir& dir() const { return d; }
 
 		File& operator=(const File& f) = default;
-};
-
-
-class Env{
-public:
-	static const char*		 	CWD();
-	static bool					CWD(const char* c);
-	static bool					CWD(const Dir& d);
-
-	static const char*			GET(const char* c);
-	static void					SET(const char* var, const char* val);
-
-	static const char*		 	SEP();
 };
 
 namespace os{
