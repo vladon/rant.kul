@@ -69,6 +69,11 @@ class Process : public kul::AProcess{
 			args[i] = NULL;		
 			return execvp(s.c_str(), args);
 		}
+		const std::string command(){
+			std::string s;
+			for(const std::string& a : arguments()) s += " " + a;
+			return s;
+		}
 		void tearDown();
 		void finish()	{ }
 		void preStart()	{ }
