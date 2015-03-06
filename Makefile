@@ -9,7 +9,7 @@ INTEL=icpc
 INCS = 	-I$(CURDIR)/inc \
 		-I$(CURDIR)/os/nixish/inc \
 		-I$(CURDIR)/ext/pugixml/trunk/src \
-		-I$(CURDIR)/ext/sparsehash/make/include
+		-I$(CURDIR)/ext/sparsehash/trunk/include
 LIB = bin/libkul.a
 
 entry:
@@ -67,8 +67,8 @@ hash:
 	@if [ ! -d "$(CURDIR)/ext/sparsehash/trunk" ]; then \
 		svn co http://sparsehash.googlecode.com/svn/trunk/ ext/sparsehash/trunk; \
 		cd ./ext/sparsehash/trunk; bash ./configure --prefix=$(CURDIR)/ext/sparsehash/trunk; \
-		$(MAKE) -C $(CURDIR)/ext/sparsehash/make; \
-		$(MAKE) -C $(CURDIR)/ext/sparsehash/make install; \
+		$(MAKE) -C $(CURDIR)/ext/sparsehash/trunk; \
+		$(MAKE) -C $(CURDIR)/ext/sparsehash/trunk install; \
 	fi;
 
 pugi:
