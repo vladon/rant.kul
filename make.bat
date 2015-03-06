@@ -19,7 +19,6 @@ IF NOT EXIST %PWD%\ext\pugixml\trunk (
 GOTO eof
 
 :blank
-SET GIT_VER=master
 SET OWD=%PWD%
 SET PWD=%CD%\ext\kul\%GIT_VER%
 
@@ -30,6 +29,15 @@ MKDIR %PWD%\ext\pugixml\trunk\bin
 %VSCC% %CXXFLAGS%  %INCLUDES% /c /Fo"%PWD%\ext\pugixml\trunk\bin\pugixml.o" "%PWD%\ext\pugixml\trunk\src\pugixml.cpp"
 %VSCAR% /OUT:"%PWD%\ext\pugixml\trunk\bin\pugixml.lib" /NOLOGO /LTCG %PWD%\ext\pugixml\trunk\bin\pugixml.o
 
+RD /S/Q %PWD%\bin
+MKDIR %PWD%\bin
+FOR /f %%f in ('dir /b %PWD%\os\win\src') do %VSCC% %CXXFLAGS% %INCLUDES% /c /Fo"%PWD%\bin\%%f.o" "%PWD%\os\win\src\%%f" 
+FOR /f %%f in ('dir /b %PWD%\src') do %VSCC% %CXXFLAGS% %INCLUDES% /c /Fo"%PWD%\bin\%%f.o" "%PWD%\src\%%f" 
+
+FOR /f %%f in ('dir /b %PWD%\bin') do SET OBJECTS=!OBJECTS! %PWD%\bin\%%f
+%VSCAR% /OUT:"%PWD%\bin\kul.lib" /NOLOGO /LTCG %OBJECTS%
+
+SET OBJECTS=
 SET PWD=%OWD%
 GOTO eof
 

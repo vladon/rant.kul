@@ -36,11 +36,18 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				<include>./inc</include>
 				<include>./tst</include>
 			</includes>
+			<sources>
+				<source>./src</source>
+			</sources>
 		</profile>
-		<profile name="nix" parent="c">
+		<profile name="nixc" parent="c">
 			<includes>
-				<include>./ext/sparsehash/make/include</include>
+				<include>./os/nixish/inc</include>
+				<include>./ext/sparsehash/trunk/include</include>
 			</includes>
+			<sources>
+				<source>./os/nixish/src</source>
+			</sources>
 			<dependencies>
 				<dependency>
 					<name>pugixml</name>
@@ -61,7 +68,28 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				</files>
 			</build>
 		</profile>
-		<profile name="win" parent="c">
+		<profile name="nix" parent="nixc" os="nix">
+			<sources>
+				<source>./os/nix/src</source>
+			</sources>
+			<build type="lib" mode="static" lang="cpp"/> 
+		</profile>
+		<profile name="bsd" parent="nixc" os="bsd">
+			<sources>
+				<source>./os/bsd/src</source>
+			</sources>
+			<build type="lib" mode="static" lang="cpp"/> 
+		</profile>
+		<profile name="win" parent="c" os="win">
+			<includes>
+				<include>./ext/sparsehash/trunk/src</include>
+				<include>./ext/sparsehash/trunk/src/windows</include>
+				<include>./ext/msinttypes-r26</include>
+				<include>./os/win/inc</include>
+			</includes>
+			<sources>
+				<source>./os/win/src</source>
+			</sources>
 			<dependencies>
 				<dependency>
 					<name>pugixml</name>
@@ -70,11 +98,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 					<local>./ext/pugixml</local>
 				</dependency>
 			</dependencies>	
-			<includes>
-				<include>./ext/sparsehash/trunk/src</include>
-				<include>./ext/sparsehash/trunk/src/windows</include>
-				<include>./ext/msinttypes-r26</include>
-			</includes>
 			<build type="lib" mode="static" lang="cpp">
 				<files>
 					<file type="cpp">
