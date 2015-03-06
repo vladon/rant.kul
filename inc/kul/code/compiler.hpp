@@ -41,8 +41,8 @@ class CompilerProcessCapture : public kul::ProcessCapture{
 		std::string f;
 		std::exception_ptr ep;
 	public:
-		CompilerProcessCapture(kul::AProcess& p, const std::string& f) : kul::ProcessCapture(p), f(f), ep(0){}
-		CompilerProcessCapture(const std::string& f) : f(f), ep(0){}
+		CompilerProcessCapture(kul::AProcess& p, const std::string& f) : kul::ProcessCapture(p), f(f), ep(){}
+		CompilerProcessCapture(const std::string& f) : f(f), ep(){}
 		CompilerProcessCapture(const CompilerProcessCapture& cp) : kul::ProcessCapture(cp), f(cp.f), ep(cp.ep){}
 
 		const std::string& file() const {return f;}
