@@ -98,7 +98,6 @@ class Cmd{
 	public:
 		Cmd(const char* c, const char* h = "") : c(c), h(h){}
 		const char* command() 	const { return c;}
-		const char* help() 		const { return h;}
 };
 
 enum EnvVarMode{ APPE = 0, PREP, REPL};
@@ -135,8 +134,8 @@ class Arg : public Cmd{
 		const char* d;
 		ArgType t;
 	public:
-		Arg(const char* d, const char* dd, ArgType t, const char* h = "") : Cmd(dd, h), d(d), t(t){}
-		Arg(const char* d, const char* dd, const char* h = "") : Cmd(dd, h), d(d), t(ArgType::FLAG){}
+		Arg(const char* d, const char* dd, ArgType t) : Cmd(dd), d(d), t(t){}
+		Arg(const char* d, const char* dd) : Cmd(dd), d(d), t(ArgType::FLAG){}
 		const char* dash() 			const { return d;}
 		const char* dashdash() 		const { return command();}
 		const ArgType& type() 		const { return t; }
