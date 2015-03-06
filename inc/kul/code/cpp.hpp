@@ -275,6 +275,22 @@ class WINCompiler : public CCompiler{
 				if(mode == Mode::SHAR) p.addArg(sharedLib(lib));
 				else
 				if(mode == Mode::STAT) p.addArg(staticLib(lib));
+				else
+					for(const std::string libp : libPaths){
+						bool f = 0;
+						for(const kul::File fi : kul::Dir(libp).files()){
+							if(fi.name().compare(sharedLib(lib)) == 0){
+								p.addArg(sharedLib(lib));
+								f = 1;
+							}else
+							if(fi.name().compare(staticLib(lib)) == 0){
+								p.addArg(staticLib(lib));
+								f = 1;
+							}
+							if(f) break;
+						}
+						if(f) break;
+					}
 			for(const std::string& s: kul::String::split(linkerEnd, ' ')) p.addArg(s);
 
 			try{
