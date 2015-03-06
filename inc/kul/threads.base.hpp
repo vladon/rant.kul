@@ -272,7 +272,7 @@ class PredicatedThreadPool : public ThreadPool{
 		void start() throw (std::exception) {
 			if(started()) KEXCEPT(Exception, "ThreadPool is already started");
 			setStarted();
-			int c = 0;
+			unsigned int c = 0;
 			while(c < ps){
 				for(unsigned int i = ts.size(); i < m && c < ps; i++){
 					c++;
