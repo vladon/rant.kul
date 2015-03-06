@@ -2,7 +2,7 @@
 VER_GIT=master
 
 CXX=g++
-CXXFLAGS=-std=c++11 -O3 -g0 -Wall -c -fmessage-length=0 
+CXXFLAGS=-std=c++1y -O3 -g0 -Wall -c -fmessage-length=0 
 CLANG=clang++
 INTEL=icpc
 //CLANGFLAGS=-stdlib=libc++
