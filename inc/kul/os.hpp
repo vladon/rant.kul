@@ -70,7 +70,7 @@ class Dir{
 		const std::string& path() const { return p;}
 		const std::string  real() const { return REAL(path()); }
 
-		const Dir prnt() const { return Dir(PRNT(REAL(path()))); }
+		const Dir prnt() const { return Dir(PRNT(path())); }
 
 		const std::vector<Dir> 	dirs(bool incHidden = false) const throw(fs::Exception);
 		const std::vector<File> files(bool recursive = false) const throw(fs::Exception);
