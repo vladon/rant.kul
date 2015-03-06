@@ -56,7 +56,7 @@ class Dir{
 		static const std::string PRNT(const std::string& a);
 	public:
 		Dir(const std::string& p, bool m = false) throw(fs::Exception) : p(p) {
-			if(!is() && m && !mk()) KEXCEPT(fs::Exception, "Invalid directory path provided");
+			if(m && !is() && !mk()) KEXCEPT(fs::Exception, "Invalid directory path provided");
 		}
 		Dir(const Dir& d) : p(d.p){}
 
