@@ -157,7 +157,7 @@ class test{ public: test(){
 	TestThreadPoolQObject ttpo2(mutex, q);
 	kul::Ref<TestThreadPoolQObject> ref3(ttpo2);
 	kul::PredicatedThreadPool<std::queue<int> > tp2(ref3, q);
-	tp2.setMax(4);
+	tp2.setMax(kul::cpu::threads());
 	tp2.detach();
 	tp2.run();
 	tp2.join();
