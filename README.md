@@ -1,7 +1,9 @@
 kul
 ===
 
-C++ Kommon usage library - base - requires OS specific lib for some sources
+C++ Kommon usage library
+
+Convenience library providing cross platform threading/process management/io ops/logging
 
 How to use:
 view tst/kul.test.hpp
