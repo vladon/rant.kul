@@ -30,7 +30,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "kul/os.hpp"
 #include "kul/xml.hpp"
-#include "kul/defs.hpp"
+#include "kul/def.hpp"
 #include "kul/time.hpp"
 #include "kul/except.hpp"
 #include "kul/string.hpp"
@@ -83,8 +83,9 @@ class LogMan{
 		const Logger logger;
 		LogMan() : m(kul::log::mode::NON), logger(){
 			kul::log::mode lM = kul::log::mode::NON;
-			if(kul::Env::GET("KLOG")){
-				std::string s(kul::Env::GET("KLOG"));
+			const char* klog = kul::Env::GET("KLOG");
+			if(klog){
+				std::string s(klog);
 				if(s.compare("1") == 0 || s.compare("INF") == 0)      lM = log::mode::INF;
 				else if(s.compare("2") == 0 || s.compare("ERR") == 0) lM = log::mode::ERR;
 				else if(s.compare("3") == 0 || s.compare("DBG") == 0) lM = log::mode::DBG;
