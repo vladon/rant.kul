@@ -113,19 +113,16 @@ class ThreaderService{
 		template <class T> static std::shared_ptr<kul::osi::AThreader> refThreader(const Ref<T>& ref);
 };
 
-class ALock{
-	public:
-		virtual ~ALock(){}
-};
-
 class ScopeLock;
 class Mutex{
 	private:
 		std::atomic<bool> l;
+		std::queue<std::string> q;
 		
-		bool  locked()	{ return this->l.load(); }
-		void  lock()	{ this->l.exchange(1); }
-		void  unlock()	{ this->l.exchange(0); }
+		bool locked()	{ return this->l.load(); }
+		void lock()		{ this->l = 1; }
+		void unlock()	{ this->l = 0; }
+		bool free()		{ return l.is_lock_free(); }
 		
 	public:
 		Mutex() : l(0) {}
@@ -133,18 +130,25 @@ class Mutex{
 		friend class ScopeLock;
 };
 
-class ScopeLock : public ALock{
+class ScopeLock{
 	private:
 		Mutex& m;
 	public:
-		ScopeLock(Mutex& m) : m(m) {			
-			while(this->m.locked()) this_thread::sleep(1);			
-			this->m.lock();			
+		ScopeLock(Mutex& m) : m(m) {
+			const std::string& tid(kul::this_thread::id());
+			this->m.q.push(tid);
+			while(!this->m.free() || this->m.locked())
+				this_thread::sleep(1);
+			while(!this->m.free() || this->m.q.front() != tid)
+				this_thread::sleep(1);
+			this->m.lock();
 		}
-		~ScopeLock(){			
+		~ScopeLock(){
 			this->m.unlock();
+			this->m.q.pop();
 		}
 };
+
 
 class Thread : public threading::AThread{
 	private:
@@ -176,9 +180,7 @@ class Thread : public threading::AThread{
 		void interrupt() throw(kul::threading::InterruptionException){
 			th->interrupt();
 		}
-		~Thread(){
-			//LOG(INFO) << "KILLING THREAD\t\t"  << this;
-		}
+		~Thread(){}
 };
 
 
@@ -213,8 +215,8 @@ class ThreadPool{
 		kul::Ref<ThreadPool> re;
 		kul::Thread th;
 		std::shared_ptr<kul::threading::APooledThreader> pT;
-		std::vector<std::shared_ptr<kul::osi::AThreader> > ts;
-
+		std::queue<std::shared_ptr<kul::osi::AThreader> > ts;
+		std::vector<std::exception_ptr> ePs;
 		void setStarted()	{ s = true; }
 		bool started()		{ return s; }
 		virtual void start() throw (std::exception) {
@@ -222,7 +224,7 @@ class ThreadPool{
 			setStarted();
 			for(unsigned int i = 0 ; i < m; i++){
 				std::shared_ptr<kul::osi::AThreader> at = pT->threader();
-				ts.push_back(at);
+				ts.push(at);
 				at->run();
 				this_thread::uSleep(__KUL_THREAD_SPAWN_UWAIT__);
 			}
@@ -239,18 +241,16 @@ class ThreadPool{
 		}
 		virtual void join() throw (std::exception){
 			th.join();
-			while(true){
-				unsigned int fs = 0;
-				for(const std::shared_ptr<kul::osi::AThreader>& at : ts){
-					if(at->finished()){
-						if(at->exception() != std::exception_ptr()){
-							if(!d) std::rethrow_exception(at->exception());
-						}
-						fs++;
+			while(ts.size()){
+				const std::shared_ptr<kul::osi::AThreader>& at = ts.front();
+				if(at->finished()){
+					if(at->exception() != std::exception_ptr()){
+						if(!d) std::rethrow_exception(at->exception());
+						ePs.push_back(at->exception());
 					}
+					ts.pop();
 				}
 				this_thread::sleep(1);
-				if(fs == ts.size()) break;
 			}
 		}
 		void detach(){
@@ -259,10 +259,6 @@ class ThreadPool{
 		}
 		void interrupt() throw(kul::threading::InterruptionException)	{ }
 		const std::vector<std::exception_ptr> exceptionPointers() {
-			std::vector<std::exception_ptr> ePs;
-			for(const std::shared_ptr<kul::osi::AThreader>& at : ts){
-				if(at->exception() != std::exception_ptr()) ePs.push_back(at->exception());
-			}
 			return ePs;
 		}
 };
@@ -272,29 +268,28 @@ class PredicatedThreadPool : public ThreadPool{
 	private:
 		P& p;
 		unsigned int ps;
-		std::vector<kul::osi::AThreader*> fin;
 	protected:
 		void start() throw (std::exception) {
 			if(started()) KEXCEPT(Exception, "ThreadPool is already started");
 			setStarted();
-			while(ts.size() < ps){
-				for(unsigned int i = ts.size() - fin.size(); i < m && ts.size() < ps; i++){
+			int c = 0;
+			while(c < ps){
+				for(unsigned int i = ts.size(); i < m && c < ps; i++){
+					c++;
 					std::shared_ptr<kul::osi::AThreader> at = pT->threader();
-					ts.push_back(at);
+					ts.push(at);
 					at->run();
 					this_thread::uSleep(__KUL_THREAD_SPAWN_UWAIT__);
 				}
-				for(const std::shared_ptr<kul::osi::AThreader>& at : ts){
-					if(at->finished()){
-						bool f = 0;
-						for(const kul::osi::AThreader* atp : fin)
-							if(atp == at.get()) f = 1;
-						if(f) continue;
-						if(at->exception() != std::exception_ptr()){
-							if(!d) std::rethrow_exception(at->exception());
-						}
-						fin.push_back(at.get());
+				const std::shared_ptr<kul::osi::AThreader>* at = &ts.front();
+				while(at && (*at)->finished()){
+					if((*at)->exception() != std::exception_ptr()){
+						if(!d) std::rethrow_exception((*at)->exception());
+						ePs.push_back((*at)->exception());
 					}
+					ts.pop();
+					at = 0;
+					if(ts.size()) at = &ts.front();
 				}
 				this_thread::sleep(1);
 			}
@@ -304,6 +299,5 @@ class PredicatedThreadPool : public ThreadPool{
 		template <class T> PredicatedThreadPool(const Ref<T>& ref, P& pr) 	: ThreadPool(ref)	, p(pr), ps(p.size()){}
 };
 }
+
 #endif /* _KUL_THREADS_BASE_HPP_ */
-
-
