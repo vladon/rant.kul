@@ -72,7 +72,8 @@ class Dir{
 		}
 		static const std::string MINI(const std::string& a){
 			return a.find(Env::CWD()) == std::string::npos ? a 
-				: a.compare(Env::CWD()) == 0 ? a.substr(strlen(Env::CWD())) : a.substr(strlen(Env::CWD()) + 1);
+				: a.compare(Env::CWD()) == 0 ? a.substr(std::string(Env::CWD()).size()) 
+				: a.substr(std::string(Env::CWD()).size() + 1);
 		}
 	public:
 		Dir(const std::string& p, bool m = false) throw(fs::Exception) : p(Dir::LOCL(p)) {
