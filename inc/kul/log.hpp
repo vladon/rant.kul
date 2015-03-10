@@ -50,15 +50,13 @@ class Logger{
 	private:
 		static unsigned short tid;
 	public:
-		void log(const char* f, const int& l, const std::string& s, const log::mode& m) const{
-			if(m == log::NON)
+		void out(const std::string& s, const log::mode& m) const{
+			if(m != log::ERR)
 				std::cout << s << std::endl;
-			else if(m == log::ERR)
-				std::cerr << line(f, l, s, m) << std::endl;
 			else 
-				std::cout << line(f, l, s, m) << std::endl;
+				std::cerr << s << std::endl;
 		}
-		const std::string line(const char* f, const int& l, const std::string& s, const log::mode& m) const{
+		void log(const char* f, const int& l, const std::string& s, const log::mode& m) const{
 			std::stringstream ss;
 			std::string mode("[" + modeTxt(m) + "]");
 			kul::String::pad(mode, 7);
@@ -66,7 +64,7 @@ class Logger{
 			tid = tr.size() > tid ? tr.size() : tid;
 			kul::String::pad(tr, tid);
 			ss << mode << " : " << tr << " - " << kul::DateTime::NOW().substr(4) << " : " << f << " : " << l << " " << s;
-			return ss.str();
+			out(ss.str(), m);
 		}
 		const std::string modeTxt(const log::mode& m) const{
 			std::string s("NONE");
@@ -104,37 +102,55 @@ class LogMan{
 		void log(const char* f, const int& l, const log::mode& m, const std::string& s){
 			if(this->m >= m) logger.log(f, l, s, m);
 		}
+		void out(const log::mode& m, const std::string& s){
+			if(this->m >= m) logger.out(s, m);
+		}
 };
 
-class LogMessage{
-	private:
-		const char* f;
-		const int& l;
-		const log::mode& m;
+class Message{
+	protected:
 		std::string msg;
-	public:		
-		~LogMessage(){
-			LogMan::INSTANCE().log(f, l, m, msg);
-		}
-		LogMessage(const char* f, const int& l, const log::mode& m) : f(f), l(l), m(m){}
-		template<class T> LogMessage& operator<<(const T& s){			
+		const log::mode& m;
+
+		Message(const log::mode& m) : m(m){}
+	public:
+		template<class T> Message& operator<<(const T& s){
 			std::stringstream ss;
 			ss << s;
 			msg += ss.str();
 			return *this;
 		}
+
+};
+class LogMessage : public Message{
+	private:
+		const char* f;
+		const int& l;
+	public:		
+		~LogMessage(){
+			LogMan::INSTANCE().log(f, l, m, msg);
+		}
+		LogMessage(const char* f, const int& l, const log::mode& m) :  Message(m), f(f), l(l){}
 };
 
-class LogMessageToCOut : public LogMessage{
+class OutMessage : public Message{
 	public:
-		LogMessageToCOut(const char* f, const int& l, const log::mode& m) : LogMessage(f, l, m){}
+		~OutMessage(){
+			LogMan::INSTANCE().out(m, msg);
+		}
+		OutMessage(const log::mode& m = kul::log::mode::NON) : Message(m){}
 };
 
-#define KLOG_NON 	kul::LogMessage(__FILE__, __LINE__, kul::log::mode::NON)
 #define KLOG_INF 	kul::LogMessage(__FILE__, __LINE__, kul::log::mode::INF)
 #define KLOG_ERR 	kul::LogMessage(__FILE__, __LINE__, kul::log::mode::ERR)
 #define KLOG_DBG 	kul::LogMessage(__FILE__, __LINE__, kul::log::mode::DBG)
 #define KLOG(sev) KLOG_ ## sev
 
-}
+#define KOUT_NON 	kul::OutMessage()
+#define KOUT_INF 	kul::OutMessage(kul::log::mode::INF)
+#define KOUT_ERR 	kul::OutMessage(kul::log::mode::ERR)
+#define KOUT_DBG 	kul::OutMessage(kul::log::mode::DBG)
+#define KOUT(sev) KOUT_ ## sev
+
+} // END NAMESPACE kul
 #endif /* _KUL_LOG_HPP_ */
