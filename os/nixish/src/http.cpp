@@ -103,7 +103,7 @@ void kul::http::Client::start(const std::string& u, const short& p){
 		KLOG(ERR) << "ERROR connecting";
 		exit(0);
 	}
-	KLOG(NON) << "CONNECTED";	
+	KOUT(NON) << "CONNECTED";	
 }
 
 void kul::http::Client::send(const ARequest& r) const{
