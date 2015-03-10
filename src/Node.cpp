@@ -46,3 +46,19 @@ const std::string kul::xml::Node::att(const std::string& s) const throw (Excepti
 			return p.second;
 	KEXCEPT(Exception, "XML Exception: Attribute " + s + " doesn't exist under node " + this->name());
 }
+
+bool kul::xml::Node::hasChild(const std::string& s) const{
+	try{
+		(*this)[s];
+		return 1;
+	}catch(const kul::xml::Exception& e){}
+	return 0;
+}
+
+bool kul::xml::Node::hasAttr(const std::string& s) const{
+	try{
+		this->att(s);
+		return 1;
+	}catch(const kul::xml::Exception& e){}
+	return 0;
+}
