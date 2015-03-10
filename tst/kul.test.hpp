@@ -91,14 +91,15 @@ class test{ public: test(){
 	KLOG(INF) << kul::Env::CWD();
 	KLOG(INF) << kul::os::userDir().real();
 	KLOG(INF) << kul::os::userAppDir("maiken").real();
-	for(kul::Dir d : kul::Dir(kul::Env::CWD()).dirs()) for(kul::File f : d.files()) KLOG(INF) << f.real();
+	for(const kul::Dir& d : kul::Dir(kul::Env::CWD()).dirs()) 
+		for(const kul::File& f : d.files()) KLOG(INF) << d.join(f.name());
 
 	kul::Process p("echo");
 	try{
 		p.addArg("Hello").addArg("World").start();
 	}catch(const kul::proc::Exception& e){ 
 		KLOG(INF) << e.debug()<< " : " << typeid(e).name();
-		KLOG(INF) << "Error expected on windows without echo on path"; //it's a built in command in cmd
+		KLOG(INF) << "Error expected on windows without echo on path";
 	}
 
 	for(const std::string& arg : kul::cli::CmdLine::asArgs("/path/to \"words in quotes\" words\\ not\\ in\\ quotes end"))
@@ -135,6 +136,7 @@ class test{ public: test(){
 	
 	kul::Mutex mutex;
 	{
+		kul::Mutex mutex;
 		{
 			kul::ScopeLock lock(mutex);
 		}
