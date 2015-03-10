@@ -25,7 +25,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define _KUL_THREADS_BASE_HPP_
 
 #include <queue>
-#include <atomic>
 #include <chrono>
 #include <memory>
 #include <thread>
@@ -53,20 +52,7 @@ class InterruptionException : public Exception{
 	public:
 		InterruptionException(const char*f, const int l, std::string s) : Exception(f, l, s){}
 };
-
-class AThread{	
-	protected:
-		const std::string threadID() const { return this_thread::id(); }
-		virtual void run()			throw(kul::threading::Exception) 				= 0;
-		virtual void join()															= 0;
-		virtual void detach()														= 0;
-		virtual void sleep(const ulong& millis)										= 0;
-		virtual bool finished()														= 0;
-		virtual void interrupt()	throw(kul::threading::InterruptionException) 	= 0;
-	public:		
-		virtual ~AThread(){}
-};
-}
+}// END NAMESPACE threading
 
 template <class T>
 class Ref{
@@ -113,76 +99,27 @@ class ThreaderService{
 		template <class T> static std::shared_ptr<kul::osi::AThreader> refThreader(const Ref<T>& ref);
 };
 
-class ScopeLock;
-class Mutex{
-	private:
-		std::atomic<bool> l;
-		std::queue<std::string> q;
-		
-		bool locked()	{ return this->l.load(); }
-		void lock()		{ this->l = 1; }
-		void unlock()	{ this->l = 0; }
-		bool free()		{ return l.is_lock_free(); }
-		
-	public:
-		Mutex() : l(0) {}
-		virtual ~Mutex() {}
-		friend class ScopeLock;
-};
-
-class ScopeLock{
-	private:
-		Mutex& m;
-	public:
-		ScopeLock(Mutex& m) : m(m) {
-			const std::string& tid(kul::this_thread::id());
-			this->m.q.push(tid);
-			while(!this->m.free() || this->m.locked())
-				this_thread::sleep(1);
-			while(!this->m.free() || this->m.q.front() != tid)
-				this_thread::sleep(1);
-			this->m.lock();
-		}
-		~ScopeLock(){
-			this->m.unlock();
-			this->m.q.pop();
-		}
-};
-
-
-class Thread : public threading::AThread{
+class Thread{
 	private:
 		bool s;
 		std::shared_ptr<kul::osi::AThreader> th;
 	protected:
-		void setStarted()	{ s = true; }
-		bool started()		{ return s; }
 	public:
 		template <class T> Thread(T t) 					: s(0), th(ThreaderService::threader(t))		{ }
 		template <class T> Thread(const Ref<T>& ref) 	: s(0), th(ThreaderService::refThreader(ref))	{ }
 		void run() throw(kul::threading::Exception){ 
-			if(started()) KEXCEPT(threading::Exception, "Thread already started");
-			setStarted();
+			if(s) KEXCEPT(threading::Exception, "Thread already started");
+			s = true;
 			th->run();			
 		}
-		void join(){ 			
-			if(started()) th->join();
-		}
-		void sleep(const ulong& millis){
-			this_thread::sleep(millis);
-		}
-		void detach(){ 			
-			th->detach();
-		}		
-		bool finished(){ 
-			return th->finished();
-		}		
+		void join()						{ if(s) th->join();	}
+		void sleep(const ulong& mil)	{ if(s) this_thread::sleep(mil); }
+		void detach()					{ if(s) th->detach(); }
+		bool finished()					{ return s && th->finished(); }
 		void interrupt() throw(kul::threading::InterruptionException){
 			th->interrupt();
 		}
-		~Thread(){}
 };
-
 
 namespace threading{
 class APooledThreader{
@@ -206,7 +143,7 @@ class PooledRefThreader : public APooledThreader{
 		PooledRefThreader(const Ref<T>& ref) : r(ref){}
 		std::shared_ptr<kul::osi::AThreader> threader() const { return ThreaderService::refThreader(r);}
 };
-}
+}// END NAMESPACE threading
 
 class ThreadPool{
 	protected:
@@ -250,7 +187,6 @@ class ThreadPool{
 					}
 					ts.pop();
 				}
-				this_thread::sleep(1);
 			}
 		}
 		void detach(){
@@ -291,13 +227,12 @@ class PredicatedThreadPool : public ThreadPool{
 					at = 0;
 					if(ts.size()) at = &ts.front();
 				}
-				this_thread::sleep(1);
 			}
 		}
 	public:
 		template <class T> PredicatedThreadPool(const T& t, P& pr) 			: ThreadPool(t) 	, p(pr), ps(p.size())	{}
 		template <class T> PredicatedThreadPool(const Ref<T>& ref, P& pr) 	: ThreadPool(ref)	, p(pr), ps(p.size()){}
 };
-}
+}// END NAMESPACE kul
 
 #endif /* _KUL_THREADS_BASE_HPP_ */
