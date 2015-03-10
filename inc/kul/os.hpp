@@ -45,17 +45,37 @@ class Exception : public kul::Exception{
 } // END NAMESPACE FileSystem
 
 
+class Dir;
 class File;
+
+class Env{
+public:
+	static const char*		 	CWD();
+	static bool					CWD(const char* c);
+	static bool					CWD(const Dir& d);
+
+	static const char*			GET(const char* c);
+	static void					SET(const char* var, const char* val);
+
+	static const char*		 	SEP();
+};
 
 class Dir{
 	private:
 		Dir(){}
 		std::string p;
 
-		static const std::string LOCL(const std::string& a);
-		static const std::string PRNT(const std::string& a);
+		static const std::string LOCL(std::string s);
+		static const std::string PRNT(const std::string& s){
+			const std::string& p = s.substr(0, s.rfind(SEP()) + 1);
+			return kul::Dir(p).root() ? p : s.substr(0, s.rfind(SEP()));
+		}
+		static const std::string MINI(const std::string& a){
+			return a.find(Env::CWD()) == std::string::npos ? a 
+				: a.compare(Env::CWD()) == 0 ? a.substr(strlen(Env::CWD())) : a.substr(strlen(Env::CWD()) + 1);
+		}
 	public:
-		Dir(const std::string& p, bool m = false) throw(fs::Exception) : p(p) {
+		Dir(const std::string& p, bool m = false) throw(fs::Exception) : p(Dir::LOCL(p)) {
 			if(m && !is() && !mk()) KEXCEPT(fs::Exception, "Invalid directory path provided");
 		}
 		Dir(const Dir& d) : p(d.p){}
@@ -65,10 +85,13 @@ class Dir{
 		void rm() const;
 		bool root() const;
 
-		const std::string join(const std::string& s) const{ return path() + SEP() + s; }
-		const std::string locl()  const { return LOCL(path()); }
+		const std::string join(const std::string& s) const{ 
+			return p.size() == 0 ? s : root() ? path() + s : JOIN(path(), s); 
+		}
+		const std::string  locl() const { return LOCL(path()); }
 		const std::string& path() const { return p;}
 		const std::string  real() const { return REAL(path()); }
+		const std::string  mini() const { return MINI(real()); }
 
 		const Dir prnt() const { return Dir(PRNT(path())); }
 
@@ -83,34 +106,22 @@ class Dir{
 		Dir& operator=(const Dir& d) = default;
 };
 
-class Env{
-public:
-	static const char*		 	CWD();
-	static bool					CWD(const char* c);
-	static bool					CWD(const Dir& d);
-
-	static const char*			GET(const char* c);
-	static void					SET(const char* var, const char* val);
-
-	static const char*		 	SEP();
-};
-
 class File{
 	private:
 		std::string n;
 		Dir d;
 	public:
-		File(const std::string& n, bool m = false) : n(n){
+		File(const std::string& n, bool m = false) : n(Dir::LOCL(n)){
 			try{
-				d = Dir(Dir::PRNT(Dir::REAL(n)), m);
+				d = Dir(Dir::PRNT(Dir::REAL(this->n)), m);
 			}catch(const kul::fs::Exception& e){
-				if(File(n, Dir(Env::CWD())).is())
+				if(File(this->n, Dir(Env::CWD())).is())
 					d = Dir(Env::CWD());
 				else
-					d = Dir(Dir::PRNT(n), m);
+					d = Dir(Dir::PRNT(this->n), m);
 			}
-			if(n.find(d.path()) != std::string::npos)
-				this->n = n.substr(d.path().size() + 1);
+			if(this->n.find(d.path()) != std::string::npos)
+				this->n = this->n.substr(d.path().size() + 1);
 		}
 		File(const std::string& n, const Dir& d) : n(n), d(d){}
 		File(const File& f) : n(f.n), d(f.d){}
@@ -122,10 +133,8 @@ class File{
 
 		const std::string& name() const { return n; }
 
-		const std::string real() const throw (fs::Exception){
-			return d.join(n);
-		}
-
+		const std::string real() const { return Dir::JOIN(d.real(), n); }
+		const std::string mini() const { return Dir::MINI(real()); }
 		const Dir& dir() const { return d; }
 
 		File& operator=(const File& f) = default;

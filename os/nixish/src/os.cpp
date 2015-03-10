@@ -64,8 +64,7 @@ const char* kul::Env::SEP(){
 	return ":";
 }
 
-const std::string kul::Dir::LOCL(const std::string& s){
-	std::string local(s);
+const std::string kul::Dir::LOCL(std::string s){
 	kul::String::replaceAll(local, "\\", "/");
 	return local;
 }
@@ -76,9 +75,6 @@ const std::string kul::Dir::REAL(const std::string& s) throw(fs::Exception){
 		return dir;
 	}
 	KEXCEPT(fs::Exception, "Directory \"" + s + "\" does not exist");
-}
-const std::string kul::Dir::PRNT(const std::string& s){
-	return std::string(s.substr(0, s.rfind(SEP())));
 }
 const std::string kul::Dir::SEP(){
 	return std::string("/");

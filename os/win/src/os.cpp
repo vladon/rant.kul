@@ -75,10 +75,9 @@ const char* kul::Env::SEP(){
 	return ";";
 }
 
-const std::string kul::Dir::LOCL(const std::string& s){
-	std::string local(s);
-	kul::String::replaceAll(local, "/", "\\");
-	return local;
+const std::string kul::Dir::LOCL(std::string s){
+	kul::String::replaceAll(s, "/", "\\");
+	return s;
 }
 const std::string kul::Dir::REAL(const std::string& s) throw(fs::Exception){
 	char* expanded = _fullpath(NULL, s.c_str(), _MAX_PATH);
@@ -89,15 +88,11 @@ const std::string kul::Dir::REAL(const std::string& s) throw(fs::Exception){
 	}
 	KEXCEPT(fs::Exception, "Directory \"" + s + "\" does not exist");
 }
-const std::string kul::Dir::PRNT(const std::string& s){
-	return std::string(s.substr(0, s.rfind(SEP())));
-}
 const std::string kul::Dir::SEP(){
 	return std::string("\\");
 }
-
 bool kul::Dir::is() const{
-	DWORD ftyp = GetFileAttributesA(real().c_str());
+	DWORD ftyp = GetFileAttributesA(path().c_str());
 	return (ftyp != INVALID_FILE_ATTRIBUTES && ftyp & FILE_ATTRIBUTE_DIRECTORY);
 }
 bool kul::Dir::mk() const{
@@ -115,7 +110,7 @@ void kul::Dir::rm() const{
 	}
 }
 bool kul::Dir::root() const{
-	return real().size() == 3;
+	return is() && real().size() == 3;
 }
 
 const std::vector<kul::Dir> kul::Dir::dirs(bool incHidden) const throw(Exception){
@@ -176,7 +171,7 @@ const std::vector<kul::File> kul::Dir::files(bool recursive) const throw(fs::Exc
 
 
 bool kul::File::is() const{
-	return (bool) std::ifstream(real().c_str());
+	return (bool) std::ifstream(d.join(n).c_str());
 }
 bool kul::File::rm() const{
 	if(is()){
@@ -210,10 +205,3 @@ const std::string kul::os::newLine(){
 	return "\r\n";
 	#endif
 }
-
-
-
-// bool kul::os::path::exists(const char*c){
-// 	struct stat buffer;   
-// 	return (stat (c, &buffer) == 0); 
-// }

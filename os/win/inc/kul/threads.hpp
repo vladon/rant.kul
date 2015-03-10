@@ -30,6 +30,36 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace kul{ 
 
+class Mutex{
+	private:
+		CRITICAL_SECTION critSec;
+	public:
+		Mutex(){
+			InitializeCriticalSection(&critSec);
+		}
+		~Mutex() {
+			DeleteCriticalSection(&critSec);
+		}
+		void lock() {
+			EnterCriticalSection(&critSec); 
+		}
+		void unlock() {
+			LeaveCriticalSection(&critSec);
+		}
+};
+
+class ScopeLock{
+	private:
+		Mutex& m;
+	public:
+		ScopeLock(Mutex& m) : m(m) {
+			this->m.lock();
+		}
+		~ScopeLock(){
+			this->m.unlock();
+		}
+};
+
 namespace threading{
 
 DWORD WINAPI thread(LPVOID lpParameter);
@@ -87,7 +117,7 @@ class RefThreader : public AThreader{
 		friend class kul::ThreaderService;
 };
 
-}
+}// END NAMESPACE threading
 
 template <class T> std::shared_ptr<kul::osi::AThreader> kul::ThreaderService::threader(const T& t){
 	return std::make_shared<kul::threading::Threader<T> >(kul::threading::Threader<T>(t));
@@ -96,5 +126,5 @@ template <class T> std::shared_ptr<kul::osi::AThreader> kul::ThreaderService::re
 	return std::make_shared<kul::threading::RefThreader<T> >(kul::threading::RefThreader<T>(ref));
 }
 
-}
+}// END NAMESPACE kul
 #endif /* _KUL_THREADS_HPP_ */

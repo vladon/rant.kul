@@ -6,7 +6,7 @@ Created on: 18 Aug 2014
 
 Copyright (c) 2013, Philip Deegan
 
-This file is part of kul.win (The Kommon Usage Library for Windows Environments).
+This file is part of kul (The Kommon Usage Library).
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -27,30 +27,15 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/defs.hpp"
 
 #ifndef __KUL_OS__
- 	#define __KUL_OS__ "win"
+ 	#define __KUL_OS__ "bsd"
 #endif /*  __KUL_OS__ */
 
 #ifndef __KUL_THREAD_SPAWN_UWAIT__
- 	#define __KUL_THREAD_SPAWN_UWAIT__ 0
+ 	#define __KUL_THREAD_SPAWN_UWAIT__ 5000000
 #endif /*  __KUL_THREAD_SPAWN_UWAIT__ */
 
-#ifndef PROCESS_BUFFER_SIZE
-	#define PROCESS_BUFFER_SIZE 4096
-#endif /*  PROCESS_BUFFER_SIZE */
-
-#pragma warning(disable : 4005)
-#pragma warning(disable : 4503)
-#pragma warning(disable : 4800)
-
 #ifndef NOEXCEPT
-	#define NOEXCEPT
+	#define NOEXCEPT noexcept
 #endif /*  NOEXCEPT */
-
-#ifndef INTMAX_MAX
-	#define INTMAX_MAX _I64_MAX
-#endif /*  INTMAX_MAX */
-#ifndef UINTMAX_MAX
-	#define UINTMAX_MAX _UI64_MAX
-#endif /*  UINTMAX_MAX */
 
 #endif /* _KUL_DEF_HPP_ */

@@ -31,6 +31,40 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace kul{ 
 
+class Mutex{
+	private:
+		pthread_mutex_t mute;
+	public:
+		Mutex(){
+			pthread_mutexattr_t att;
+			pthread_mutexattr_init(&att);
+			pthread_mutexattr_settype(&att, PTHREAD_MUTEX_RECURSIVE);
+			pthread_mutex_init(&mute, &att);
+			pthread_mutexattr_destroy(&att);
+		}
+		~Mutex() {
+			pthread_mutex_destroy(&mute);
+		}
+		void lock() {
+			pthread_mutex_lock(&mute); 
+		}
+		void unlock() {
+			pthread_mutex_unlock(&mute);
+		}
+};
+
+class ScopeLock{
+	private:
+		Mutex& m;
+	public:
+		ScopeLock(Mutex& m) : m(m) {
+			this->m.lock();
+		}
+		~ScopeLock(){
+			this->m.unlock();
+		}
+};
+
 namespace threading{
 
 class AThreader : public kul::osi::AThreader{
@@ -89,8 +123,7 @@ class RefThreader : public AThreader{
 	public:
 		friend class kul::ThreaderService;
 };
-
-}
+}// END NAMESPACE threading
 
 template <class T> std::shared_ptr<kul::osi::AThreader> kul::ThreaderService::threader(const T& t){
 	return std::make_shared<kul::threading::Threader<T> >(kul::threading::Threader<T>(t));
@@ -99,5 +132,5 @@ template <class T> std::shared_ptr<kul::osi::AThreader> kul::ThreaderService::re
 	return std::make_shared<kul::threading::RefThreader<T> >(kul::threading::RefThreader<T>(ref));
 }
 
-}
+}// END NAMESPACE kul
 #endif /* _KUL_THREADS_HPP_ */

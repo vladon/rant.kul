@@ -30,8 +30,12 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
  	#define __KUL_OS__ "nix"
 #endif /*  __KUL_OS__ */
 
-#define KWINTOSTRING(x) x
+#ifndef __KUL_THREAD_SPAWN_UWAIT__
+ 	#define __KUL_THREAD_SPAWN_UWAIT__ 5000000
+#endif /*  __KUL_THREAD_SPAWN_UWAIT__ */
 
-#define NOEXCEPT noexcept
+#ifndef NOEXCEPT
+	#define NOEXCEPT noexcept
+#endif /*  NOEXCEPT */
 
 #endif /* _KUL_DEF_HPP_ */
