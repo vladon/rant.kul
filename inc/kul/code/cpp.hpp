@@ -72,7 +72,7 @@ class GCCompiler : public CCompiler{
 			}
 			kul::Process p(cmd);
 			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
-			CompilerProcessCapture pc(p, out);
+			CompilerProcessCapture pc(p);
 			for(const std::string& path : libPaths)	p.addArg("-L" + path);
 			if(mode == Mode::SHAR)		p.addArg("-shared");
 			else if(mode == Mode::STAT) p.addArg("-static");
@@ -92,11 +92,9 @@ class GCCompiler : public CCompiler{
 		const CompilerProcessCapture buildSharedLibrary(
 			const std::string& linker, 
 			const std::vector<std::string>& objects, 
-			const std::string& outDir, 
-			const std::string& outFile) const throw (kul::Exception){ 
+			const kul::File& out) const throw (kul::Exception){ 
 
-			const std::string lib(kul::Dir(outDir).join("lib" + outFile) + ".so");
-
+			const std::string lib = out.dir().join(sharedLib(out.name()));
 			std::string cmd = linker;
 			std::vector<std::string> bits;
 			if(linker.find(" ") != std::string::npos){
@@ -104,7 +102,7 @@ class GCCompiler : public CCompiler{
 				cmd = bits[0];
 			}
 			kul::Process p(cmd);
-			CompilerProcessCapture pc(p, lib);
+			CompilerProcessCapture pc(p);
 			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
 			p.addArg("-shared").addArg("-o").addArg(lib);
 			for(const std::string& o : objects)	p.addArg(o);	
@@ -119,10 +117,9 @@ class GCCompiler : public CCompiler{
 		const CompilerProcessCapture buildStaticLibrary(
 			const std::string& archiver, 
 			const std::vector<std::string>& objects, 
-			const std::string& outDir, 
-			const std::string& outFile) const throw (kul::Exception){ 
+			const kul::File& out) const throw (kul::Exception){ 
 
-			const std::string lib(kul::Dir(outDir).join("lib" + outFile) + ".a");
+			const std::string lib = out.dir().join(staticLib(out.name()));
 			std::string cmd = archiver;
 			std::vector<std::string> bits;
 			if(archiver.find(" ") != std::string::npos){
@@ -130,7 +127,7 @@ class GCCompiler : public CCompiler{
 				cmd = bits[0];
 			}
 			kul::Process p(cmd);
-			CompilerProcessCapture pc(p, lib);
+			CompilerProcessCapture pc(p);
 			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
 			p.addArg(lib).addArg("-c");
 			for(const std::string& o : objects)	p.addArg(o);	
@@ -149,8 +146,6 @@ class GCCompiler : public CCompiler{
 			const std::string& in, 
 			const std::string& out) const throw (kul::Exception){ 
 
-			using namespace kul;
-			std::string obj = out + ".obj";
 			std::string cmd = compiler;
 			std::vector<std::string> bits;
 			if(compiler.find(" ") != std::string::npos){
@@ -159,11 +154,11 @@ class GCCompiler : public CCompiler{
 			}
 			kul::Process p(cmd);
 			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
-			CompilerProcessCapture pc(p, obj);
+			CompilerProcessCapture pc(p);
 			
 			for(const std::string& s : incs)	p.addArg("-I"+s);
 			for(const std::string& s : args)	p.addArg(s);
-			p.addArg("-o").addArg(obj).addArg("-c").addArg(in);
+			p.addArg("-o").addArg(out).addArg("-c").addArg(in);
 			try{
 				p.start();
 			}catch(const kul::proc::Exception& e){
@@ -266,7 +261,7 @@ class WINCompiler : public CCompiler{
 				cmd = bits[0];
 			}
 			kul::Process p(cmd);
-			CompilerProcessCapture pc(p, exe);
+			CompilerProcessCapture pc(p);
 			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
 			for(const std::string& path : libPaths)	p.addArg("/LIBPATH:\"" + path + "\"");
 			p.addArg("/OUT:\"" + exe + "\"").addArg("/NOLOGO");	
@@ -304,11 +299,9 @@ class WINCompiler : public CCompiler{
 		const CompilerProcessCapture buildSharedLibrary(
 			const std::string& linker, 
 			const std::vector<std::string>& objects, 
-			const std::string& outDir, 
-			const std::string& outFile) const throw (kul::Exception){ 
+			const kul::File& out) const throw (kul::Exception){ 
 
-			const std::string lib(kul::Dir(outDir).join(outFile) + ".dll"); 
-
+			const std::string lib = out.dir().join(sharedLib(out.name()));
 			std::string cmd = linker;
 			std::vector<std::string> bits;
 			if(linker.find(" ") != std::string::npos){
@@ -317,7 +310,7 @@ class WINCompiler : public CCompiler{
 			}
 			kul::Process p(cmd);
 			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
-			CompilerProcessCapture pc(p, lib);
+			CompilerProcessCapture pc(p);
 			p.addArg("/OUT:\"" + lib + "\"").addArg("/NOLOGO");
 			for(const std::string& o : objects)	p.addArg(o);	
 			try{
@@ -331,10 +324,9 @@ class WINCompiler : public CCompiler{
 		const CompilerProcessCapture buildStaticLibrary(
 			const std::string& archiver, 
 			const std::vector<std::string>& objects, 
-			const std::string& outDir, 
-			const std::string& outFile) const throw (kul::Exception){ 
+			const kul::File& out) const throw (kul::Exception){ 
 
-			const std::string lib(kul::Dir(outDir).join(outFile) + ".lib"); 
+			const std::string lib = out.dir().join(staticLib(out.name()));
 			std::string cmd = archiver;
 			std::vector<std::string> bits;
 			if(archiver.find(" ") != std::string::npos){
@@ -342,7 +334,7 @@ class WINCompiler : public CCompiler{
 				cmd = bits[0];
 			}
 			kul::Process p(cmd);
-			CompilerProcessCapture pc(p, lib);
+			CompilerProcessCapture pc(p);
 			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
 			p.addArg("/OUT:\"" + lib + "\"").addArg("/NOLOGO").addArg("/LTCG");
 			for(const std::string& o : objects)	p.addArg(o);	
@@ -360,9 +352,6 @@ class WINCompiler : public CCompiler{
 			const std::string& in, 
 			const std::string& out) const throw (kul::Exception){ 
 
-			using namespace kul;
-			
-			std::string obj = out + ".obj";
 			std::string cmd = compiler;
 			std::vector<std::string> bits;
 			if(compiler.find(" ") != std::string::npos){
@@ -371,10 +360,10 @@ class WINCompiler : public CCompiler{
 			}
 			kul::Process p(cmd);
 			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
-			CompilerProcessCapture pc(p, obj);
+			CompilerProcessCapture pc(p);
 			for(const std::string& s : incs)	p.addArg("/I\"" + s + "\"");
 			for(const std::string& s : args)	p.addArg(s);
-			p.addArg("/c").addArg("/Fo\"" + obj + "\"").addArg("\"" + in + "\"");
+			p.addArg("/c").addArg("/Fo\"" + out + "\"").addArg("\"" + in + "\"");
 			try{
 				p.start();
 			}catch(const kul::Exception& e){

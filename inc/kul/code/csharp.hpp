@@ -54,7 +54,7 @@ class WINCompiler : public Compiler{
 				cmd = bits[0];
 			}
 			kul::Process p(cmd);
-			CompilerProcessCapture pc(p, exe);
+			CompilerProcessCapture pc(p);
 			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
 			p.addArg("/NOLOGO").addArg("/OUT:\"" + exe + "\"");
 			for(const std::string& path : libPaths)	p.addArg("/LIB:\"" + path + "\"");
@@ -76,18 +76,14 @@ class WINCompiler : public Compiler{
 		const CompilerProcessCapture buildSharedLibrary(
 			const std::string& linker, 
 			const std::vector<std::string>& objects, 
-			const std::string& outDir, 
-			const std::string& outFile) const throw (kul::Exception){ 
+			const kul::File& out) const throw (kul::Exception){ 
 
-			const std::string lib(kul::Dir(outDir).join(outFile) + ".dll");
-
-			return CompilerProcessCapture(lib);
+			return CompilerProcessCapture();
 		}
 		const CompilerProcessCapture buildStaticLibrary(
 			const std::string& archiver, 
 			const std::vector<std::string>& objects, 
-			const std::string& outDir, 
-			const std::string& outFile) const throw (kul::Exception){ 
+			const kul::File& out) const throw (kul::Exception){ 
 
 			KEXCEPT(Exception, "No static libraries in C Sharp");
 		}
@@ -98,7 +94,7 @@ class WINCompiler : public Compiler{
 			const std::string& in, 
 			const std::string& out) const throw (kul::Exception){
 
-			return CompilerProcessCapture(in);
+			return CompilerProcessCapture();
 		}
 		virtual void preCompileHeader(			
 			const std::vector<std::string>& incs,
