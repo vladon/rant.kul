@@ -1,12 +1,14 @@
 
 VER_GIT=master
 
+OS =
 CXX=g++
 CXXFLAGS=-std=c++1y -O3 -g0 -Wall -c -fmessage-length=0 
 CLANG=clang++
 INTEL=icpc
 //CLANGFLAGS=-stdlib=libc++
 INCS = 	-I$(CURDIR)/inc \
+		-I$(CURDIR)/os/$(OS)/inc \
 		-I$(CURDIR)/os/nixish/inc \
 		-I$(CURDIR)/ext/pugixml/trunk/src \
 		-I$(CURDIR)/ext/sparsehash/trunk/include
