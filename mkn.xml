@@ -69,12 +69,18 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			</build>
 		</profile>
 		<profile name="nix" parent="nixc" os="nix">
+			<includes>
+				<include>./os/nix/inc</include>
+			</includes>
 			<sources>
 				<source>./os/nix/src</source>
 			</sources>
 			<build type="lib" mode="static" lang="cpp"/> 
 		</profile>
 		<profile name="bsd" parent="nixc" os="bsd">
+			<includes>
+				<include>./os/bsd/inc</include>
+			</includes>
 			<sources>
 				<source>./os/bsd/src</source>
 			</sources>
