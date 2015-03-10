@@ -187,6 +187,7 @@ class ThreadPool{
 					}
 					ts.pop();
 				}
+				this_thread::sleep(1);
 			}
 		}
 		void detach(){
@@ -226,6 +227,7 @@ class PredicatedThreadPool : public ThreadPool{
 					ts.pop();
 					at = 0;
 					if(ts.size()) at = &ts.front();
+					this_thread::sleep(1);
 				}
 			}
 		}
