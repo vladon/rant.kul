@@ -32,14 +32,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 	#define ulong unsigned long
 #endif /*  ulong */
 
-#ifndef KLOG_LVL
-	#define KLOG_LVL 0
-#endif /*  KLOG_LVL */
-
-#ifndef __KUL_THREAD_SPAWN_UWAIT__
- 	#define __KUL_THREAD_SPAWN_UWAIT__ 5000000
-#endif /*  __KUL_THREAD_SPAWN_UWAIT__ */
-
 #define KSTRINGIFY(x) #x
 #define KTOSTRING(x) KSTRINGIFY(x)
 

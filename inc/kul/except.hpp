@@ -27,6 +27,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <stdexcept>
 
+#include <kul/def.hpp>
+
 namespace kul{
 
 class Exception : public std::runtime_error{
@@ -34,13 +36,8 @@ class Exception : public std::runtime_error{
 		const char* f;
 		const int l;
 	public:
-#if defined(_WIN32) || defined(_WIN64)	// delete when M$ supports noexcept
-		~Exception() /*noexcept*/{} 	// delete
-		const char* what() const /*noexcept*/{ return std::runtime_error::what();} // delete when M$ supports noexcept
-#else									// delete when M$ supports noexcept
-		~Exception() noexcept{}
-		const char* what() const noexcept{ return std::runtime_error::what();}
-#endif									// delete when M$ supports noexcept
+		~Exception() NOEXCEPT{}
+		const char* what() const NOEXCEPT{ return std::runtime_error::what();}
 		Exception(const char*f, const int& l, const std::string& s) : std::runtime_error(s), f(f), l(l){}
 		Exception(const Exception& e) : std::runtime_error(e.what()), f(e.file()),  l(e.line()){}
 
