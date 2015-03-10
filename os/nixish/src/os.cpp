@@ -65,8 +65,8 @@ const char* kul::Env::SEP(){
 }
 
 const std::string kul::Dir::LOCL(std::string s){
-	kul::String::replaceAll(local, "\\", "/");
-	return local;
+	kul::String::replaceAll(s, "\\", "/");
+	return s;
 }
 const std::string kul::Dir::REAL(const std::string& s) throw(fs::Exception){
 	char* expanded = realpath(s.c_str() , NULL);
