@@ -37,8 +37,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				<source>./trunk/src</source>
 			</sources>
 		</profile>
-		<profile name="nix" parent="com">
- 			<build type="lib" mode="static" lang="cpp">
+		<profile name="nixish" parent="com">
+ 			<build type="lib">
 				<files>
 					<file type="cpp">
 						<args>		
@@ -50,7 +50,13 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				</files>
 			</build>
 		</profile>
-		<profile name="win" parent="com">
+		<profile name="nix" parent="nixish" os="nix">
+ 			<build type="lib" mode="static" lang="cpp"/>
+		</profile>
+		<profile name="bsd" parent="nixish" os="bsd">
+ 			<build type="lib" mode="static" lang="cpp"/>
+		</profile>
+		<profile name="win" parent="com" os="win">
  			<build type="lib" mode="static" lang="cpp">
 				<files>
 					<file type="cpp">
