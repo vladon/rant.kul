@@ -100,7 +100,7 @@ void kul::Dir::rm() const{
 	}
 }
 bool kul::Dir::root() const{
-	return real().size() == 1;
+	return is() && real().size() == 1;
 }
 
 const std::vector<kul::Dir> kul::Dir::dirs(bool incHidden) const throw(fs::Exception){
