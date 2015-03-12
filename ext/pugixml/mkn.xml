@@ -38,7 +38,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			</sources>
 		</profile>
 		<profile name="nixish" parent="com">
- 			<build type="lib" mode="static" lang="cpp"/>
+ 			<build type="lib" mode="static" lang="cpp">
 				<files>
 					<file type="cpp">
 						<args>		
