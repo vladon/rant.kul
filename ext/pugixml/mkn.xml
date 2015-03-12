@@ -38,10 +38,10 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			</sources>
 		</profile>
 		<profile name="nixish" parent="com">
- 			<build type="lib" mode="static" lang="cpp">
+ 			<build type="lib">
 				<files>
 					<file type="cpp">
-						<args>		
+						<args>
 							<arg>-std=c++1y</arg>
 							<arg>-Wall</arg>
 							<arg>-fmessage-length=0</arg>
@@ -51,7 +51,9 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			</build>
 		</profile>
 		<profile name="nix" parent="nixish" os="nix"/>
+ 			<build type="lib" mode="static" lang="cpp"/>
 		<profile name="bsd" parent="nixish" os="bsd"/>
+ 			<build type="lib" mode="static" lang="cpp"/>
 		<profile name="win" parent="com" os="win">
  			<build type="lib" mode="static" lang="cpp">
 				<files>
