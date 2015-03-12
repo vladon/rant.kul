@@ -69,6 +69,7 @@ const std::string kul::scm::Git::remoteVersion(const std::string& d, const std::
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}
+	if(pc.outs().empty()) KEXCEPT(Exception, "SCM ERROR URL OR BRANCH MAY NOT EXIST: " + url + " / " + branch);
 	std::string s(pc.outs()[0]);
 	kul::String::trim(s);
 	return s.substr(0, s.find("	"));
@@ -102,7 +103,6 @@ void kul::scm::Git::setOrigin(const std::string& d, const std::string& r) const{
 	}
 }
 void kul::scm::Git::status(const std::string& d) const{
-
 	kul::Process p("git", d);
 	try{
 		p.addArg("status").start();
@@ -111,7 +111,6 @@ void kul::scm::Git::status(const std::string& d) const{
 	}
 }
 void kul::scm::Git::diff(const std::string& d) const{
-
 	kul::Process p("git", d);
 	p.addArg("diff");
 	try{
