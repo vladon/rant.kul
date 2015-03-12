@@ -35,9 +35,11 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			<includes>
 				<include>./inc</include>
 				<include>./tst</include>
+				<include>./os/${OS}/inc</include>
 			</includes>
 			<sources>
 				<source>./src</source>
+				<source>./os/${OS}/src</source>
 			</sources>
 		</profile>
 		<profile name="nixc" parent="c">
@@ -69,21 +71,9 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			</build>
 		</profile>
 		<profile name="nix" parent="nixc" os="nix">
-			<includes>
-				<include>./os/nix/inc</include>
-			</includes>
-			<sources>
-				<source>./os/nix/src</source>
-			</sources>
 			<build type="lib" mode="static" lang="cpp"/> 
 		</profile>
 		<profile name="bsd" parent="nixc" os="bsd">
-			<includes>
-				<include>./os/bsd/inc</include>
-			</includes>
-			<sources>
-				<source>./os/bsd/src</source>
-			</sources>
 			<build type="lib" mode="static" lang="cpp"/> 
 		</profile>
 		<profile name="win" parent="c" os="win">
@@ -91,10 +81,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				<include>./ext/sparsehash/trunk/src</include>
 				<include>./ext/sparsehash/trunk/src/windows</include>
 				<include>./ext/msinttypes-r26</include>
-				<include>./os/win/inc</include>
 			</includes>
 			<sources>
-				<source>./os/win/src</source>
 			</sources>
 			<dependencies>
 				<dependency>
