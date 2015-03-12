@@ -25,7 +25,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 <maiken>
 	<project>
 		<name>kul</name>		
-		<version>master</version>
+		<version>rel.130315</version>
 	</project>
 	<scm scm="git">
 		<scr>http://www.github.com/Dekken/kul.git</scr>
@@ -41,6 +41,13 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 				<source>./src</source>
 				<source>./os/${OS}/src</source>
 			</sources>
+			<dependencies>
+				<dependency>
+					<name>pugixml</name>
+					<version>trunk</version>
+					<local>./ext/pugixml</local>
+				</dependency>
+			</dependencies>	
 		</profile>
 		<profile name="nixc" parent="c">
 			<includes>
@@ -50,14 +57,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			<sources>
 				<source>./os/nixish/src</source>
 			</sources>
-			<dependencies>
-				<dependency>
-					<name>pugixml</name>
-					<version>master</version>
-					<profile>nix</profile>
-					<local>./ext/pugixml</local>
-				</dependency>
-			</dependencies>	
 			<build type="lib" mode="static" lang="cpp"> 
 				<files>
 					<file type="cpp">
@@ -84,14 +83,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 			</includes>
 			<sources>
 			</sources>
-			<dependencies>
-				<dependency>
-					<name>pugixml</name>
-					<version>master</version>
-					<profile>win</profile>
-					<local>./ext/pugixml</local>
-				</dependency>
-			</dependencies>	
 			<build type="lib" mode="static" lang="cpp">
 				<files>
 					<file type="cpp">
