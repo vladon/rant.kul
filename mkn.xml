@@ -25,7 +25,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 <maiken>
 	<project>
 		<name>kul</name>		
-		<version>rel.130315</version>
+		<version>master</version>
 	</project>
 	<scm scm="git">
 		<scr>http://www.github.com/Dekken/kul.git</scr>
