@@ -4,14 +4,12 @@ VER_GIT=master
 OS =
 CXX=g++
 CXXFLAGS=-std=c++1y -O3 -g0 -Wall -c -fmessage-length=0 
-CLANG=clang++
-INTEL=icpc
 //CLANGFLAGS=-stdlib=libc++
 INCS = 	-I$(CURDIR)/inc \
 		-I$(CURDIR)/os/$(OS)/inc \
 		-I$(CURDIR)/os/nixish/inc \
-		-I$(CURDIR)/ext/pugixml/trunk/src \
-		-I$(CURDIR)/ext/sparsehash/trunk/include
+		-I$(CURDIR)/ext/pugixml/master/src \
+		-I$(CURDIR)/ext/sparsehash/master/include
 LIB = bin/libkul.a
 
 entry:
@@ -57,31 +55,23 @@ libs:
 	$(MAKE) hash
 	$(MAKE) pugi
 
-clang:
-	$(MAKE) hash
-	$(MAKE) pugi CXX=$(CLANG)
-
-intel:
-	$(MAKE) hash
-	$(MAKE) pugi CXX=$(INTEL)
-
 hash:
-	@if [ ! -d "$(CURDIR)/ext/sparsehash/trunk" ]; then \
-		svn co http://sparsehash.googlecode.com/svn/trunk/ ext/sparsehash/trunk; \
-		cd ./ext/sparsehash/trunk; bash ./configure --prefix=$(CURDIR)/ext/sparsehash/trunk; \
-		$(MAKE) -C $(CURDIR)/ext/sparsehash/trunk; \
-		$(MAKE) -C $(CURDIR)/ext/sparsehash/trunk install; \
+	@if [ ! -d "$(CURDIR)/ext/sparsehash/master" ]; then \
+		git clone http://github.com/dekken/sparsehash ext/sparsehash/master; \
+		cd ./ext/sparsehash/master; bash ./configure --prefix=$(CURDIR)/ext/sparsehash/master; \
+		$(MAKE) -C $(CURDIR)/ext/sparsehash/master; \
+		$(MAKE) -C $(CURDIR)/ext/sparsehash/master install; \
 	fi;
 
 pugi:
-	@if [ ! -d "$(CURDIR)/ext/pugixml/trunk" ]; then \
-		svn co http://pugixml.googlecode.com/svn/tags/latest/ ext/pugixml/trunk; \
+	@if [ ! -d "$(CURDIR)/ext/pugixml/master" ]; then \
+		git clone https://github.com/dekken/pugixml ext/pugixml/master; \
 	fi;
-	@if [ ! -d "$(CURDIR)/ext/pugixml/trunk/bin" ]; then \
-		mkdir ext/pugixml/trunk/bin; \
+	@if [ ! -d "$(CURDIR)/ext/pugixml/master/bin" ]; then \
+		mkdir ext/pugixml/master/bin; \
 	fi;
-	$(CXX) $(CXXFLAGS) -I$(CURDIR)/ext/pugixml/trunk/src -o "$(CURDIR)/ext/pugixml/trunk/bin/pugixml.o" "$(CURDIR)/ext/pugixml/trunk/src/pugixml.cpp";
-	ar -r $(CURDIR)/ext/pugixml/trunk/bin/libpugixml.a "$(CURDIR)/ext/pugixml/trunk/bin/pugixml.o"
+	$(CXX) $(CXXFLAGS) -I$(CURDIR)/ext/pugixml/master/src -o "$(CURDIR)/ext/pugixml/master/bin/pugixml.o" "$(CURDIR)/ext/pugixml/master/src/pugixml.cpp";
+	ar -r $(CURDIR)/ext/pugixml/master/bin/libpugixml.a "$(CURDIR)/ext/pugixml/master/bin/pugixml.o"
 
 clean:
 	rm -rf bin
