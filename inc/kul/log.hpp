@@ -51,10 +51,10 @@ class Logger{
 		static unsigned short tid;
 	public:
 		void out(const std::string& s, const log::mode& m) const{
-			if(m != log::ERR)
-				std::cout << s << std::endl;
-			else 
-				std::cerr << s << std::endl;
+			if(m != log::ERR) 
+				printf(s.c_str());
+			else
+				fprintf(stderr, s.c_str());
 		}
 		void log(const char* f, const int& l, const std::string& s, const log::mode& m) const{
 			std::stringstream ss;
@@ -63,7 +63,7 @@ class Logger{
 			std::string tr(kul::this_thread::id());
 			tid = tr.size() > tid ? tr.size() : tid;
 			kul::String::pad(tr, tid);
-			ss << mode << " : " << tr << " - " << kul::DateTime::NOW().substr(4) << " : " << f << " : " << l << " " << s;
+			ss << mode << " : " << tr << " - " << kul::DateTime::NOW().substr(4) << " : " << f << " : " << l << " " << s << kul::os::newLine();
 			out(ss.str(), m);
 		}
 		const std::string modeTxt(const log::mode& m) const{
@@ -103,7 +103,7 @@ class LogMan{
 			if(this->m >= m) logger.log(f, l, s, m);
 		}
 		void out(const log::mode& m, const std::string& s){
-			if(this->m >= m) logger.out(s, m);
+			if(this->m >= m) logger.out(s + kul::os::newLine(), m);
 		}
 };
 
