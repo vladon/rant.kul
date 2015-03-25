@@ -226,7 +226,7 @@ class PredicatedThreadPool : public ThreadPool{
 					}
 					ts.pop();
 					at = 0;
-					if(ts.size()) at = &std::move(ts.front());
+					if(ts.size()) at = &ts.front();
 					this_thread::sleep(1);
 				}
 			}
