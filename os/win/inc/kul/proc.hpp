@@ -36,7 +36,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/def.hpp"
 #include "kul/proc.base.hpp"
 
-extern char **environ;
+// extern char **environ;
 
 namespace kul{ 
 
