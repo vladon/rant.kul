@@ -41,7 +41,7 @@
 				<dependency>
 					<name>sparsehash</name>
 					<version>master</version>
-					<scr scm="git" run="make &amp;&amp; make install">${spash}</scr>
+					<scr scm="git" run="sh make.sh">${spash}</scr>
 				</dependency>
 			</dependencies>	
 		</profile>
