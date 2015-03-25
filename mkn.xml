@@ -2,7 +2,7 @@
 <maiken>
 	<properties>
 		<github>http://www.github.com/Dekken</github>
-		<spash>${github}/sparsehash</spash>
+		<spash>${github}/google.sparsehash</spash>
 		<pugixml>${github}/pugixml</pugixml>
 	</properties>
 	<project>
@@ -39,7 +39,7 @@
 			</sources>
 			<dependencies>
 				<dependency>
-					<name>sparsehash</name>
+					<name>google.sparsehash</name>
 					<version>master</version>
 					<scr scm="git" run="sh make.sh">${spash}</scr>
 				</dependency>
@@ -53,7 +53,7 @@
 			</includes>
 			<dependencies>
 				<dependency>
-					<name>sparsehash</name>
+					<name>google.sparsehash</name>
 					<version>master</version>
 					<scr scm="git" run="make.bat">${spash}</scr>
 				</dependency>
