@@ -11,7 +11,7 @@ GOTO eof
 
 :get
 IF NOT EXIST %PWD%\ext\sparsehash\master (
-	git clone http://github.com/dekken/sparsehash %PWD%/ext/sparsehash/master
+	git clone http://github.com/dekken/google.sparsehash %PWD%/ext/sparsehash/master
 )
 IF NOT EXIST %PWD%\ext\pugixml\master (
 	git clone https://github.com/dekken/pugixml %PWD%/ext/pugixml/master
