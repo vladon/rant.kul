@@ -37,21 +37,13 @@ void kul::Process::run() throw (kul::Exception){
 	sa.bInheritHandle = TRUE; 
 	sa.lpSecurityDescriptor = NULL; 
 	// Create a pipe for the child process's STDERR. 
-	if ( ! CreatePipe(&g_hChildStd_ERR_Rd, &g_hChildStd_ERR_Wr, &sa, 0) ) {
-		error(__LINE__, "CreatePipe failed");
-	}
+	if (!CreatePipe(&g_hChildStd_ERR_Rd, &g_hChildStd_ERR_Wr, &sa, 0)) 		error(__LINE__, "CreatePipe failed");
 	// Ensure the read handle to the pipe for STDERR is not inherited.
-	if ( ! SetHandleInformation(g_hChildStd_ERR_Rd, HANDLE_FLAG_INHERIT, 0) ){
-		error(__LINE__, "SetHandleInformation failed");
-	}
+	if (!SetHandleInformation(g_hChildStd_ERR_Rd, HANDLE_FLAG_INHERIT, 0)) 	error(__LINE__, "SetHandleInformation failed");
 	// Create a pipe for the child process's STDOUT. 
-	if ( ! CreatePipe(&g_hChildStd_OUT_Rd, &g_hChildStd_OUT_Wr, &sa, 0) ) {
-		error(__LINE__, "CreatePipe failed");
-	}
+	if (!CreatePipe(&g_hChildStd_OUT_Rd, &g_hChildStd_OUT_Wr, &sa, 0)) 		error(__LINE__, "CreatePipe failed");
 	// Ensure the read handle to the pipe for STDOUT is not inherited
-	if ( ! SetHandleInformation(g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0) ){
-		error(__LINE__, "SetHandleInformation failed");
-	}
+	if (!SetHandleInformation(g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0)) 	error(__LINE__, "SetHandleInformation failed");
 
 	PROCESS_INFORMATION piProcInfo; 
 	STARTUPINFO siStartInfo;
@@ -69,12 +61,15 @@ void kul::Process::run() throw (kul::Exception){
 
 	preStart();
 
-	// Record the current env vars before changing to new ones
-	std::vector<std::pair<const char*, std::string> > oldEvs;
+	TCHAR chNewEnv[PROCESS_BUFFER_SIZE];
+	LPTSTR lpszCurrentVariable;
+	lpszCurrentVariable = (LPTSTR) chNewEnv;
 	for(std::pair<const std::string , const std::string > evs : environmentVariables()){
-		oldEvs.push_back(std::pair<const char*, std::string>(evs.first.c_str(), kul::Env::GET(evs.first.c_str())));
-		kul::Env::SET(evs.first.c_str(), evs.second.c_str());
+		if(FAILED(StringCchCopy(lpszCurrentVariable, PROCESS_BUFFER_SIZE, TEXT(std::string(evs.first + "=" + evs.second).c_str())))) 
+			error(__LINE__, "String copy failed");
+		lpszCurrentVariable += lstrlen(lpszCurrentVariable) + 1;
 	}
+	*lpszCurrentVariable = (TCHAR)0; 
 
 	const char* dir = directory().empty() ? 0 : directory().c_str();
 	LPSTR szCmdline = _strdup(command().c_str());
@@ -85,7 +80,7 @@ void kul::Process::run() throw (kul::Exception){
 		NULL,			// primary thread security attributes 
 		TRUE,			// handles are inherited 
 		0,				// creation flags		 
-		NULL,			// use parent's environment 
+		environmentVariables().size() ? chNewEnv : NULL,
 		dir,
 		&siStartInfo,	// STARTUPINFO pointer 
 		&piProcInfo);	// receives PROCESS_INFORMATION
@@ -94,14 +89,8 @@ void kul::Process::run() throw (kul::Exception){
 
 	CloseHandle(g_hChildStd_ERR_Wr);
 	CloseHandle(g_hChildStd_OUT_Wr);
-	
-	// Reset changed env vars back to what previously was
-	for(const std::pair<const char*, std::string>& oldEv : oldEvs)
-		kul::Env::SET(oldEv.first, oldEv.second.c_str());
 
-	if(!bSuccess)
-		error(__LINE__, "CreateProcess failed with last error: " + GetLastError());
-
+	if(!bSuccess) error(__LINE__, "CreateProcess failed with last error: " + GetLastError());
 	if(this->waitForExit()){
 		DWORD dwRead; 
 		CHAR chBuf[PROCESS_BUFFER_SIZE];
@@ -123,9 +112,7 @@ void kul::Process::run() throw (kul::Exception){
 			} 
 		}
 	}
-
 	tearDown();
-	
 	if(this->waitForExit()){
 		DWORD ec = 0;
 		if (FALSE == GetExitCodeProcess(piProcInfo.hProcess, &ec))
