@@ -57,7 +57,7 @@ libs:
 
 hash:
 	@if [ ! -d "$(CURDIR)/ext/sparsehash/master" ]; then \
-		git clone http://github.com/dekken/sparsehash ext/sparsehash/master; \
+		git clone http://github.com/dekken/google.sparsehash ext/sparsehash/master; \
 		cd ./ext/sparsehash/master; bash ./configure --prefix=$(CURDIR)/ext/sparsehash/master; \
 		$(MAKE) -C $(CURDIR)/ext/sparsehash/master; \
 		$(MAKE) -C $(CURDIR)/ext/sparsehash/master install; \
