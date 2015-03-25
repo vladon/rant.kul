@@ -119,11 +119,11 @@ class RefThreader : public AThreader{
 
 }// END NAMESPACE threading
 
-template <class T> std::unique_ptr<kul::osi::AThreader> kul::ThreaderService::threader(const T& t){
-	return std::make_unique<kul::threading::Threader<T> >(kul::threading::Threader<T>(t));
+template <class T> std::shared_ptr<kul::osi::AThreader> kul::ThreaderService::threader(const T& t){
+	return std::make_shared<kul::threading::Threader<T> >(kul::threading::Threader<T>(t));
 }
-template <class T> std::unique_ptr<kul::osi::AThreader> kul::ThreaderService::refThreader(const Ref<T>& ref){
-	return std::make_unique<kul::threading::RefThreader<T> >(kul::threading::RefThreader<T>(ref));
+template <class T> std::shared_ptr<kul::osi::AThreader> kul::ThreaderService::refThreader(const Ref<T>& ref){
+	return std::make_shared<kul::threading::RefThreader<T> >(kul::threading::RefThreader<T>(ref));
 }
 
 }// END NAMESPACE kul
