@@ -77,7 +77,6 @@ class Process : public kul::AProcess{
 		void tearDown();
 		void finish()	{ }
 		void preStart()	{ }
-		void tick()		{ }	
 	public:
 		Process(const std::string& cmd, const bool& wfe = true)							: kul::AProcess(cmd, wfe){}
 		Process(const std::string& path, const std::string& cmd, const bool& wfe = true): kul::AProcess(path, cmd, wfe){}

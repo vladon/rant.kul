@@ -78,8 +78,6 @@ void kul::Process::run() throw (kul::proc::Exception){
 
 			do {
 				alive = kill(pid(), 0) == 0;
-				if(alive)
-					this->tick();
 
 				if(FD_ISSET(popPip[1], &childOutFds)) {
 
