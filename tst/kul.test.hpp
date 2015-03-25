@@ -136,7 +136,6 @@ class test{ public: test(){
 	
 	kul::Mutex mutex;
 	{
-		kul::Mutex mutex;
 		{
 			kul::ScopeLock lock(mutex);
 		}
