@@ -85,16 +85,12 @@ class String{
 			    std::transform(bCpy.begin(), bCpy.end(), bCpy.begin(), ::tolower);
 			    return (aCpy == bCpy);
 		}
-		static std::vector<std::string> lines(const char* ch){
+		static std::vector<std::string> lines(const std::string& s){
 			std::vector<std::string> ls;
-			std::string s(ch);
 			if(s.find("\n") != std::string::npos){
 				std::string l;
 				std::stringstream ss(s);
-				while(std::getline(ss, l)) {
-					if(l.compare("") != 0)
-						ls.push_back(l);
-				}
+				while(std::getline(ss, l)) if(!l.empty()) ls.push_back(l);
 			}else ls.push_back(s);
 			return ls;
 		}

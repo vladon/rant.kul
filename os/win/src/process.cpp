@@ -100,14 +100,14 @@ void kul::Process::run() throw (kul::Exception){
 			for (;;) { 
 				bSuccess = ReadFile( g_hChildStd_OUT_Rd, chBuf, PROCESS_BUFFER_SIZE, &dwRead, NULL);
 				if(!bSuccess || dwRead == 0 ) break;
-				for(const std::string& l : kul::String::lines(std::string(chBuf, dwRead).c_str())) out(l);
+				for(const std::string& l : kul::String::lines(std::string(chBuf, dwRead))) out(l);
 				dwRead = 0;
 			} 
 			dwRead = 0;
 			for (;;) { 
 				bSuccess=ReadFile( g_hChildStd_ERR_Rd, chBuf, PROCESS_BUFFER_SIZE, &dwRead, NULL);
 				if(!bSuccess || dwRead == 0 ) break; 
-				for(const std::string& l : kul::String::lines(std::string(chBuf, dwRead).c_str())) err(l);
+				for(const std::string& l : kul::String::lines(std::string(chBuf, dwRead))) err(l);
 				dwRead = 0;
 			} 
 		}
