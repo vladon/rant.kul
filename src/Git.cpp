@@ -26,7 +26,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 void kul::scm::Git::co(const std::string& d, const std::string& r, const std::string& v) const throw(Exception){
 	Dir dr(d, true);
 	kul::Process p("git", d);
-	p.addArg("clone").addArg(r.c_str());
+	p.addArg("clone").addArg(r);
 	if(!v.empty()) p.addArg("-b").addArg(v);
 	try{
 		p.addArg(".");

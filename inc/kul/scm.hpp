@@ -94,10 +94,14 @@ class Svn : public Scm{
 class Manager{
 	private:
 		Manager(){
-			scms.insert(std::pair<std::string, std::shared_ptr<Scm> >("git", std::make_shared<Git>()));
-			scms.insert(std::pair<std::string, std::shared_ptr<Scm> >("svn", std::make_shared<Svn>()));
+			git = std::make_unique<Git>();
+			svn = std::make_unique<Svn>();
+			scms.insert(std::pair<std::string, Scm*>("git", git.get()));
+			scms.insert(std::pair<std::string, Scm*>("svn", svn.get()));
 		}
-		hash::map::S2T<std::shared_ptr<Scm> > scms;
+		hash::map::S2T<Scm*> scms;
+		std::unique_ptr<Scm> git;
+		std::unique_ptr<Scm> svn;
 	public:
 		static Manager& INSTANCE(){ 
 			static Manager instance; 
@@ -105,13 +109,11 @@ class Manager{
 		}
 		const Scm& get(const std::string& s) throw(ScmNotFoundException){
 			if(scms.count(s) > 0)
-				return *(*scms.find(s)).second.get();
-			throw ScmNotFoundException(__FILE__, __LINE__, "Compiler for " + s + " is not implemented");
+				return *(*scms.find(s)).second;
+			KEXCEPT(ScmNotFoundException, "Compiler for " + s + " is not implemented");
 		}
 };
 
-
-
-
-}}
+}// END NAMESPACE scm
+}// END NAMESPACE kul
 #endif /* _KUL_SCM_HPP_ */

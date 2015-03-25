@@ -37,12 +37,12 @@ class CompilerNotFoundException : public kul::Exception{
 class Compilers{
 	private:
 		Compilers(){
-			gcc		= std::make_shared<cpp::GCCompiler>();
-			clang	= std::make_shared<cpp::ClangCompiler>();
-			intel	= std::make_shared<cpp::IntelCompiler>();
-			winc	= std::make_shared<cpp::WINCompiler>();
+			gcc		= std::make_unique<cpp::GCCompiler>();
+			clang	= std::make_unique<cpp::ClangCompiler>();
+			intel	= std::make_unique<cpp::IntelCompiler>();
+			winc	= std::make_unique<cpp::WINCompiler>();
 
-			wincs 	= std::make_shared<csharp::WINCompiler>();
+			wincs 	= std::make_unique<csharp::WINCompiler>();
 
 			cs.insert(std::pair<std::string, Compiler*>("gcc"		, gcc.get()));
 			cs.insert(std::pair<std::string, Compiler*>("g++"		, gcc.get()));
@@ -51,14 +51,14 @@ class Compilers{
 			cs.insert(std::pair<std::string, Compiler*>("clang++"	, clang.get()));
 			cs.insert(std::pair<std::string, Compiler*>("icc"		, intel.get()));
 			cs.insert(std::pair<std::string, Compiler*>("icpc"		, intel.get()));
-			cs.insert(std::pair<std::string, Compiler*>("cl"			, winc.get()));
+			cs.insert(std::pair<std::string, Compiler*>("cl"		, winc.get()));
 			cs.insert(std::pair<std::string, Compiler*>("csc"		, wincs.get()));
 		}
-		std::shared_ptr<Compiler> gcc;
-		std::shared_ptr<Compiler> clang;
-		std::shared_ptr<Compiler> intel;
-		std::shared_ptr<Compiler> winc;
-		std::shared_ptr<Compiler> wincs;
+		std::unique_ptr<Compiler> gcc;
+		std::unique_ptr<Compiler> clang;
+		std::unique_ptr<Compiler> intel;
+		std::unique_ptr<Compiler> winc;
+		std::unique_ptr<Compiler> wincs;
 		hash::map::S2T<Compiler*> cs;
 	public:
 		static Compilers& INSTANCE(){ 

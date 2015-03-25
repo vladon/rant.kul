@@ -44,15 +44,15 @@ class Exception : public kul::Exception{
 class Reader{
 	private:
 		std::ifstream f;
-		std::shared_ptr<std::string> str;
+		std::unique_ptr<std::string> str;
 	public:
-		Reader(const char* c) : f(c), str(0) { if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");}
+		Reader(const char* c) : f(c) { if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");}
 		const std::string* read(){
 			str.reset();
 			std::string s;
 			if(f.good()){
 				getline(f, s);
-				str = std::make_shared<std::string>(s);
+				str = std::make_unique<std::string>(s);
 			}
 			return str.get();
 		}

@@ -95,14 +95,14 @@ class AThreader{
 
 class ThreaderService{
 	public:
-		template <class T> static std::shared_ptr<kul::osi::AThreader> threader(const T& t);
-		template <class T> static std::shared_ptr<kul::osi::AThreader> refThreader(const Ref<T>& ref);
+		template <class T> static std::unique_ptr<kul::osi::AThreader> threader(const T& t);
+		template <class T> static std::unique_ptr<kul::osi::AThreader> refThreader(const Ref<T>& ref);
 };
 
 class Thread{
 	private:
 		bool s;
-		std::shared_ptr<kul::osi::AThreader> th;
+		std::unique_ptr<kul::osi::AThreader> th;
 	protected:
 	public:
 		template <class T> Thread(T t) 					: s(0), th(ThreaderService::threader(t))		{ }
@@ -125,7 +125,7 @@ namespace threading{
 class APooledThreader{
 	public:
 		virtual ~APooledThreader(){}
-		virtual std::shared_ptr<kul::osi::AThreader> threader() const = 0;
+		virtual std::unique_ptr<kul::osi::AThreader> threader() const = 0;
 };
 template <class T>
 class PooledThreader : public APooledThreader{
@@ -133,7 +133,7 @@ class PooledThreader : public APooledThreader{
 		const T t;
 	public:
 		PooledThreader(const T& t) : t(t){}
-		std::shared_ptr<kul::osi::AThreader> threader() const { return ThreaderService::threader(t);}
+		std::unique_ptr<kul::osi::AThreader> threader() const { return ThreaderService::threader(t);}
 };
 template <class T>
 class PooledRefThreader : public APooledThreader{
@@ -141,7 +141,7 @@ class PooledRefThreader : public APooledThreader{
 		const Ref<T>& r;
 	public:
 		PooledRefThreader(const Ref<T>& ref) : r(ref){}
-		std::shared_ptr<kul::osi::AThreader> threader() const { return ThreaderService::refThreader(r);}
+		std::unique_ptr<kul::osi::AThreader> threader() const { return ThreaderService::refThreader(r);}
 };
 }// END NAMESPACE threading
 
@@ -151,8 +151,8 @@ class ThreadPool{
 		unsigned int m;	
 		kul::Ref<ThreadPool> re;
 		kul::Thread th;
-		std::shared_ptr<kul::threading::APooledThreader> pT;
-		std::queue<std::shared_ptr<kul::osi::AThreader> > ts;
+		std::unique_ptr<kul::threading::APooledThreader> pT;
+		std::queue<std::unique_ptr<kul::osi::AThreader> > ts;
 		std::vector<std::exception_ptr> ePs;
 		void setStarted()	{ s = true; }
 		bool started()		{ return s; }
@@ -160,15 +160,15 @@ class ThreadPool{
 			if(started()) KEXCEPT(Exception, "ThreadPool is already started");
 			setStarted();
 			for(unsigned int i = 0 ; i < m; i++){
-				std::shared_ptr<kul::osi::AThreader> at = pT->threader();
-				ts.push(at);
+				std::unique_ptr<kul::osi::AThreader> at = pT->threader();
 				at->run();
+				ts.push(std::move(at));
 				this_thread::uSleep(__KUL_THREAD_SPAWN_UWAIT__);
 			}
 		}
 	public:
-		template <class T> ThreadPool(const T& t) 			: d(0), s(0), m(1), re(*this), th(re), pT(std::make_shared<kul::threading::PooledThreader<T> >(t)){}
-		template <class T> ThreadPool(const Ref<T>& ref) 	: d(0), s(0), m(1), re(*this), th(re), pT(std::make_shared<kul::threading::PooledRefThreader<T> >(ref)){}
+		template <class T> ThreadPool(const T& t) 			: d(0), s(0), m(1), re(*this), th(re), pT(std::make_unique<kul::threading::PooledThreader<T> >(t)){}
+		template <class T> ThreadPool(const Ref<T>& ref) 	: d(0), s(0), m(1), re(*this), th(re), pT(std::make_unique<kul::threading::PooledRefThreader<T> >(ref)){}
 		void setMax(const int& max) { m = max;}
 		void run(){
 			th.run();
@@ -179,7 +179,7 @@ class ThreadPool{
 		virtual void join() throw (std::exception){
 			th.join();
 			while(ts.size()){
-				const std::shared_ptr<kul::osi::AThreader>& at = ts.front();
+				const std::unique_ptr<kul::osi::AThreader>& at = ts.front();
 				if(at->finished()){
 					if(at->exception() != std::exception_ptr()){
 						if(!d) std::rethrow_exception(at->exception());
@@ -213,12 +213,12 @@ class PredicatedThreadPool : public ThreadPool{
 			while(c < ps){
 				for(unsigned int i = ts.size(); i < m && c < ps; i++){
 					c++;
-					std::shared_ptr<kul::osi::AThreader> at = pT->threader();
-					ts.push(at);
+					std::unique_ptr<kul::osi::AThreader> at = pT->threader();
 					at->run();
+					ts.push(std::move(at));
 					this_thread::uSleep(__KUL_THREAD_SPAWN_UWAIT__);
 				}
-				const std::shared_ptr<kul::osi::AThreader>* at = &ts.front();
+				const std::unique_ptr<kul::osi::AThreader>* at = &ts.front();
 				while(at && (*at)->finished()){
 					if((*at)->exception() != std::exception_ptr()){
 						if(!d) std::rethrow_exception((*at)->exception());
@@ -226,7 +226,7 @@ class PredicatedThreadPool : public ThreadPool{
 					}
 					ts.pop();
 					at = 0;
-					if(ts.size()) at = &ts.front();
+					if(ts.size()) at = &std::move(ts.front());
 					this_thread::sleep(1);
 				}
 			}

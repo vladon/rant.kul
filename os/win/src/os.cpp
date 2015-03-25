@@ -190,13 +190,12 @@ bool kul::File::mv(const Dir& d) const{
 }
 
 const kul::Dir kul::os::userDir(){
-	std::string home(Env::GET("HOME"));
-	if(home.size() == 0)
-		home = std::string(Env::GET("HOMEDRIVE")) + std::string(Env::GET("HOMEPATH"));
-	return Dir(home);
+	const char* h = Env::GET("HOME");
+	if(h) return kul::Dir(h);
+	return kul::Dir(std::string(Env::GET("HOMEDRIVE")) + std::string(Env::GET("HOMEPATH")));
 }
 const kul::Dir kul::os::userAppDir(const std::string& app){
-	return Dir(userDir().join(app));
+	return kul::Dir(userDir().join(app));
 }
 const std::string kul::os::newLine(){
 	#if (_MSC_VER >= 1800 )

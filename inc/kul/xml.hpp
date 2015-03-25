@@ -109,7 +109,7 @@ class NodeUser{
 		std::shared_ptr<const Node> rn;
 	protected:
 		const std::string f;
-		void reset(std::shared_ptr<const Node> node){ rn = node;}
+		void reset(const std::shared_ptr<const Node>& node){ rn = node; }
 		void reset() 								{ rn.reset(); }
 
 	public:
