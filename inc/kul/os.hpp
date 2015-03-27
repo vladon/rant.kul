@@ -116,10 +116,7 @@ class File{
 			try{
 				d = Dir(Dir::PRNT(Dir::REAL(this->n)), m);
 			}catch(const kul::fs::Exception& e){
-				if(File(this->n, Dir(Env::CWD())).is())
-					d = Dir(Env::CWD());
-				else
-					d = Dir(Dir::PRNT(this->n), m);
+				d = Dir(Env::CWD());
 			}
 			if(this->n.find(d.path()) != std::string::npos)
 				this->n = this->n.substr(d.path().size() + 1);
