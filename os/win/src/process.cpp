@@ -95,8 +95,7 @@ void kul::Process::run() throw (kul::Exception){
 		DWORD dwRead; 
 		CHAR chBuf[PROCESS_BUFFER_SIZE];
 		bSuccess = FALSE;
-
-		while(WaitForSingleObject(piProcInfo.hProcess, 1) == WAIT_TIMEOUT){
+		do{
 			for (;;) { 
 				bSuccess = ReadFile( g_hChildStd_OUT_Rd, chBuf, PROCESS_BUFFER_SIZE, &dwRead, NULL);
 				if(!bSuccess || dwRead == 0 ) break;
@@ -110,7 +109,7 @@ void kul::Process::run() throw (kul::Exception){
 				for(const std::string& l : kul::String::lines(std::string(chBuf, dwRead))) err(l);
 				dwRead = 0;
 			} 
-		}
+		}while(WaitForSingleObject(piProcInfo.hProcess, 1) == WAIT_TIMEOUT);
 	}
 	tearDown();
 	if(this->waitForExit()){
