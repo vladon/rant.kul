@@ -30,7 +30,7 @@ namespace kul{ namespace http{
 
 class Exception : public kul::Exception{
 	public:
-		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 
 class ARequest{
@@ -50,14 +50,14 @@ class ARequest{
 
 class AServer{
 	protected:
-		long int up;
+		long int s;
 		short p;
 	public:
-		AServer(const short& p) : p(p){}
+		AServer(const short& p) : s(kul::Now::MILLIS()), p(p){}
 		virtual ~AServer(){}
-		virtual void start() = 0;
-		const long int& upTime(){ return up; }
-		const short& 	port()	{ return p; }
+		virtual void start() const = 0;
+		const long int	up()	{ return s - kul::Now::MILLIS(); }
+		const short&	port()	{ return p; }
 };
 class AClient{
 	public:

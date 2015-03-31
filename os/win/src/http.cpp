@@ -6,7 +6,7 @@ Created on: 10 Sept 2014
 
 Copyright (c) 2013, Philip Deegan
 
-This file is part of kul.win (The Kommon Usage Library for Linux Distros).
+This file is part of kul (The Kommon Usage Library).
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -25,42 +25,28 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/log.hpp"
 #include "kul/http.hpp"
 
-void kul::http::Server::start() throw(kul::http::Exception){
-	ULONG 	r = HttpInitialize(HTTPAPI_VERSION_1, HTTP_INITIALIZE_SERVER, NULL);
-	if(r != NO_ERROR)
-		KEXCEPT(Exception, "HttpInitialize failed: " + r);
-
-	r = HttpCreateHttpHandle(&this->q, 0);
-	KLOG(INF) << r; 
-	if(r != NO_ERROR)
-		KEXCEPT(Exception, "HttpCreateHttpHandle failed: " + r);
-
-	r = HttpAddUrl(&this->q, LOCALHOST, NULL);
-	KLOG(INF) << r;
-	if(r != NO_ERROR)
-		KEXCEPT(Exception, "HttpAddUrl failed: " + r);
-
+void kul::http::Server::start() const throw(kul::http::Exception){
 	ULONG RequestBufferLength 	= sizeof(HTTP_REQUEST) + 2048;
 	PCHAR pRequestBuffer 		= (PCHAR) wAlloc(RequestBufferLength);
-
 	if(pRequestBuffer == NULL)
 		KEXCEPT(Exception, "Buffer allocation failed: " + ERROR_NOT_ENOUGH_MEMORY);
 
 	PHTTP_REQUEST req = (PHTTP_REQUEST) pRequestBuffer;
 	HTTP_REQUEST_ID requestId;
 	HTTP_SET_NULL_ID(&requestId);
-	DWORD			bytesRead;
+	DWORD bytesRead;
+	ULONG r = 0;
 	while(true){
 		RtlZeroMemory(req, RequestBufferLength);
 
 		r = HttpReceiveHttpRequest(
-				this->q, 			// Req Queue
-				requestId, 			// Req ID
-				0,	 				// Flags
-				req, 			// HTTP request buffer
-				RequestBufferLength,// req buffer length
-				&bytesRead, 		// bytes received
-				NULL);				// LPOVERLAPPED
+			this->q,			// Req Queue
+			requestId,			// Req ID
+			0,	 				// Flags
+			req,				// HTTP request buffer
+			RequestBufferLength,// req buffer length
+			&bytesRead,			// bytes received
+			NULL);				// LPOVERLAPPED
 
 		if(r == NO_ERROR){
 			if(req->Verb == HttpVerbGET){
@@ -100,17 +86,10 @@ bool kul::http::Server::doPost(IN PHTTP_REQUEST req){
 }
 
 
-void kul::http::Client::start(const std::string& u, const short& p){
+void kul::http::Client::start(const std::string& u, const short& p){}
 
-}
+void kul::http::Client::send(const ARequest& r) const{}
 
-void kul::http::Client::send(const ARequest& r) const{
-
-}
-
-void kul::http::GetRequest::send(const int& sockfd) const{
-
-}
+void kul::http::GetRequest::send(const int& sockfd) const{}
 
 void kul::http::PostRequest::send(const int& sockfd) const{}
-
