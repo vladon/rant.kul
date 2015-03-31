@@ -52,9 +52,9 @@ class Logger{
 	public:
 		void out(const std::string& s, const log::mode& m) const{
 			if(m != log::ERR) 
-				printf(s.c_str());
+				printf("%s", s.c_str());
 			else
-				fprintf(stderr, s.c_str());
+				fprintf(stderr, "%s", s.c_str());
 		}
 		void log(const char* f, const int& l, const std::string& s, const log::mode& m) const{
 			std::stringstream ss;
