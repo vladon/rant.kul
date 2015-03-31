@@ -6,7 +6,7 @@ Created on: 1 Jan 2013
 
 Copyright (c) 2013, Philip Deegan
 
-This file is part of kul.win (The Kommon Usage Library for Windows Environments).
+This file is part of kul (The Kommon Usage Library).
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -86,7 +86,7 @@ const std::string kul::Dir::REAL(const std::string& s) throw(fs::Exception){
 		delete expanded;
 		return dir;
 	}
-	KEXCEPT(fs::Exception, "Directory \"" + s + "\" does not exist");
+	KEXCEPT(fs::Exception, "Item: \"" + s + "\" does not exist");
 }
 const std::string kul::Dir::SEP(){
 	return std::string("\\");
@@ -175,14 +175,14 @@ bool kul::File::is() const{
 }
 bool kul::File::rm() const{
 	if(is()){
-		unlink(real().c_str());
+		unlink(d.join(n).c_str());
 		return true;
 	}
 	return false;
 }
 bool kul::File::cp(const File& f) const{
-	std::ifstream src(real(), std::ios::binary);
-	std::ofstream dst(f.real(), std::ios::binary);
+	std::ifstream src(d.join(n), std::ios::binary);
+	std::ofstream dst(f.dir().join(f.name()), std::ios::binary);
 	return (bool) (dst << src.rdbuf());
 }
 bool kul::File::mv(const Dir& d) const{
