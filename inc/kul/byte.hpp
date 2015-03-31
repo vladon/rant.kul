@@ -1,6 +1,6 @@
 /**
 
-./inc/kul/http.hpp
+./inc/kul/byte.hpp
 
 Created on: 3 Sept 2014
 
@@ -24,7 +24,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_NET_HPP_
 #define _KUL_NET_HPP_
 
-namespace kul{ namespace net{
+namespace kul{ namespace byte{
 
 //Everything gets converted to littie endian - bites are read right to left historically
 //http://stackoverflow.com/questions/2182002/convert-big-endian-to-little-endian-in-c-without-using-provided-func
