@@ -33,12 +33,12 @@ namespace kul{ namespace scm{
 
 class Exception : public kul::Exception{
 	public:
-		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 
 class ScmNotFoundException : public kul::Exception{
 	public:
-		ScmNotFoundException(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+		ScmNotFoundException(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 
 class Scm{

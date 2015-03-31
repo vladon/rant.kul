@@ -40,7 +40,7 @@ namespace fs {
 
 class Exception : public kul::Exception{
 	public:
-		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 } // END NAMESPACE FileSystem
 

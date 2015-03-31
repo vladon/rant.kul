@@ -33,12 +33,12 @@ namespace kul { namespace proc {
 
 class Exception : public kul::Exception{
 	public:
-		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 
 class ExitException : public kul::proc::Exception{
 	public:
-		ExitException(const char*f, const int l, std::string s) : Exception(f, l, s){}
+		ExitException(const char*f, const int l, const std::string& s) : Exception(f, l, s){}
 };
 }
 

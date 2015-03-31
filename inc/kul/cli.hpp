@@ -37,22 +37,22 @@ namespace kul{  namespace cli {
 
 class Exception : public kul::Exception{
 	public:
-		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 
 class ParseException : public kul::Exception{
 	public:
-		ParseException(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+		ParseException(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 
 class ArgNotFoundException : public Exception{
 	public:
-		ArgNotFoundException(const char*f, const int l, std::string s) : Exception(f, l, s){}
+		ArgNotFoundException(const char*f, const int l, const std::string& s) : Exception(f, l, s){}
 };
 
 class ArgParsingException : public Exception{
 	public:
-		ArgParsingException(const char*f, const int l, std::string s) : Exception(f, l, s){}
+		ArgParsingException(const char*f, const int l, const std::string& s) : Exception(f, l, s){}
 };
 
 class CmdLine{
