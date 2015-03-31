@@ -232,7 +232,7 @@ class PredicatedThreadPool : public ThreadPool{
 			}
 		}
 	public:
-		template <class T> PredicatedThreadPool(const T& t, P& pr) 			: ThreadPool(t) 	, p(pr), ps(p.size())	{}
+		template <class T> PredicatedThreadPool(const T& t, P& pr) 			: ThreadPool(t) 	, p(pr), ps(p.size()){}
 		template <class T> PredicatedThreadPool(const Ref<T>& ref, P& pr) 	: ThreadPool(ref)	, p(pr), ps(p.size()){}
 };
 }// END NAMESPACE kul
