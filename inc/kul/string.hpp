@@ -52,7 +52,7 @@ class String{
 			while(s.find(' ') == 0 || s.find('	') == 0)
 				s = s.substr(1);
 			while(s.rfind(' ') == s.size() - 1 || s.rfind('	') == s.size() - 1)
-				s = s.substr(0, s.size() - 2);
+				s = s.substr(0, s.size() - 1);
 		}
 		static void pad(std::string& s, const unsigned int& p){
 			while(s.size() < p) s += " ";
