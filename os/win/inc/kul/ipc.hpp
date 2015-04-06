@@ -54,7 +54,7 @@ class Server{
 		void start() throw(Exception);
 	protected:
 		virtual void handle(const std::string& s);
-		void respond(const std::string& s);
+		// void respond(const std::string& s);
 	public:
 		virtual ~Server(){
 			if (pchRequest != NULL) HeapFree(GetProcessHeap(), 0, pchRequest);

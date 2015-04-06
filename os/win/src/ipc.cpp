@@ -25,13 +25,10 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/log.hpp"
 
 void kul::ipc::Server::start() throw(kul::ipc::Exception){
- 
 	DWORD  dwThreadId = 0; 
 	hPipe = INVALID_HANDLE_VALUE;
 	LPTSTR lpszPipename = _strdup(uuid.c_str()); 
-	KLOG(INF) << uuid;
 
-	_tprintf(TEXT("\nPipe Server: Main thread awaiting client connection on %s\n"), lpszPipename);
 	hPipe = CreateNamedPipe( 
 		lpszPipename,			 // pipe name 
 		PIPE_ACCESS_DUPLEX,		// read/write access 
@@ -48,8 +45,6 @@ void kul::ipc::Server::start() throw(kul::ipc::Exception){
 		KEXCEPT(kul::ipc::Exception, "CreateNamedPipe failed: " + std::to_string(GetLastError()));
 }
 void kul::ipc::Server::listen() throw(kul::ipc::Exception){
-
-
 	while(true /*listen 1/num/infinit*/){
 
 		HANDLE hHeap	  = GetProcessHeap();
@@ -77,9 +72,9 @@ void kul::ipc::Server::listen() throw(kul::ipc::Exception){
 
 			if(!fSuccess || cbBytesRead == 0){	
 				if(GetLastError() == ERROR_BROKEN_PIPE)
-					_tprintf(TEXT("InstanceThread: client disconnected.\n"), GetLastError()); 
-				else
-					_tprintf(TEXT("InstanceThread ReadFile failed, GLE=%d.\n"), GetLastError()); 
+				// 	_tprintf(TEXT("InstanceThread: client disconnected.\n"), GetLastError()); 
+				// else
+				// 	_tprintf(TEXT("InstanceThread ReadFile failed, GLE=%d.\n"), GetLastError()); 
 				break;
 			}
 			handle(pchRequest);
@@ -91,8 +86,10 @@ void kul::ipc::Server::listen() throw(kul::ipc::Exception){
 	CloseHandle(hPipe); 
 }
 void kul::ipc::Server::handle(const std::string& s){
-	respond("kul::ipc::Server::handle");
+	KLOG(INF) << s;
+	// respond("kul::ipc::Server::handle");
 }
+/** works on windows, review for others
 void kul::ipc::Server::respond(const std::string& s) {
 	LPTSTR str 			= _strdup(s.c_str()); 
 	HANDLE hHeap 		= GetProcessHeap();
@@ -119,14 +116,13 @@ void kul::ipc::Server::respond(const std::string& s) {
 	HeapFree(hHeap, 0, pchReply);
 	if (!fSuccess || cbReplyBytes != cbWritten)
 		KEXCEPT(kul::ipc::Exception, "kul::ipc::Server::respond failed: " + std::to_string(GetLastError()));
-}
+}*/
 
 void kul::ipc::Client::send(const std::string& m) const throw(kul::ipc::Exception){
 	DWORD  cbToWrite, cbWritten;
 	LPTSTR lpvMessage = _strdup(m.c_str()); 
 	// Send a message to the pipe server. 
 	cbToWrite = (lstrlen(lpvMessage)+1)*sizeof(TCHAR);
-	_tprintf( TEXT("Sending %d byte message: \"%s\"\n"), cbToWrite, lpvMessage);
 	BOOL	fSuccess = FALSE; 
 	fSuccess = WriteFile(
 		hPipe,		// pipe handle 
@@ -139,11 +135,9 @@ void kul::ipc::Client::send(const std::string& m) const throw(kul::ipc::Exceptio
 		KEXCEPT(kul::ipc::Exception, "WriteFile to pipe failed: " + std::to_string(GetLastError()));
 }
 void kul::ipc::Client::start() throw(kul::ipc::Exception){
-
 	BOOL fSuccess = FALSE; 
 	DWORD  dwMode; 
 	LPTSTR lpszPipename = _strdup(uuid.c_str());
-	KLOG(INF) << uuid;
 	while(1){ 
 		hPipe = CreateFile( 
 			lpszPipename,	// pipe name 
@@ -181,25 +175,26 @@ void kul::ipc::Client::stop() const throw(kul::ipc::Exception){
 	CloseHandle(hPipe); 
 }
 
-// const std::string* kul::ipc::Client::receive() throw(kul::ipc::Exception){
-// 	KLOG(INF);
-// 	BOOL	fSuccess = FALSE; 
-// 	DWORD  cbRead;
-// 	TCHAR  chBuf[BUFSIZE]; 
-// 	str.reset();
-// 	// Read from the pipe. 
-// 	if(m){
-// 		fSuccess = ReadFile( 
-// 			hPipe,
-// 			chBuf,	 // buffer to receive reply 
-// 			BUFSIZE*sizeof(TCHAR),  // size of buffer 
-// 			&cbRead,  // number of bytes read 
-// 			NULL);	 // not overlapped 
-// 		m = GetLastError() == ERROR_MORE_DATA;
-// 		if(!fSuccess && !m)
-// 			KEXCEPT(kul::ipc::Exception, "ReadFile from pipe failed: " + std::to_string(GetLastError()));
-// 		if(fSuccess)
-// 			str = std::make_unique<std::string>(chBuf);
-// 	}
-// 	return str.get();
-// }
+/** works on windows, review for others
+const std::string* kul::ipc::Client::receive() throw(kul::ipc::Exception){
+	KLOG(INF);
+	BOOL	fSuccess = FALSE; 
+	DWORD  cbRead;
+	TCHAR  chBuf[BUFSIZE]; 
+	str.reset();
+	// Read from the pipe. 
+	if(m){
+		fSuccess = ReadFile( 
+			hPipe,
+			chBuf,	 // buffer to receive reply 
+			BUFSIZE*sizeof(TCHAR),  // size of buffer 
+			&cbRead,  // number of bytes read 
+			NULL);	 // not overlapped 
+		m = GetLastError() == ERROR_MORE_DATA;
+		if(!fSuccess && !m)
+			KEXCEPT(kul::ipc::Exception, "ReadFile from pipe failed: " + std::to_string(GetLastError()));
+		if(fSuccess)
+			str = std::make_unique<std::string>(chBuf);
+	}
+	return str.get();
+}*/
