@@ -25,6 +25,10 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/proc.hpp"
 #include "kul/string.hpp"
 
+const int kul::this_proc::id(){
+	return GetCurrentProcessId();;
+}
+
 void kul::Process::tearDown(){
 	CloseHandle(g_hChildStd_OUT_Rd);
 	CloseHandle(g_hChildStd_ERR_Rd);

@@ -29,7 +29,13 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "kul/except.hpp"
 
-namespace kul { namespace proc {
+namespace kul { 
+
+namespace this_proc{
+	const int id();
+}
+
+namespace proc{
 
 class Exception : public kul::Exception{
 	public:
