@@ -99,7 +99,7 @@ class Node{
 		const std::string&				name() 			const { return this->n; }
 		const std::string&				txt() 			const { return t; }
 		bool							hasChild(const std::string& s) const;
-		bool							hasAttr(const std::string& s) const;
+		bool							hasAtt(const std::string& s) const;
 };
 
 template <class T>
