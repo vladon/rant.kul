@@ -131,6 +131,7 @@ class File{
 
 		const std::string& name() const { return n; }
 
+		const std::string full() const { return Dir::JOIN(d.path(), n); }
 		const std::string real() const { return Dir::JOIN(d.real(), n); }
 		const std::string mini() const { return Dir::MINI(real()); }
 		const Dir& dir() const { return d; }
