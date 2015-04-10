@@ -24,6 +24,10 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/log.hpp"
 #include "kul/proc.hpp"
 
+int kul::this_proc::id(){
+	return getpid();
+}
+
 void kul::Process::waitForStatus(){
 	int ret = 0;
 	ret = recall(waitpid(pid(), &cStat, 0));
