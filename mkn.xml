@@ -21,9 +21,6 @@
 				<source>./src</source>
 				<source>./os/${OS}/src</source>
 			</sources>
-			<libraries>
-				<library>pthread</library>
-			</libraries>
 			<dependencies>
 				<dependency>
 					<name>pugixml</name>
@@ -40,6 +37,9 @@
 			<sources>
 				<source>./os/nixish/src</source>
 			</sources>
+			<libraries>
+				<library>pthread</library>
+			</libraries>
 			<dependencies>
 				<dependency>
 					<name>google.sparsehash</name>
