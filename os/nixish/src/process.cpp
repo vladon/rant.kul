@@ -24,7 +24,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/log.hpp"
 #include "kul/proc.hpp"
 
-int kul::this_proc::id(){
+const int kul::this_proc::id(){
 	return getpid();
 }
 
