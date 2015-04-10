@@ -28,6 +28,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define _KUL_IPC_UUID_PREFIX_ "/tmp/pipe"
 #endif
 
+#include "kul/log.hpp"
 #include "kul/proc.hpp"
 
 #include <fcntl.h>
@@ -67,7 +68,9 @@ class Server : public IPCCall{
 
 		void start() throw(Exception);
 	protected:
-		virtual void handle(const std::string& s);
+		virtual void handle(const std::string& s){
+			KLOG(INF) << s;
+		}
 		void respond(const std::string& s);
 	public:
 		virtual ~Server(){}
@@ -90,7 +93,6 @@ class Client : public IPCCall{
 		Client(const std::string& ui) throw(Exception) : m(1), uuid(ui, Dir(_KUL_IPC_UUID_PREFIX_)) { start(); }
 		Client(const int& pid) throw(Exception) : m(1), uuid(std::to_string(pid), Dir(_KUL_IPC_UUID_PREFIX_ + std::string("pid/"))) { start(); }
 		virtual void send(const std::string& m) const throw(Exception);
-		const std::string receive() throw(Exception);
 
 };
 
