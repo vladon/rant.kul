@@ -21,6 +21,9 @@
 				<source>./src</source>
 				<source>./os/${OS}/src</source>
 			</sources>
+			<libraries>
+				<library>pthread</library>
+			</libraries>
 			<dependencies>
 				<dependency>
 					<name>pugixml</name>
