@@ -148,19 +148,27 @@ const std::vector<kul::File> kul::Dir::files(bool recursive) const throw(fs::Exc
 bool kul::File::is() const{
 	return (bool) std::ifstream(d.join(n).c_str());
 }
-bool kul::File::rm() const{
-	if(is()){
-		unlink(real().c_str());
-		return true;
-	}
-	return false;
-}
 bool kul::File::cp(const File& f) const{
 	std::ifstream src(real(), std::ios::binary);
 	std::ofstream dst(f.real(), std::ios::binary);
 	return (bool) (dst << src.rdbuf());
 }
+bool kul::File::mk() const{
+	FILE* pFile;
+	pFile = fopen(full().c_str(),"w");
+	if(pFile != NULL){
+		fclose(pFile);
+	}
+	return pFile != NULL;
+}
 bool kul::File::mv(const Dir& d) const{
+	return false;
+}
+bool kul::File::rm() const{
+	if(is()){
+		unlink(real().c_str());
+		return true;
+	}
 	return false;
 }
 

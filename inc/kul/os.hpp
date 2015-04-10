@@ -126,6 +126,7 @@ class File{
 
 		bool cp(const File& f) const;
 		bool is() const;
+		bool mk() const;
 		bool mv(const Dir& d) const;
 		bool rm() const;
 
