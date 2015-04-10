@@ -8,7 +8,7 @@
 	<project>
 		<name>kul</name>		
 		<version>master</version>
-		<scr scm="git">${github}/kul</scr>
+		<scr scm="git">${github}/kul.git</scr>
 	</project>
 	<profiles>
 		<profile name="c">
