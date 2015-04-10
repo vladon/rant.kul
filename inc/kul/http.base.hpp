@@ -24,6 +24,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_HTTP_BASE_HPP_
 #define _KUL_HTTP_BASE_HPP_
 
+#include "kul/log.hpp"
 #include "kul/hash.hpp"
 
 namespace kul{ namespace http{
@@ -40,7 +41,9 @@ class ARequest{
 		virtual const std::string method() const = 0;
 		virtual const std::string version() const = 0;
 		virtual const std::string toString(const std::string& host, const std::string& res) const = 0;
-		virtual void handle(const std::string& s) = 0;
+		virtual void handle(const std::string& s){
+			KLOG(INF) << s;
+		}
 	public:
 		ARequest(bool text = 1) { if(text) mime("text/html");}
 		virtual ~ARequest(){}
@@ -75,9 +78,6 @@ class _1_1GetRequest : public A1_1Request{
 	private:
 		const std::string method() const { return "GET";}
 	protected:
-		virtual void handle(const std::string& s){
-			KLOG(INF) << s;
-		}
 		virtual const std::string toString(const std::string& host, const std::string& res) const{
 			std::string s(method() + " /" + res);
 			if(atts.size() > 0) s = s + "?";
@@ -100,9 +100,6 @@ class _1_1PostRequest : public A1_1Request{
 	private:
 		const std::string method() const { return "POST";}
 	protected:
-		virtual void handle(const std::string& s){
-			KLOG(INF) << s;
-		}
 		virtual const std::string toString(const std::string& host, const std::string& res) const{
 			std::string s(method() + " /" + res + " " + version());
 			s = s + "\r\nHost: " + host;

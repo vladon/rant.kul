@@ -24,6 +24,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_NET_HPP_
 #define _KUL_NET_HPP_
 
+#include <stdint.h>
+
 namespace kul{ namespace byte{
 
 //Everything gets converted to littie endian - bites are read right to left historically

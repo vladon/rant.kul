@@ -184,7 +184,7 @@ void kul::http::_1_1GetRequest::send(const std::string& h, const int p, const st
 		KEXCEPT(Exception, "Could not connect");
 	// std::string req("GET / HTTP/1.1\r\nHost: " + u + "\r\nConnection: close\r\n\r\n");
 	std::string req(toString(h, res));
-	::send(sock, req.c_str(), req.size(),0);
+	::send(sock, req.c_str(), req.size(), 0);
 	char buffer[10000];
 	int nDataLength;
 	std::string s;

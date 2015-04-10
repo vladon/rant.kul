@@ -38,15 +38,12 @@ namespace kul{ namespace http{
 class Server : public kul::http::AServer{
 	public:
 		Server(const short& p) : AServer(p){}
+		void start() throw(kul::http::Exception);
+		virtual std::string handle(const std::string& res, const std::string& atts) throw(kul::http::Exception){
+			return res + " : " + atts;
+		}
 };
 
-class Client : public kul::http::AClient{
-	private:
-		int sockfd;
-	public:
-		Client() : AClient(){}
-		~Client(){}
-};
 
 }}
 #endif /* _KUL_HTTP_HPP_ */
