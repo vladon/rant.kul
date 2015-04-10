@@ -30,60 +30,116 @@ namespace kul{ namespace http{
 
 class Exception : public kul::Exception{
 	public:
-		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 
 class ARequest{
-	private:
-		const std::string m;
+	protected:
 		kul::hash::map::S2S atts;
+		kul::hash::set::String mis;
+		virtual const std::string method() const = 0;
+		virtual const std::string version() const = 0;
+		virtual const std::string toString(const std::string& host, const std::string& res) const = 0;
+		virtual void handle(const std::string& s) = 0;
 	public:
-		ARequest(const std::string& m) : m(m){}
+		ARequest(bool text = 1) { if(text) mime("text/html");}
 		virtual ~ARequest(){}
-		virtual void send(const int& sockfd) const = 0;
-		void addAttribute(const std::string& k, const std::string& v){
+		virtual void send(const std::string& host, const int port, const std::string& res) = 0;
+		void attribute(const std::string& k, const std::string& v){
 			atts[k] = v;
+		}void mime(const std::string& m){
+			mis.insert(m);
 		}
-		const std::string& 			message()	 const { return m; }
 		const kul::hash::map::S2S& 	attributes() const { return atts; }
+};
+
+// GET /tutorials/other/top-20-mysql-best-practices/ HTTP/1.1
+// Host: net.tutsplus.com
+// User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 (.NET CLR 3.5.30729)
+// Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+// Accept-Language: en-us,en;q=0.5
+// Accept-Encoding: gzip,deflate
+// Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+// Keep-Alive: 300
+// Connection: keep-alive
+// Cookie: PHPSESSID=r2t5uvjq435r4q7ib3vtdjq120
+// Pragma: no-cache
+// Cache-Control: no-cache
+
+class A1_1Request : public ARequest{
+	protected:
+		const std::string version() const{ return "HTTP/1.1";}
+};
+
+class _1_1GetRequest : public A1_1Request{
+	private:
+		const std::string method() const { return "GET";}
+	protected:
+		virtual void handle(const std::string& s){
+			KLOG(INF) << s;
+		}
+		virtual const std::string toString(const std::string& host, const std::string& res) const{
+			std::string s(method() + " /" + res);
+			if(atts.size() > 0) s = s + "?";
+			for(const std::pair<std::string, std::string>& p : atts) s = s + p.first + "=" + p.second + "&";
+			if(atts.size() > 0) s = s.substr(0, s.size() - 1);
+			s = s + " " + version();
+			s = s + "\r\nHost: " + host;
+			if(mis.size() > 0 ) s = s + "\r\nAccept: ";
+			for(const std::string& m : mis) s = s + m + ", ";
+			if(mis.size() > 0 ) s = s.substr(0, s.size() - 2);
+			s = s + "\r\nContent-Length: 0";
+			s = s + "\r\nConnection: close\r\n\r\n";
+			return s;
+		};
+	public:
+		virtual void send(const std::string& host, const int port, const std::string& res);
+};
+
+class _1_1PostRequest : public A1_1Request{
+	private:
+		const std::string method() const { return "POST";}
+	protected:
+		virtual void handle(const std::string& s){
+			KLOG(INF) << s;
+		}
+		virtual const std::string toString(const std::string& host, const std::string& res) const{
+			std::string s(method() + " /" + res + " " + version());
+			s = s + "\r\nHost: " + host;
+			if(mis.size() > 0 ) s = s + "\r\nAccept: ";
+			for(const std::string& m : mis) s = s + m + ", ";
+			if(mis.size() > 0 ) s = s.substr(0, s.size() - 2);
+			int cs = 0;
+			for(const std::pair<std::string, std::string>& p : atts) cs += p.first.size() + p.second.size() + 1;
+			if(atts.size() > 0) cs += atts.size() - 1;
+			s = s + "\r\nContent-Length: " + std::to_string(cs);
+			s = s + "\r\nConnection: close\r\n\r\n";
+			for(const std::pair<std::string, std::string>& p : atts) s = s + p.first + "=" + p.second + "&";
+			if(atts.size() > 0) s = s.substr(0, s.size() - 1);
+			return s;
+		};
+	public:
+		virtual void send(const std::string& host, const int port, const std::string& res);
 };
 
 class AServer{
 	protected:
-		long int up;
+		long int s;
 		short p;
 	public:
-		AServer(const short& p) : p(p){}
+		AServer(const short& p) : s(kul::Now::MILLIS()), p(p){}
 		virtual ~AServer(){}
-		virtual void start() = 0;
-		const long int& upTime(){ return up; }
-		const short& 	port()	{ return p; }
-};
-class AClient{
-	public:
-		AClient(){}
-		virtual ~AClient(){}
-		virtual void start(const std::string& u, const short& p) = 0;
-		virtual void send(const ARequest& r) const = 0;
+		virtual void start() throw(kul::http::Exception) = 0;
+		virtual std::string handle(const std::string& res, const std::string& atts) throw(kul::http::Exception) = 0;
+		const long int	up()	{ return s - kul::Now::MILLIS(); }
+		const short&	port()	{ return p; }
 };
 
+class AResponse{};
+class GetResponse  : public AResponse{};
+class PostResponse : public AResponse{};
 
-class GetRequest  : public ARequest{
-	public:
-		GetRequest(const std::string& m) : ARequest(m){}
-		void send(const int& sockfd) const;
-};
-class PostRequest : public ARequest{
-	public:
-		PostRequest(const std::string& m) : ARequest(m){}
-		void send(const int& sockfd) const;
-};
-
-class Response{};
-class GetResponse  : public Response{};
-class PostResponse : public Response{};
-
-
-}}
+}
+}
 
 #endif /* _KUL_HTTP_BASE_HPP_ */

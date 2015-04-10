@@ -42,7 +42,7 @@ enum mode { NON = 0, INF, ERR, DBG};
 
 class Exception : public kul::Exception{
 	public:
-		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 
 }
@@ -80,16 +80,17 @@ class LogMan{
 		log::mode m;
 		const Logger logger;
 		LogMan() : m(kul::log::mode::NON), logger(){
-			kul::log::mode lM = kul::log::mode::NON;
 			const char* klog = kul::Env::GET("KLOG");
 			if(klog){
 				std::string s(klog);
-				if(s.compare("1") == 0 || s.compare("INF") == 0)      lM = log::mode::INF;
-				else if(s.compare("2") == 0 || s.compare("ERR") == 0) lM = log::mode::ERR;
-				else if(s.compare("3") == 0 || s.compare("DBG") == 0) lM = log::mode::DBG;
+				kul::String::trim(s);
+				if(s.compare("0") == 0 || s.compare("NON") == 0)      m = log::mode::NON;
+				else if(s.compare("1") == 0 || s.compare("INF") == 0) m = log::mode::INF;
+				else if(s.compare("2") == 0 || s.compare("ERR") == 0) m = log::mode::ERR;
+				else if(s.compare("3") == 0 || s.compare("DBG") == 0) m = log::mode::DBG;
 				else KEXCEPT(Exception, "KLOG OPTION UNKNOWN");
 			}
-			m = lM;
+			// logger.log(__FILE__, __LINE__, klog, kul::log::mode::INF);
 		}
 	public:
 		static LogMan& INSTANCE(){

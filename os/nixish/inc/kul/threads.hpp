@@ -6,7 +6,7 @@ Created on: 1 Jan 2013
 
 Copyright (c) 2013, Philip Deegan
 
-This file is part of kul.nix (The Kommon Usage Library for Linux Distros).
+This file is part of kul (The Kommon Usage Library).
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -94,7 +94,6 @@ template <class T>
 class Threader : public AThreader{
 	private:
 		T t;
-		Threader(const T& t) : t(t){}
 	protected:
 		void act(){ 
 			try{
@@ -104,32 +103,31 @@ class Threader : public AThreader{
 			}
 		}
 	public:
-		friend class kul::ThreaderService;
+		Threader(const T& t) : t(t){}
 };
 
 template <class T>
 class RefThreader : public AThreader{
 	private:
-		const Ref<T> r;
-		RefThreader(const Ref<T>& r) : r(r) {}
+		const Ref<T>& ref;
 	protected:
 		void act(){ 
 			try{
-				r.get()();
+				ref.get()();
 			}catch(const std::exception& e){ 
 				this->eP = std::current_exception();
 			}
 		}
 	public:
-		friend class kul::ThreaderService;
+		RefThreader(const Ref<T>& ref) : ref(ref){}
 };
 }// END NAMESPACE threading
 
 template <class T> std::shared_ptr<kul::osi::AThreader> kul::ThreaderService::threader(const T& t){
-	return std::make_shared<kul::threading::Threader<T> >(kul::threading::Threader<T>(t));
+	return std::make_shared<kul::threading::Threader<T> >(t);
 }
 template <class T> std::shared_ptr<kul::osi::AThreader> kul::ThreaderService::refThreader(const Ref<T>& ref){
-	return std::make_shared<kul::threading::RefThreader<T> >(kul::threading::RefThreader<T>(ref));
+	return std::make_shared<kul::threading::RefThreader<T> >(ref);
 }
 
 }// END NAMESPACE kul

@@ -6,7 +6,7 @@ Created on: 24 Feb 2013
 
 Copyright (c) 2013, Philip Deegan
 
-This file is part of kul.win (The Kommon Usage Library for Windows Environments).
+This file is part of kul (The Kommon Usage Library).
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,10 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/log.hpp"
 #include "kul/proc.hpp"
 #include "kul/string.hpp"
+
+const int kul::this_proc::id(){
+	return GetCurrentProcessId();;
+}
 
 void kul::Process::tearDown(){
 	CloseHandle(g_hChildStd_OUT_Rd);

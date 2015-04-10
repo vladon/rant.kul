@@ -45,12 +45,12 @@ namespace threading{
 
 class Exception : public kul::Exception{
 	public:
-		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 
 class InterruptionException : public Exception{
 	public:
-		InterruptionException(const char*f, const int l, std::string s) : Exception(f, l, s){}
+		InterruptionException(const char*f, const int l, const std::string& s) : Exception(f, l, s){}
 };
 }// END NAMESPACE threading
 
@@ -232,7 +232,7 @@ class PredicatedThreadPool : public ThreadPool{
 			}
 		}
 	public:
-		template <class T> PredicatedThreadPool(const T& t, P& pr) 			: ThreadPool(t) 	, p(pr), ps(p.size())	{}
+		template <class T> PredicatedThreadPool(const T& t, P& pr) 			: ThreadPool(t) 	, p(pr), ps(p.size()){}
 		template <class T> PredicatedThreadPool(const Ref<T>& ref, P& pr) 	: ThreadPool(ref)	, p(pr), ps(p.size()){}
 };
 }// END NAMESPACE kul

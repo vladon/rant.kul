@@ -43,7 +43,7 @@ class NodeAttributeValidator;
 
 class Exception : public kul::Exception{
 	public:
-		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 
 class PugiXMLService{
@@ -99,7 +99,7 @@ class Node{
 		const std::string&				name() 			const { return this->n; }
 		const std::string&				txt() 			const { return t; }
 		bool							hasChild(const std::string& s) const;
-		bool							hasAttr(const std::string& s) const;
+		bool							hasAtt(const std::string& s) const;
 };
 
 template <class T>

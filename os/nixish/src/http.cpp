@@ -6,7 +6,7 @@ Created on: 10 Sept 2014
 
 Copyright (c) 2013, Philip Deegan
 
-This file is part of kul.nix (The Kommon Usage Library for Linux Distros).
+This file is part of kul (The Kommon Usage Library).
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "kul/log.hpp"
-#include "kul/net.hpp"
+#include "kul/byte.hpp"
 #include "kul/http.hpp"
 
 void kul::http::Server::start(){
@@ -42,7 +42,7 @@ void kul::http::Server::start(){
 	portno = this->port();
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = INADDR_ANY;
-	serv_addr.sin_port = kul::net::Endian::UINT32(portno);
+	serv_addr.sin_port = kul::byte::Endian::UINT32(portno);
  	
 	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0){
 		 perror("ERROR on binding");

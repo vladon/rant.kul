@@ -55,7 +55,7 @@ bool kul::xml::Node::hasChild(const std::string& s) const{
 	return 0;
 }
 
-bool kul::xml::Node::hasAttr(const std::string& s) const{
+bool kul::xml::Node::hasAtt(const std::string& s) const{
 	try{
 		this->att(s);
 		return 1;

@@ -37,11 +37,10 @@ class Exception : public std::runtime_error{
 		const int l;
 	public:
 		~Exception() NOEXCEPT{}
-		const char* what() const NOEXCEPT{ return std::runtime_error::what();}
 		Exception(const char*f, const int& l, const std::string& s) : std::runtime_error(s), f(f), l(l){}
 		Exception(const Exception& e) : std::runtime_error(e.what()), f(e.file()),  l(e.line()){}
 
-		const std::string debug() 	const { return std::string(std::string(f) + " : " + std::to_string(l) + " : " + std::string(std::runtime_error::what()));}
+		const std::string debug() 	const { return std::string(std::string(f) + " : " + std::to_string(l) + " : " + std::string(what()));}
 		const char* file() 			const { return f;}
 		const int& line() 			const { return l;}
 };

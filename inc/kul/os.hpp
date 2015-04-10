@@ -40,7 +40,7 @@ namespace fs {
 
 class Exception : public kul::Exception{
 	public:
-		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 } // END NAMESPACE FileSystem
 
@@ -132,6 +132,7 @@ class File{
 
 		const std::string& name() const { return n; }
 
+		const std::string full() const { return Dir::JOIN(d.path(), n); }
 		const std::string real() const { return Dir::JOIN(d.real(), n); }
 		const std::string mini() const { return Dir::MINI(real()); }
 		const Dir& dir() const { return d; }

@@ -29,16 +29,22 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "kul/except.hpp"
 
-namespace kul { namespace proc {
+namespace kul { 
+
+namespace this_proc{
+	const int id();
+}
+
+namespace proc{
 
 class Exception : public kul::Exception{
 	public:
-		Exception(const char*f, const int l, std::string s) : kul::Exception(f, l, s){}
+		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 
 class ExitException : public kul::proc::Exception{
 	public:
-		ExitException(const char*f, const int l, std::string s) : Exception(f, l, s){}
+		ExitException(const char*f, const int l, const std::string& s) : Exception(f, l, s){}
 };
 }
 

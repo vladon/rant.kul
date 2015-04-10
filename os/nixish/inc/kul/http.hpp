@@ -21,8 +21,8 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _KUL_NIX_HTTP_HPP_
-#define _KUL_NIX_HTTP_HPP_
+#ifndef _KUL_HTTP_HPP_
+#define _KUL_HTTP_HPP_
 
 #include "kul/http.base.hpp"
 
@@ -38,7 +38,6 @@ namespace kul{ namespace http{
 class Server : public kul::http::AServer{
 	public:
 		Server(const short& p) : AServer(p){}
-		void start();
 };
 
 class Client : public kul::http::AClient{
@@ -47,9 +46,7 @@ class Client : public kul::http::AClient{
 	public:
 		Client() : AClient(){}
 		~Client(){}
-		void start(const std::string& u, const short& p);
-		void send(const ARequest& r) const;
 };
 
 }}
-#endif /* _KUL_NIX_HTTP_HPP_ */
+#endif /* _KUL_HTTP_HPP_ */
