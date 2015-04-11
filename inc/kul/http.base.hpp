@@ -47,7 +47,7 @@ class ARequest{
 	public:
 		ARequest(bool text = 1) { if(text) mime("text/html");}
 		virtual ~ARequest(){}
-		virtual void send(const std::string& host, const int port, const std::string& res) = 0;
+		virtual void send(const std::string& host, const int& port, const std::string& res) = 0;
 		void attribute(const std::string& k, const std::string& v){
 			atts[k] = v;
 		}void mime(const std::string& m){
@@ -55,19 +55,6 @@ class ARequest{
 		}
 		const kul::hash::map::S2S& 	attributes() const { return atts; }
 };
-
-// GET /tutorials/other/top-20-mysql-best-practices/ HTTP/1.1
-// Host: net.tutsplus.com
-// User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 (.NET CLR 3.5.30729)
-// Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-// Accept-Language: en-us,en;q=0.5
-// Accept-Encoding: gzip,deflate
-// Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
-// Keep-Alive: 300
-// Connection: keep-alive
-// Cookie: PHPSESSID=r2t5uvjq435r4q7ib3vtdjq120
-// Pragma: no-cache
-// Cache-Control: no-cache
 
 class A1_1Request : public ARequest{
 	protected:
@@ -93,7 +80,7 @@ class _1_1GetRequest : public A1_1Request{
 			return s;
 		};
 	public:
-		virtual void send(const std::string& host, const int port, const std::string& res);
+		virtual void send(const std::string& host, const int& port = 80, const std::string& res = "");
 };
 
 class _1_1PostRequest : public A1_1Request{
@@ -116,7 +103,7 @@ class _1_1PostRequest : public A1_1Request{
 			return s;
 		};
 	public:
-		virtual void send(const std::string& host, const int port, const std::string& res);
+		virtual void send(const std::string& host, const int& port = 80, const std::string& res = "");
 };
 
 class AServer{

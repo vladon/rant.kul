@@ -170,7 +170,7 @@ void kul::http::Server::postClean(PUCHAR rstr){
 	if(rstr) wFreeM(rstr);
 }
 
-void kul::http::_1_1GetRequest::send(const std::string& h, const int p, const std::string& res){
+void kul::http::_1_1GetRequest::send(const std::string& h, const int& p, const std::string& res){
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0) KEXCEPT(Exception, "WSAStartup failed");
 	SOCKET sock = socket(AF_INET,SOCK_STREAM, IPPROTO_TCP);
@@ -202,7 +202,7 @@ void kul::http::_1_1GetRequest::send(const std::string& h, const int p, const st
 }
 
 
-void kul::http::_1_1PostRequest::send(const std::string& h, const int p, const std::string& res){
+void kul::http::_1_1PostRequest::send(const std::string& h, const int& p, const std::string& res){
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0) KEXCEPT(Exception, "WSAStartup failed");
 	SOCKET sock = socket(AF_INET,SOCK_STREAM, IPPROTO_TCP);
