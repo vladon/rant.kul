@@ -28,9 +28,12 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace kul{ namespace byte{
 
-//Everything gets converted to littie endian - bites are read right to left historically
-//http://stackoverflow.com/questions/2182002/convert-big-endian-to-little-endian-in-c-without-using-provided-func
-class Endian{
+bool isBigEndian(){
+	const int one = 1;
+	return (*(char*)&one) == 0;
+}
+
+class LittleEndian{
 	public:
 		static uint16_t UINT16(uint16_t i){
 			uint16_t n = 42;

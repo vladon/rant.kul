@@ -119,11 +119,8 @@ class AServer{
 		const short&	port()	{ return p; }
 };
 
-class AResponse{};
-class GetResponse  : public AResponse{};
-class PostResponse : public AResponse{};
 
-}
-}
+}// END NAMESPACE http
+}// END NAMESPACE kul
 
 #endif /* _KUL_HTTP_BASE_HPP_ */
