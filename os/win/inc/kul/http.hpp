@@ -27,7 +27,12 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_HTTP_HPP_
 #define _KUL_HTTP_HPP_
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
 #include "kul/log.hpp"
+#include "kul/threads.hpp"
 #include "kul/http.base.hpp"
 
 #ifndef UNICODE
@@ -40,10 +45,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0600
-#endif
-
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
 #endif
 
 #include <http.h>
@@ -85,13 +86,14 @@ class Server : public kul::http::AServer{
 			if(q) CloseHandle(q);
 			HttpTerminate(HTTP_INITIALIZE_SERVER, NULL);
 		}
-		void start() throw(kul::http::Exception);
-		virtual std::string handle(const std::string& res, const std::string& atts) throw(kul::http::Exception){
+		void listen() throw(kul::http::Exception);
+		void stop();
+		virtual const std::string handle(const std::string& res, const std::string& atts){
 			return res + " : " + atts;
 		}
 };
 
-}
-}
+}// END NAMESPACE ipc
+}// END NAMESPACE http
 
 #endif /* _KUL_HTTP_HPP_ */

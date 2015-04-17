@@ -25,7 +25,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/log.hpp"
 #include "kul/http.hpp"
 
-void kul::http::Server::start() throw(kul::http::Exception){
+void kul::http::Server::listen() throw(kul::http::Exception){
 	ULONG RequestBufferLength 	= sizeof(HTTP_REQUEST) + 2048;
 	PCHAR pRequestBuffer 		= (PCHAR) wAlloc(RequestBufferLength);
 	if(pRequestBuffer == NULL)
@@ -36,7 +36,7 @@ void kul::http::Server::start() throw(kul::http::Exception){
 	HTTP_SET_NULL_ID(&requestId);
 	DWORD bytesRead;
 	ULONG r = 0;
-	while(true){
+	while(1){
 		RtlZeroMemory(req, RequestBufferLength);
 		r = HttpReceiveHttpRequest(this->q, requestId, 0, req, RequestBufferLength, &bytesRead, NULL);
 		if(r == NO_ERROR){
@@ -60,6 +60,11 @@ void kul::http::Server::start() throw(kul::http::Exception){
 			HTTP_SET_NULL_ID(&requestId);
 		}else KEXCEPT(Exception, "HttpReceiveHttpRequest failed: " + std::to_string(r));
 	}
+}
+void kul::http::Server::stop(){
+	ULONG r = 0;
+	HttpShutdownRequestQueue(q);
+	if(r != NO_ERROR) KEXCEPT(Exception, "HttpShutdownRequestQueue failed: " + std::to_string(r));
 }
 
 void kul::http::Server::initialiseReponse(HTTP_RESPONSE& response, int status, PSTR reason){
@@ -155,8 +160,7 @@ bool kul::http::Server::post(PHTTP_REQUEST req){
 					return result;
 			}
 		}while(TRUE);
-	}else{
-		// This request does not have an entity body.
+	}else{ // This request does not have an entity body.
 		result = HttpSendHttpResponse(this->q, req->RequestId, 0, &response, NULL, &bytesSent, NULL,0, NULL, NULL);
 		if(result != NO_ERROR){
 			postClean(rstr);
@@ -170,7 +174,7 @@ void kul::http::Server::postClean(PUCHAR rstr){
 	if(rstr) wFreeM(rstr);
 }
 
-void kul::http::_1_1GetRequest::send(const std::string& h, const int& p, const std::string& res){
+void kul::http::_1_1GetRequest::send(const std::string& h, const std::string& res, const int& p){
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0) KEXCEPT(Exception, "WSAStartup failed");
 	SOCKET sock = socket(AF_INET,SOCK_STREAM, IPPROTO_TCP);
@@ -182,7 +186,6 @@ void kul::http::_1_1GetRequest::send(const std::string& h, const int& p, const s
 	SockAddr.sin_addr.s_addr = *((unsigned long*)host->h_addr);
 	if(connect(sock,(SOCKADDR*)(&SockAddr),sizeof(SockAddr)) != 0)
 		KEXCEPT(Exception, "Could not connect");
-	// std::string req("GET / HTTP/1.1\r\nHost: " + u + "\r\nConnection: close\r\n\r\n");
 	std::string req(toString(h, res));
 	::send(sock, req.c_str(), req.size(), 0);
 	char buffer[10000];
@@ -201,8 +204,7 @@ void kul::http::_1_1GetRequest::send(const std::string& h, const int& p, const s
 	WSACleanup();
 }
 
-
-void kul::http::_1_1PostRequest::send(const std::string& h, const int& p, const std::string& res){
+void kul::http::_1_1PostRequest::send(const std::string& h, const std::string& res, const int& p){
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0) KEXCEPT(Exception, "WSAStartup failed");
 	SOCKET sock = socket(AF_INET,SOCK_STREAM, IPPROTO_TCP);
@@ -214,7 +216,6 @@ void kul::http::_1_1PostRequest::send(const std::string& h, const int& p, const 
 	SockAddr.sin_addr.s_addr = *((unsigned long*)host->h_addr);
 	if(connect(sock,(SOCKADDR*)(&SockAddr),sizeof(SockAddr)) != 0)
 		KEXCEPT(Exception, "Could not connect");
-	// std::string req("GET / HTTP/1.1\r\nHost: " + u + "\r\nConnection: close\r\n\r\n");
 	std::string req(toString(h, res));
 	::send(sock, req.c_str(), req.size(), 0);
 	char buffer[10000];

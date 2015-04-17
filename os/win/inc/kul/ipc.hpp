@@ -47,6 +47,7 @@ class Exception : public kul::Exception{
 
 class Server{
 	private:
+		int lp;
 		const std::string uuid;
 		HANDLE hPipe;
 		TCHAR *pchRequest, *pchReply;
@@ -54,22 +55,19 @@ class Server{
 		void start() throw(Exception);
 	protected:
 		virtual void handle(const std::string& s);
-		// void respond(const std::string& s);
 	public:
 		virtual ~Server(){
 			if (pchRequest != NULL) HeapFree(GetProcessHeap(), 0, pchRequest);
 			if (pchReply != NULL) HeapFree(GetProcessHeap(), 0, pchReply);
 		}
 		void listen() throw(Exception);
-		Server() throw(Exception) : uuid(_KUL_IPC_UUID_PREFIX_ + std::string("pid\\") + std::to_string(kul::this_proc::id())){ start();}
-		Server(const std::string& ui) throw(Exception) : uuid(_KUL_IPC_UUID_PREFIX_ + ui){ start();}
+		Server(const int& lp = -1) throw(Exception) : lp(lp), uuid(_KUL_IPC_UUID_PREFIX_ + std::string("pid\\") + std::to_string(kul::this_proc::id())){ start();}
+		Server(const std::string& ui, const int& lp = -1) throw(Exception) : uuid(_KUL_IPC_UUID_PREFIX_ + ui), lp(lp){ start();}
 };
 
 class Client{
 	private:
-		bool m;
-		std::string uuid;
-		std::unique_ptr<std::string> str;
+		const std::string uuid;
 
 		HANDLE hPipe; 
 		void start() throw(Exception);
@@ -78,11 +76,9 @@ class Client{
 		virtual ~Client(){
 			stop();
 		}
-		Client(const std::string& ui) throw(Exception) : m(1), uuid(_KUL_IPC_UUID_PREFIX_ + ui) { start(); }
-		Client(const int& pid) throw(Exception) : m(1), uuid(_KUL_IPC_UUID_PREFIX_ + std::string("pid\\") + std::to_string(pid)) { start(); }
+		Client(const std::string& ui) throw(Exception) : uuid(_KUL_IPC_UUID_PREFIX_ + ui) { start(); }
+		Client(const int& pid) throw(Exception) : uuid(_KUL_IPC_UUID_PREFIX_ + std::string("pid\\") + std::to_string(pid)) { start(); }
 		virtual void send(const std::string& m) const throw(Exception);
-		// const std::string* receive() throw(Exception);
-
 };
 
 }// END NAMESPACE ipc

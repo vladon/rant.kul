@@ -53,4 +53,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 	#define UINTMAX_MAX _UI64_MAX
 #endif /*  UINTMAX_MAX */
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
 #endif /* _KUL_DEF_HPP_ */

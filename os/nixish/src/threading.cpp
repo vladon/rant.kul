@@ -32,9 +32,14 @@ const std::string kul::this_thread::id(){
 	os << std::hex << pthread_self();
 	return os.str();
 }
-void kul::this_thread::uSleep(const unsigned long& nanos){
-	std::this_thread::sleep_for(std::chrono::nanoseconds(nanos));
-}
+
+
 void kul::this_thread::sleep(const unsigned long& millis){
 	std::this_thread::sleep_for(std::chrono::milliseconds(millis));
+}
+void kul::this_thread::uSleep(const unsigned long& micros){
+	std::this_thread::sleep_for(std::chrono::microseconds(micros));
+}
+void kul::this_thread::nSleep(const unsigned long& nanos){
+	std::this_thread::sleep_for(std::chrono::nanoseconds(nanos));
 }

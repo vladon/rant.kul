@@ -37,8 +37,9 @@ namespace kul{
 
 namespace this_thread{	
 	const std::string id();
-	void uSleep(const unsigned long& nanos);
 	void sleep(const unsigned long& millis);
+	void uSleep(const unsigned long& micros);
+	void nSleep(const unsigned long& nanos);
 }// END NAMESPACE this_thread
 
 namespace threading{
@@ -163,7 +164,7 @@ class ThreadPool{
 				std::shared_ptr<kul::osi::AThreader> at = pT->threader();
 				at->run();
 				ts.push(at);
-				this_thread::uSleep(__KUL_THREAD_SPAWN_UWAIT__);
+				this_thread::nSleep(__KUL_THREAD_SPAWN_UWAIT__);
 			}
 		}
 	public:
@@ -216,7 +217,7 @@ class PredicatedThreadPool : public ThreadPool{
 					std::shared_ptr<kul::osi::AThreader> at = pT->threader();
 					at->run();
 					ts.push(at);
-					this_thread::uSleep(__KUL_THREAD_SPAWN_UWAIT__);
+					this_thread::nSleep(__KUL_THREAD_SPAWN_UWAIT__);
 				}
 				const std::shared_ptr<kul::osi::AThreader>* at = &ts.front();
 				while(at && (*at)->finished()){
