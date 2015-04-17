@@ -21,16 +21,16 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _KUL_NET_HPP_
-#define _KUL_NET_HPP_
+#ifndef _KUL_BYTE_HPP_
+#define _KUL_BYTE_HPP_
 
 #include <stdint.h>
 
 namespace kul{ namespace byte{
 
-//Everything gets converted to littie endian - bites are read right to left historically
-//http://stackoverflow.com/questions/2182002/convert-big-endian-to-little-endian-in-c-without-using-provided-func
-class Endian{
+bool isBigEndian();
+
+class LittleEndian{
 	public:
 		static uint16_t UINT16(uint16_t i){
 			uint16_t n = 42;
@@ -85,4 +85,4 @@ class Endian{
 
 }}
 
-#endif /* _KUL_NET_HPP_ */
+#endif /* _KUL_BYTE_HPP_ */

@@ -24,7 +24,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_HTTP_BASE_HPP_
 #define _KUL_HTTP_BASE_HPP_
 
-#include "kul/log.hpp"
 #include "kul/hash.hpp"
 
 namespace kul{ namespace http{

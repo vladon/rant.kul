@@ -84,14 +84,15 @@ void kul::Process::run() throw (kul::proc::Exception){
 				alive = kill(pid(), 0) == 0;
 				kul::this_thread::sleep(10);
 				if(FD_ISSET(popPip[1], &childOutFds)) {
-
+					bool b = 0;
 					do {
 						int ret = 0;
 						char cOut[2048] = {'\0'};
 						ret = recall(read(popPip[1], cOut, sizeof(cOut)));
 						if (ret < 0){
-							if ((errno != EAGAIN) || (errno != EWOULDBLOCK))
+							if(b && ((errno != EAGAIN) || (errno != EWOULDBLOCK)))
 								error(__LINE__, "read on childout failed");
+							if(((errno != EAGAIN) || (errno != EWOULDBLOCK))) b = 1;
 						}
 						else if (ret)
 							for(const std::string& s : kul::String::lines(cOut))
@@ -100,13 +101,15 @@ void kul::Process::run() throw (kul::proc::Exception){
 					} while(ret > 0);
 				}
 				if(FD_ISSET(popPip[2], &childOutFds)) {
+					bool b = 0;
 					do {
 						int ret = 0;
 						char cErr[2048] = {'\0'};
 						ret = recall(read(popPip[2], cErr, sizeof(cErr)));
 						if (ret < 0){
-							if ((errno != EAGAIN) || (errno != EWOULDBLOCK))
+							if(b && ((errno != EAGAIN) || (errno != EWOULDBLOCK)))
 								error(__LINE__, "read on childout failed");
+							if(((errno != EAGAIN) || (errno != EWOULDBLOCK))) b = 1;
 						}
 						else if (ret)
 							for(const std::string& s : kul::String::lines(cErr))

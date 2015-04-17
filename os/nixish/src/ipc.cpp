@@ -29,20 +29,19 @@ void kul::ipc::Server::start() throw(kul::ipc::Exception){
 }
 void kul::ipc::Server::listen() throw(kul::ipc::Exception){
 	char buff[BUFSIZE];
-	while(1){
+	while(lp){
 		memset(buff, 0, BUFSIZE);
-		fd = open(uuid.full().c_str(), O_RDWR);//, O_RDONLY);
+		fd = open(uuid.full().c_str(), O_RDONLY);
 		if (fd == -1) KEXCEPT(kul::ipc::Exception, "Cannot open FIFO for read");
-		read(fd, buff, 9);
-		std::istringstream sspid(buff);
-		int pid;
-		sspid >> pid;
-		if(pid == kul::this_proc::id())
-			KEXCEPT(kul::ipc::Exception, "wut");
+		// uncomment to check for PID 
+		// read(fd, buff, 9);
+		// std::istringstream sspid(buff);
+		// int pid;
+		// sspid >> pid;
+		// if(pid == kul::this_proc::id())
+		// 	KEXCEPT(kul::ipc::Exception, "wut");
+		// memset(buff, 0, BUFSIZE);
 
-		kul::File mutex(uuid.name() + "_" + std::to_string(pid), uuid.dir());
-		while(mutex.is()) kul::this_thread::sleep(10);
-		memset(buff, 0, BUFSIZE);
 		int l;
 		read(fd, buff, 3);
 		std::istringstream ssl(buff);
@@ -51,21 +50,19 @@ void kul::ipc::Server::listen() throw(kul::ipc::Exception){
 		read(fd, buff, l);
 		handle(buff);
 		close(fd);
+		if(lp != -1) lp--;
 	}
 }
 
 void kul::ipc::Client::send(const std::string& m) const throw(kul::ipc::Exception){
-	kul::File mutex(uuid.name() + "_" + std::to_string(kul::this_proc::id()), uuid.dir());
-	if(!mutex.mk()) KEXCEPT(kul::ipc::Exception, "Cannot create mutex for request");
-	if(!mutex.is()) KEXCEPT(kul::ipc::Exception, "is not mute");
-	writePID();
+	// uncomment to check for PID 
+	// writePID();
 	writeLength(m);
 	write(fd, m.c_str(), m.size());
-	mutex.rm();
 }
 
 void kul::ipc::Client::start() throw(kul::ipc::Exception){
-	fd = open(uuid.full().c_str(), O_RDWR);//O_WRONLY);
+	fd = open(uuid.full().c_str(), O_WRONLY);
 	if (fd == -1) KEXCEPT(kul::ipc::Exception, "Cannot contact server");
 }
 void kul::ipc::Client::stop() const throw(kul::ipc::Exception){

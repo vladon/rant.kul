@@ -72,13 +72,13 @@ class AThreader : public kul::osi::AThreader{
 		pthread_t thread;
 		static void* threadFunction(void* aThreader){
 			reinterpret_cast<AThreader*>(aThreader)->act(); 
-			reinterpret_cast<AThreader*>(aThreader)->setFinished(); 
+			reinterpret_cast<AThreader*>(aThreader)->setFinished();
 			return 0;
 		}
 	protected:
 		AThreader() : kul::osi::AThreader(), thread(){}
 		virtual ~AThreader(){}
-		void join()			{
+		void join(){
 			while(!finished()) this_thread::sleep(1);
 		}
 		void detach()		{}

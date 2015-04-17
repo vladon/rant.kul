@@ -83,7 +83,7 @@ class TestThreadPoolQObject : public TestThreadPoolObject{
 
 class TestIPCServer : public kul::ipc::Server{
 	public:
-		TestIPCServer(const std::string& uuid) : kul::ipc::Server(uuid, 1){} // UUID 	CHECKS ONCE
+		TestIPCServer() : kul::ipc::Server("uuid", 1){} // UUID 	CHECKS ONCE
 		void handle(const std::string& s){
 			KLOG(INF) << "TestIPCServer " << s;
 		}
@@ -91,17 +91,19 @@ class TestIPCServer : public kul::ipc::Server{
 class TestIPCThread{
 	public: 
 		void operator()(){
-			TestIPCServer("uuid").listen();
+			TestIPCServer().listen();
 		}
 };
 class TestIPC{ 
 	public: 
 		TestIPC(){
 			TestIPCThread ipc;
-			kul::Thread t(ipc);
+			kul::Ref<TestIPCThread> ref(ipc);
+			kul::Thread t(ref);
 			t.run();
-			kul::this_thread::sleep(500);
+			kul::this_thread::sleep(1000);
 			kul::ipc::Client("uuid").send("TestIPCClient");
+			t.join();
 		}
 };
 
@@ -132,9 +134,10 @@ class TestHTTP{
 		TestHTTP(){
 			TestHTTPServer serv;
 			TestHTTPThread http(serv);
-			kul::Thread t(http);
+			kul::Ref<TestHTTPThread> ref(http);
+			kul::Thread t(ref);
 			t.run();
-			kul::this_thread::sleep(500);
+			kul::this_thread::sleep(1000);
 			TestGetRequest().send("localhost", "index.html", 666);
 			serv.stop();
 			t.join();

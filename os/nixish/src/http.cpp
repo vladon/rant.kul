@@ -21,39 +21,24 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "kul/byte.hpp"
+#include "kul/bash.hpp"
 #include "kul/http.hpp"
 
-void kul::http::Server::start() throw(kul::http::Exception){
-	int32_t sockfd, newsockfd, portno;
-	socklen_t clilen;
+#include <arpa/inet.h>
+
+void kul::http::Server::listen() throw(kul::http::Exception){
+	int32_t newsockfd;
+	int  r;
 	char buffer[256];
-	struct sockaddr_in serv_addr, cli_addr;
-	int  n;
-
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0)
-		KEXCEPT(Exception, "HTTP Server error opening socket");
-
-	bzero((char *) &serv_addr, sizeof(serv_addr));
-	portno = this->port();
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_addr.s_addr = INADDR_ANY;
-	serv_addr.sin_port = kul::byte::Endian::UINT32(portno);
-	
-	if (bind(sockfd, (struct sockaddr*) &serv_addr, sizeof(serv_addr)) < 0)
-		KEXCEPT(Exception, "HTTP Server error on binding");
-
-	listen(sockfd, 5);
-	clilen = sizeof(cli_addr);
 	while(1){
 		newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 		if (newsockfd < 0)
 			KEXCEPT(Exception, "HTTP Server error on accept");
+		sockets.push(newsockfd);
 
 		bzero(buffer,256);
-		n = read(newsockfd, buffer, 255);
-		if (n < 0) perror("ERROR reading from socket");
+		r = read(newsockfd, buffer, 255);
+		if (r < 0) perror("ERROR reading from socket");
 
 		std::string b(buffer);
 		std::vector<std::string> lines = kul::String::lines(b); 
@@ -61,7 +46,7 @@ void kul::http::Server::start() throw(kul::http::Exception){
 		std::string s(l0[1]);
 		std::string a;
 		if(l0[0].compare("GET") == 0){
-			if(s.find("?") != std::string::npos){ //GET
+			if(s.find("?") != std::string::npos){
 				a = s.substr(s.find("?") + 1);
 				s = s.substr(0, s.find("?"));
 			}
@@ -79,76 +64,92 @@ void kul::http::Server::start() throw(kul::http::Exception){
 			KEXCEPT(Exception, "HTTP Server request type not handled :" + l0[0]);
 
 		std::string h(handle(s, a));
-		n = write(newsockfd, h.c_str(), h.length());
+		std::string ret("HTTP/1.1 200 OK\r\n");
+		ret += "Content-Type: text/html\r\n";
+		ret += "Server: kserv\r\n";
+		ret += "Date: " + kul::DateTime::NOW() + "\r\n";
+		ret += "Connection: close\r\n";
+		ret += "Content-Length: " + std::to_string(h.size()) + "\r\n\r\n";
+		ret += h;
+		r = write(newsockfd, ret.c_str(), ret.length());
 		close(newsockfd);
 	}
 }
-
-void kul::http::_1_1GetRequest::send(const std::string& h, const int p, const std::string& res){
-	struct sockaddr_in servAddr;
-	int32_t sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (sockfd < 0)
-		KEXCEPT(Exception, "HTTPGet error opening socket");
-
-	std::string hh(h);
-	memset(&servAddr, 0, sizeof(servAddr));
-	servAddr.sin_family   = AF_INET;
-	servAddr.sin_addr.s_addr = INADDR_ANY;
-	servAddr.sin_port	   = kul::byte::Endian::INT16(p);
-	int host = getnameinfo((struct sockaddr *) &servAddr, 
-							sizeof(struct sockaddr), &hh[0], h.size(), 
-							0, 0, NI_NUMERICHOST | NI_NUMERICSERV);
-	if(host < 0)
-		KEXCEPT(Exception, "HTTPGet No such host: " + h);
-	if(connect(sockfd, (struct sockaddr *) &servAddr, sizeof(servAddr)) < 0)
-		KEXCEPT(Exception, "HTTPGet request failed to connect");
-	std::string req(toString(h, res));
-	::send(sockfd, req.c_str(), req.size(), 0); 
-	char buffer[10000];
-	int nDataLength;
-	std::string s;
-	while((nDataLength = recv(sockfd,buffer,10000,0)) > 0){
-		int i = 0;
-		while (buffer[i] >= 32 || buffer[i] == '\n' || buffer[i] == '\r') {
-			s += buffer[i];//do something with buffer[i]
-			i += 1;
-		}
-		memset(&buffer[0], 0, sizeof(buffer));
+void kul::http::Server::stop(){
+	while(!sockets.empty()){
+		shutdown(sockets.front(), SHUT_RDWR);
+		sockets.pop();
 	}
-	handle(s);
-	close(sockfd);
 }
 
-void kul::http::_1_1PostRequest::send(const std::string& h, const int p, const std::string& res){
+void kul::http::_1_1GetRequest::send(const std::string& h, const std::string& res, const int& p){
+	int32_t sck = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (sck < 0)
+		KEXCEPT(Exception, "HTTP GET error opening socket");
 	struct sockaddr_in servAddr;
-	int32_t sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (sockfd < 0)
-		KEXCEPT(Exception, "HTTPGet error opening socket");
-	std::string hh(h);
 	memset(&servAddr, 0, sizeof(servAddr));
 	servAddr.sin_family   = AF_INET;
-	servAddr.sin_addr.s_addr = INADDR_ANY;
-	servAddr.sin_port	   = kul::byte::Endian::INT16(p);
-	int host = getnameinfo((struct sockaddr *) &servAddr, 
-							sizeof(struct sockaddr), &hh[0], h.size(), 
-							0, 0, NI_NUMERICHOST | NI_NUMERICSERV);
-	if(host < 0)
-		KEXCEPT(Exception, "HTTPGet No such host: " + h);
-	if(connect(sockfd, (struct sockaddr *) &servAddr, sizeof(servAddr)) < 0)
-		KEXCEPT(Exception, "HTTPGet request failed to connect");
-	std::string req(toString(h, res));
-	::send(sockfd, req.c_str(), req.size(), 0); 
-	char buffer[10000];
-	int nDataLength;
-	std::string s;
-	while((nDataLength = recv(sockfd,buffer,10000,0)) > 0){
-		int i = 0;
-		while (buffer[i] >= 32 || buffer[i] == '\n' || buffer[i] == '\r') {
-			s += buffer[i];//do something with buffer[i]
-			i += 1;
+	int r = 0;
+	if(h.compare("localhost") == 0 || h.compare("127.0.0.1") == 0){
+		servAddr.sin_port = kul::byte::isBigEndian() ? htons(p) : kul::byte::LittleEndian::UINT32(p);
+		servAddr.sin_addr.s_addr = INADDR_ANY;
+		r = connect(sck, (struct sockaddr*) &servAddr, sizeof(servAddr));
+	}
+	else{
+		std::vector<std::string> ips(kul::bash::digHostIPv4(h));
+		if(ips.empty()) KEXCEPT(Exception, "HTTP GET No such host: " + h);
+		servAddr.sin_port = htons(p);
+		for(std::string& ip : ips){
+			servAddr.sin_addr.s_addr = inet_addr(&ip[0]);
+			if((r = connect(sck, (struct sockaddr*) &servAddr, sizeof(servAddr))) == 0) break;
 		}
+	}
+	if(r < 0) KEXCEPT(Exception, "HTTP GET failed to connect to host: " + h);
+	std::string req(toString(h, res));
+	::send(sck, req.c_str(), req.size(), 0); 
+	char buffer[10000];
+	std::string s;
+	while(recv(sck, buffer, 10000, 0) > 0){
+		int i = 0;
+		while (buffer[i] >= 32 || buffer[i] == '\n' || buffer[i] == '\r') s += buffer[i++];
 		memset(&buffer[0], 0, sizeof(buffer));
 	}
 	handle(s);
-	close(sockfd);
+	close(sck);
+}
+
+void kul::http::_1_1PostRequest::send(const std::string& h, const std::string& res, const int& p){
+	int32_t sck = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (sck < 0)
+		KEXCEPT(Exception, "HTTP GET error opening socket");
+	struct sockaddr_in servAddr;
+	memset(&servAddr, 0, sizeof(servAddr));
+	servAddr.sin_family   = AF_INET;
+	int r = 0;
+	if(h.compare("localhost") == 0 || h.compare("127.0.0.1") == 0){
+		servAddr.sin_port = kul::byte::isBigEndian() ? htons(p) : kul::byte::LittleEndian::UINT32(p);
+		servAddr.sin_addr.s_addr = INADDR_ANY;
+		r = connect(sck, (struct sockaddr*) &servAddr, sizeof(servAddr));
+	}
+	else{
+		std::vector<std::string> ips(kul::bash::digHostIPv4(h));
+		if(ips.empty()) KEXCEPT(Exception, "HTTP GET No such host: " + h);
+		servAddr.sin_port = htons(p);
+		for(std::string& ip : ips){
+			servAddr.sin_addr.s_addr = inet_addr(&ip[0]);
+			if((r = connect(sck, (struct sockaddr*) &servAddr, sizeof(servAddr))) == 0) break;
+		}
+	}
+	if(r < 0) KEXCEPT(Exception, "HTTP GET failed to connect to host: " + h);
+	std::string req(toString(h, res));
+	::send(sck, req.c_str(), req.size(), 0); 
+	char buffer[10000];
+	std::string s;
+	while(recv(sck, buffer, 10000, 0) > 0){
+		int i = 0;
+		while (buffer[i] >= 32 || buffer[i] == '\n' || buffer[i] == '\r') s += buffer[i++];
+		memset(&buffer[0], 0, sizeof(buffer));
+	}
+	handle(s);
+	close(sck);
 }
