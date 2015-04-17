@@ -24,7 +24,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_HTTP_BASE_HPP_
 #define _KUL_HTTP_BASE_HPP_
 
-#include "kul/log.hpp"
 #include "kul/hash.hpp"
 
 namespace kul{ namespace http{
@@ -47,7 +46,7 @@ class ARequest{
 	public:
 		ARequest(bool text = 1) { if(text) mime("text/html");}
 		virtual ~ARequest(){}
-		virtual void send(const std::string& host, const int& port, const std::string& res) = 0;
+		virtual void send(const std::string& host, const std::string& res, const int& port) = 0;
 		void attribute(const std::string& k, const std::string& v){
 			atts[k] = v;
 		}void mime(const std::string& m){
@@ -80,7 +79,7 @@ class _1_1GetRequest : public A1_1Request{
 			return s;
 		};
 	public:
-		virtual void send(const std::string& host, const int& port = 80, const std::string& res = "");
+		virtual void send(const std::string& host, const std::string& res = "", const int& port = 80);
 };
 
 class _1_1PostRequest : public A1_1Request{
@@ -103,7 +102,7 @@ class _1_1PostRequest : public A1_1Request{
 			return s;
 		};
 	public:
-		virtual void send(const std::string& host, const int& port = 80, const std::string& res = "");
+		virtual void send(const std::string& host, const std::string& res = "", const int& port = 80);
 };
 
 class AServer{
@@ -113,8 +112,9 @@ class AServer{
 	public:
 		AServer(const short& p) : s(kul::Now::MILLIS()), p(p){}
 		virtual ~AServer(){}
-		virtual void start() throw(kul::http::Exception) = 0;
-		virtual std::string handle(const std::string& res, const std::string& atts) throw(kul::http::Exception) = 0;
+		virtual void listen() throw(kul::http::Exception) = 0;
+		virtual void stop() = 0;
+		virtual const std::string handle(const std::string& res, const std::string& atts) = 0;
 		const long int	up()	{ return s - kul::Now::MILLIS(); }
 		const short&	port()	{ return p; }
 };

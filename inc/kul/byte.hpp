@@ -21,17 +21,14 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _KUL_NET_HPP_
-#define _KUL_NET_HPP_
+#ifndef _KUL_BYTE_HPP_
+#define _KUL_BYTE_HPP_
 
 #include <stdint.h>
 
 namespace kul{ namespace byte{
 
-bool isBigEndian(){
-	const int one = 1;
-	return (*(char*)&one) == 0;
-}
+bool isBigEndian();
 
 class LittleEndian{
 	public:
@@ -88,4 +85,4 @@ class LittleEndian{
 
 }}
 
-#endif /* _KUL_NET_HPP_ */
+#endif /* _KUL_BYTE_HPP_ */

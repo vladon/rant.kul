@@ -22,36 +22,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "kul/bash.hpp"
-#include "kul/byte.hpp"
 #include "kul/http.hpp"
 
 #include <arpa/inet.h>
 
-void kul::http::Server::start() throw(kul::http::Exception){
-	int32_t sockfd, newsockfd;
-	socklen_t clilen;
-	char buffer[256];
-	struct sockaddr_in serv_addr, cli_addr;
+void kul::http::Server::listen() throw(kul::http::Exception){
+	int32_t newsockfd;
 	int  r;
-
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0)
-		KEXCEPT(Exception, "HTTP Server error opening socket");
-
-	bzero((char *) &serv_addr, sizeof(serv_addr));
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_addr.s_addr = INADDR_ANY;
-	serv_addr.sin_port = kul::byte::isBigEndian() ? htons(this->port()) : kul::byte::LittleEndian::UINT32(this->port());
-	
-	if (bind(sockfd, (struct sockaddr*) &serv_addr, sizeof(serv_addr)) < 0)
-		KEXCEPT(Exception, "HTTP Server error on binding");
-
-	listen(sockfd, 5);
-	clilen = sizeof(cli_addr);
+	char buffer[256];
 	while(1){
 		newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 		if (newsockfd < 0)
 			KEXCEPT(Exception, "HTTP Server error on accept");
+		sockets.push(newsockfd);
 
 		bzero(buffer,256);
 		r = read(newsockfd, buffer, 255);
@@ -63,7 +46,7 @@ void kul::http::Server::start() throw(kul::http::Exception){
 		std::string s(l0[1]);
 		std::string a;
 		if(l0[0].compare("GET") == 0){
-			if(s.find("?") != std::string::npos){ //GET
+			if(s.find("?") != std::string::npos){
 				a = s.substr(s.find("?") + 1);
 				s = s.substr(0, s.find("?"));
 			}
@@ -92,8 +75,14 @@ void kul::http::Server::start() throw(kul::http::Exception){
 		close(newsockfd);
 	}
 }
+void kul::http::Server::stop(){
+	while(!sockets.empty()){
+		shutdown(sockets.front(), SHUT_RDWR);
+		sockets.pop();
+	}
+}
 
-void kul::http::_1_1GetRequest::send(const std::string& h, const int& p, const std::string& res){
+void kul::http::_1_1GetRequest::send(const std::string& h, const std::string& res, const int& p){
 	int32_t sck = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (sck < 0)
 		KEXCEPT(Exception, "HTTP GET error opening socket");
@@ -129,7 +118,7 @@ void kul::http::_1_1GetRequest::send(const std::string& h, const int& p, const s
 	close(sck);
 }
 
-void kul::http::_1_1PostRequest::send(const std::string& h, const int& p, const std::string& res){
+void kul::http::_1_1PostRequest::send(const std::string& h, const std::string& res, const int& p){
 	int32_t sck = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (sck < 0)
 		KEXCEPT(Exception, "HTTP GET error opening socket");

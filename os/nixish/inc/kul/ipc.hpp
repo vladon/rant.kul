@@ -64,6 +64,7 @@ class IPCCall{
 };
 class Server : public IPCCall{
 	private:
+		int lp;
 		const kul::File uuid;
 
 		void start() throw(Exception);
@@ -75,8 +76,8 @@ class Server : public IPCCall{
 	public:
 		virtual ~Server(){}
 		void listen() throw(Exception);
-		Server() throw(Exception) : uuid(std::to_string(kul::this_proc::id()), Dir(_KUL_IPC_UUID_PREFIX_ + std::string("pid/"))){ start();}
-		Server(const std::string& ui) throw(Exception) : uuid(ui, Dir(_KUL_IPC_UUID_PREFIX_)){ start();}
+		Server(const int& lp = -1) throw(Exception) : lp(lp), uuid(std::to_string(kul::this_proc::id()), Dir(_KUL_IPC_UUID_PREFIX_ + std::string("pid/"))){ start();}
+		Server(const std::string& ui, const int& lp = -1) throw(Exception) : lp(lp), uuid(ui, Dir(_KUL_IPC_UUID_PREFIX_)){ start();}
 };
 
 class Client : public IPCCall{

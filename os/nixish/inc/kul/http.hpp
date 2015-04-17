@@ -24,6 +24,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_HTTP_HPP_
 #define _KUL_HTTP_HPP_
 
+#include "kul/log.hpp"
+#include "kul/byte.hpp"
 #include "kul/http.base.hpp"
 
 #include <netdb.h>
@@ -36,10 +38,32 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 namespace kul{ namespace http{
 
 class Server : public kul::http::AServer{
+	private:
+		int32_t sockfd;
+		socklen_t clilen;
+		struct sockaddr_in serv_addr, cli_addr;
+
+		std::queue<int> sockets;
 	public:
-		Server(const short& p) : AServer(p){}
-		void start() throw(kul::http::Exception);
-		virtual std::string handle(const std::string& res, const std::string& atts) throw(kul::http::Exception){
+		Server(const short& p) : AServer(p){
+			sockfd = socket(AF_INET, SOCK_STREAM, 0);
+			if (sockfd < 0)
+				KEXCEPT(Exception, "HTTP Server error opening socket");
+			sockets.push(sockfd);
+			bzero((char *) &serv_addr, sizeof(serv_addr));
+			serv_addr.sin_family = AF_INET;
+			serv_addr.sin_addr.s_addr = INADDR_ANY;
+			serv_addr.sin_port = kul::byte::isBigEndian() ? htons(this->port()) : kul::byte::LittleEndian::UINT32(this->port());
+			
+			if (bind(sockfd, (struct sockaddr*) &serv_addr, sizeof(serv_addr)) < 0)
+				KEXCEPT(Exception, "HTTP Server error on binding");
+
+			::listen(sockfd, 5);
+			clilen = sizeof(cli_addr);
+		}
+		void listen() throw(kul::http::Exception);
+		void stop();
+		virtual const std::string handle(const std::string& res, const std::string& atts){
 			return res + " : " + atts;
 		}
 };
