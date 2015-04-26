@@ -29,9 +29,12 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/ipc.hpp"
 #include "kul/log.hpp"
 #include "kul/http.hpp"
+#include "kul/math.hpp"
 #include "kul/proc.hpp"
 #include "kul/time.hpp"
 #include "kul/threads.hpp"
+
+#include <iomanip>
 
 namespace kul {
 class TestThreadObject{
@@ -231,12 +234,30 @@ class test{
 			KLOG(INF) << "CPU CORES: " << kul::cpu::cores();
 			KLOG(INF) << "MAX THREADS: " << kul::cpu::threads();
 
-			try{
-				TestIPC ipc;
-				TestHTTP http;
-			}
-			catch(const kul::Exception& e){ KOUT(NON) << e.what(); }
-			catch(const std::exception& e){ KOUT(NON) << e.what(); }
+			TestIPC ipc;
+			TestHTTP http;
+
+			KLOG(INF) << kul::math::abs(1);
+			KLOG(INF) << kul::math::abs(-1);
+
+			KLOG(INF) << kul::math::root(16);
+			KLOG(INF) << kul::math::root(16, 2);
+			KLOG(INF) << kul::math::root(64, 3);
+			KLOG(INF) << kul::math::root(64, 6);
+			KLOG(INF) << std::setprecision(16) << kul::math::root<double>(64, 6, 6);
+			KLOG(INF) << kul::math::root(64, 6, 8);
+			KLOG(INF) << kul::math::root(64, 6, 3, 3);
+			// kul::math::root(root of, nth root, iterations, starting guess);
+
+			KLOG(INF) << std::setprecision(6) << kul::math::root(2, 2);
+			KLOG(INF) << std::setprecision(16) << kul::math::root<double>(2, 3);
+
+			KLOG(INF) << kul::math::pow(2, 0);
+			KLOG(INF) << kul::math::pow(-2, 0);
+			KLOG(INF) << kul::math::pow(2, 5);
+			KLOG(INF) << kul::math::pow(2, -5);
+			KLOG(INF) << kul::math::pow(2.2974, 5);
+			KLOG(INF) << kul::math::pow(2, 6);
 		}
 };
 
