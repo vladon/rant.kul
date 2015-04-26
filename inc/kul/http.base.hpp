@@ -109,7 +109,6 @@ class AServer{
 	protected:
 		short p;
 		long int s;
-		kul::Mutex mut;
 	public:
 		AServer(const short& p) : p(p), s(kul::Now::MILLIS()){}
 		virtual ~AServer(){}
