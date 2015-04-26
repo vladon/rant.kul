@@ -82,15 +82,22 @@ class LogMan{
 		LogMan() : m(kul::log::mode::NON), logger(){
 			const char* klog = kul::Env::GET("KLOG");
 			if(klog){
+				bool e = 0;
 				std::string s(klog);
-				kul::String::trim(s);
-				if(s.compare("0") == 0 || s.compare("NON") == 0)      m = log::mode::NON;
-				else if(s.compare("1") == 0 || s.compare("INF") == 0) m = log::mode::INF;
-				else if(s.compare("2") == 0 || s.compare("ERR") == 0) m = log::mode::ERR;
-				else if(s.compare("3") == 0 || s.compare("DBG") == 0) m = log::mode::DBG;
-				else KEXCEPT(Exception, "KLOG OPTION UNKNOWN");
+				if(s.empty()) e = 1;
+				else{
+					kul::String::trim(s);
+					if(s.compare("0") == 0 || s.compare("NON") == 0)      m = log::mode::NON;
+					else if(s.compare("1") == 0 || s.compare("INF") == 0) m = log::mode::INF;
+					else if(s.compare("2") == 0 || s.compare("ERR") == 0) m = log::mode::ERR;
+					else if(s.compare("3") == 0 || s.compare("DBG") == 0) m = log::mode::DBG;
+					else e = 1;
+				} 
+				if(e){
+					m = log::mode::ERR;
+					out(m, "ERROR DISCERNING LOG LEVEL, ERROR LEVEL IN USE");
+				}
 			}
-			// logger.log(__FILE__, __LINE__, klog, kul::log::mode::INF);
 		}
 	public:
 		static LogMan& INSTANCE(){
@@ -110,18 +117,15 @@ class LogMan{
 
 class Message{
 	protected:
-		std::string msg;
+		std::stringstream ss;
 		const log::mode& m;
 
 		Message(const log::mode& m) : m(m){}
 	public:
 		template<class T> Message& operator<<(const T& s){
-			std::stringstream ss;
 			ss << s;
-			msg += ss.str();
 			return *this;
 		}
-
 };
 class LogMessage : public Message{
 	private:
@@ -129,15 +133,14 @@ class LogMessage : public Message{
 		const int& l;
 	public:		
 		~LogMessage(){
-			LogMan::INSTANCE().log(f, l, m, msg);
+			LogMan::INSTANCE().log(f, l, m, ss.str());
 		}
-		LogMessage(const char* f, const int& l, const log::mode& m) :  Message(m), f(f), l(l){}
+		LogMessage(const char* f, const int& l, const log::mode& m) : Message(m), f(f), l(l){}
 };
-
 class OutMessage : public Message{
 	public:
 		~OutMessage(){
-			LogMan::INSTANCE().out(m, msg);
+			LogMan::INSTANCE().out(m, ss.str());
 		}
 		OutMessage(const log::mode& m = kul::log::mode::NON) : Message(m){}
 };
