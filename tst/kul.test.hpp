@@ -237,14 +237,11 @@ class test{
 			TestIPC ipc;
 			TestHTTP http;
 
-			KLOG(INF) << kul::math::abs(1);
 			KLOG(INF) << kul::math::abs(-1);
 
 			KLOG(INF) << kul::math::root(16);
-			KLOG(INF) << kul::math::root(16, 2);
 			KLOG(INF) << kul::math::root(64, 3);
-			KLOG(INF) << kul::math::root(64, 6);
-			KLOG(INF) << std::setprecision(16) << kul::math::root<double>(64, 6, 6);
+			KLOG(INF) << std::setprecision(16) << kul::math::root<double>(64, 6);
 			KLOG(INF) << kul::math::root(64, 6, 8);
 			KLOG(INF) << kul::math::root(64, 6, 3, 3);
 			// kul::math::root(root of, nth root, iterations, starting guess);
@@ -252,7 +249,6 @@ class test{
 			KLOG(INF) << std::setprecision(6) << kul::math::root(2, 2);
 			KLOG(INF) << std::setprecision(16) << kul::math::root<double>(2, 3);
 
-			KLOG(INF) << kul::math::pow(2, 0);
 			KLOG(INF) << kul::math::pow(-2, 0);
 			KLOG(INF) << kul::math::pow(2, 5);
 			KLOG(INF) << kul::math::pow(2, -5);
