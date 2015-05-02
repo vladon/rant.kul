@@ -27,7 +27,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <memory>
 #include <time.h>
 #include <fstream>
-#include <iostream>
 #include <stdexcept>
 
 #include "kul/os.hpp"
@@ -41,35 +40,105 @@ class Exception : public kul::Exception{
 		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 
-class Reader{
+class AReader{
 	private:
-		std::ifstream f;
 		std::unique_ptr<std::string> str;
-	public:
-		Reader(const char* c) : f(c) { if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");}
-		const std::string* read(){
+	protected:
+		const std::string* readLine(std::ifstream& f){
 			str.reset();
 			std::string s;
 			if(f.good()){
-				getline(f, s);
-				str = std::make_unique<std::string>(s);
+				std::vector<char> v;
+				v.resize(512);
+				f.getline(&v[0], 512);
+				v.resize(f.gcount());
+				str = std::make_unique<std::string>(std::string(v.begin(), v.end()));
+			}
+			return str.get();
+		}
+		const std::string* read(std::ifstream& f, const uint& s){
+			str.reset();
+			if(f.good()){
+				std::vector<char> v;
+				std::stringstream ss;
+				v.resize(s);
+				f.read(&v[0], s);
+				v.resize(f.gcount());
+				str = std::make_unique<std::string>(std::string(v.begin(), v.end()));
 			}
 			return str.get();
 		}
 };
-
-class Writer{
+class Reader : public AReader{
 	private:
-		std::ofstream ofs;
+		std::ifstream f;
 	public:
-		Writer(const char*f)  {
-			if(!f) KEXCEPT(Exception, "FileException: Empty c string used.");
-			ofs.open(f);
+		Reader(const char* c) : f(c, std::ios::in) { 
+			if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");
 		}
-		~Writer() { ofs.close();}
-		void write(const char*c, bool nl = false){ 
-			if(nl) 	ofs << c << kul::os::newLine();
-			else	ofs << c;
+		~Reader() { f.close();}
+		const std::string* readLine(){
+			return AReader::readLine(f);
+		}
+		const std::string* read(const uint& s){
+			return AReader::read(f, s);
+		}
+};
+class BinaryReader : public AReader{
+	private:
+		std::ifstream f;
+	public:
+		BinaryReader(const char* c) : f(c, std::ios::in |std::ios::binary){
+			if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");
+		}
+		~BinaryReader() { f.close();}
+		const std::string* readLine(){
+			return AReader::readLine(f);
+		}
+		const std::string* read(const uint& s){
+			return AReader::read(f, s);
+		}
+};
+
+
+class AWriter{
+	protected:
+		void write(std::ofstream& f, const char*c, bool nl){ 
+			if(nl) 	f << c << kul::os::newLine();
+			else	f << c;
+		}
+};
+class Writer: public AWriter{
+	private:
+		std::ofstream f;
+	public:
+		Writer(const char*c) : f(c, std::ios::out){ 
+			if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");
+		}
+		~Writer() { f.close();}
+		void write(const char*c, bool nl = false){
+			return AWriter::write(f, c, nl);
+		}
+		template<class T> Writer& operator<<(const T& s){
+			f << s;
+			return *this;
+		}
+};
+class BinaryWriter : public AWriter{
+	private:
+		std::ofstream f;
+	public:
+		BinaryWriter(const char* c) : f(c, std::ios::out |std::ios::binary){ 
+			if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");
+			f.unsetf(std::ios_base::skipws);
+		}
+		~BinaryWriter() { f.close();}
+		void write(const char*c, bool nl = false){
+			return AWriter::write(f, c, nl);
+		}
+		template<class T> BinaryWriter& operator<<(const T& s){
+			f << s;
+			return *this;
 		}
 };
 
