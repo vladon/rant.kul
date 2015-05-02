@@ -28,7 +28,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <chrono>
 #include <memory>
 #include <thread>
-#include <iostream>
 
 #include "kul/defs.hpp" 
 #include "kul/except.hpp"
