@@ -28,7 +28,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <tchar.h>
 #include <stdio.h>
 #include <sstream>
-#include <iostream>
 #include <strsafe.h>
 #include <windows.h> 
 
