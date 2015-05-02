@@ -109,14 +109,19 @@ class AServer{
 	protected:
 		short p;
 		long int s;
+		kul::hash::set::String rhs;;
 	public:
 		AServer(const short& p) : p(p), s(kul::Now::MILLIS()){}
 		virtual ~AServer(){}
 		virtual void listen() throw(kul::http::Exception) = 0;
 		virtual void stop() = 0;
-		virtual const std::string handle(const std::string& res, const std::string& atts) = 0;
+		virtual const std::pair<kul::hash::set::String, std::string> handle(const std::string& res, const std::string& atts) = 0;
 		const long int	up()	{ return s - kul::Now::MILLIS(); }
 		const short&	port()	{ return p; }
+
+		void addResponseHeader(const std::string& rh){ 
+			rhs.insert(rh);
+		}
 };
 
 

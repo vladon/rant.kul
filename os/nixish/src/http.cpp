@@ -63,14 +63,16 @@ void kul::http::Server::listen() throw(kul::http::Exception){
 		}else
 			KEXCEPT(Exception, "HTTP Server request type not handled :" + l0[0]);
 
-		std::string h(handle(s, a));
+		const std::pair<kul::hash::set::String, std::string>& p(handle(s, a));
 		std::string ret("HTTP/1.1 200 OK\r\n");
 		ret += "Content-Type: text/html\r\n";
 		ret += "Server: kserv\r\n";
 		ret += "Date: " + kul::DateTime::NOW() + "\r\n";
 		ret += "Connection: close\r\n";
-		ret += "Content-Length: " + std::to_string(h.size()) + "\r\n\r\n";
-		ret += h;
+		for(const std::string& rh : p.first) ret += rh  + "\r\n";
+		for(const std::string& rh : rhs) ret += rh  + "\r\n";
+		ret += "\r\n";
+		ret += p.second;
 		r = write(newsockfd, ret.c_str(), ret.length());
 		close(newsockfd);
 	}
