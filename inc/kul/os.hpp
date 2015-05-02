@@ -113,15 +113,21 @@ class File{
 		Dir d;
 	public:
 		File(const std::string& n, bool m = false) : n(Dir::LOCL(n)){
-			try{
-				d = Dir(Dir::PRNT(Dir::REAL(this->n)), m);
-			}catch(const kul::fs::Exception& e){
-				d = Dir(Env::CWD());
-			}
+			if(n.find(Dir::SEP()) != std::string::npos){
+				this->d = Dir(n.substr(0, n.rfind(Dir::SEP())));
+				this->n = this->n.substr(n.rfind(Dir::SEP()) + 1);
+			}else
+				try{
+					d = Dir(Dir::PRNT(Dir::REAL(this->n)), m);
+				}catch(const kul::fs::Exception& e){
+					this->d = Dir(Env::CWD());
+				}
 			if(this->n.find(d.path()) != std::string::npos)
 				this->n = this->n.substr(d.path().size() + 1);
 		}
 		File(const std::string& n, const Dir& d) : n(n), d(d){}
+		File(const std::string& n, const char* c) : n(n), d(c){}
+		File(const std::string& n, const std::string& d1) : n(n), d(d1){}
 		File(const File& f) : n(f.n), d(f.d){}
 
 		bool cp(const File& f) const;
