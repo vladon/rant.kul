@@ -73,7 +73,7 @@ void kul::http::Server::listen() throw(kul::http::Exception){
 		for(const std::string& rh : rhs) ret += rh  + "\r\n";
 		ret += "\r\n";
 		ret += p.second;
-		r = write(newsockfd, ret.c_str(), ret.length());
+		r = ::send(newsockfd, ret.c_str(), ret.length(), 0);
 		close(newsockfd);
 	}
 }
@@ -110,13 +110,13 @@ void kul::http::_1_1GetRequest::send(const std::string& h, const std::string& re
 	std::string req(toString(h, res));
 	::send(sck, req.c_str(), req.size(), 0); 
 	char buffer[10000];
-	std::string s;
-	while(recv(sck, buffer, 10000, 0) > 0){
-		int i = 0;
-		while (buffer[i] >= 32 || buffer[i] == '\n' || buffer[i] == '\r') s += buffer[i++];
+	int d = 0;
+	std::stringstream ss;
+	while((d = recv(sck, buffer, 10000, 0)) > 0){
+		for(int i = 0; i < d; i++) ss << buffer[i];
 		memset(&buffer[0], 0, sizeof(buffer));
 	}
-	handle(s);
+	handle(ss.str());
 	close(sck);
 }
 
@@ -146,12 +146,12 @@ void kul::http::_1_1PostRequest::send(const std::string& h, const std::string& r
 	std::string req(toString(h, res));
 	::send(sck, req.c_str(), req.size(), 0); 
 	char buffer[10000];
-	std::string s;
-	while(recv(sck, buffer, 10000, 0) > 0){
-		int i = 0;
-		while (buffer[i] >= 32 || buffer[i] == '\n' || buffer[i] == '\r') s += buffer[i++];
+	int d = 0;
+	std::stringstream ss;
+	while((d = recv(sck, buffer, 10000, 0)) > 0){
+		for(int i = 0; i < d; i++) ss << buffer[i];
 		memset(&buffer[0], 0, sizeof(buffer));
 	}
-	handle(s);
+	handle(ss.str());
 	close(sck);
 }
