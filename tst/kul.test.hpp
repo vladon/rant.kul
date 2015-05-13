@@ -113,8 +113,11 @@ class TestIPC{
 class TestHTTPServer : public kul::http::Server{
 	public:
 		TestHTTPServer() : kul::http::Server(666){}
-		const std::string handle(const std::string& res, const std::string& atts){
-			return "TestHTTPServer " + res + " : " + atts; 
+		const std::pair<kul::hash::set::String, std::string> handle(const std::string& res, const std::string& atts){
+			std::string s("TestHTTPServer " + res + " : " + atts);
+			kul::hash::set::String set;
+			set.insert("Content-Length: " + std::to_string(s.size()));
+			return std::pair<kul::hash::set::String, std::string>(set, s);			
 		}
 };
 class TestGetRequest : public kul::http::_1_1GetRequest{
