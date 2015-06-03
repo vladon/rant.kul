@@ -25,7 +25,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/proc.hpp"
 #include "kul/string.hpp"
 
-const int kul::this_proc::id(){
+int kul::this_proc::id(){
 	return GetCurrentProcessId();;
 }
 

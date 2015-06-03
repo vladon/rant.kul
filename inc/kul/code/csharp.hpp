@@ -73,19 +73,14 @@ class WINCompiler : public Compiler{
 
 			return pc;
 		}
-		const CompilerProcessCapture buildSharedLibrary(
+		const CompilerProcessCapture buildLibrary(
 			const std::string& linker, 
 			const std::vector<std::string>& objects, 
-			const kul::File& out) const throw (kul::Exception){ 
+			const kul::File& out, 
+			const Mode& mode) const throw (kul::Exception){
 
-			return CompilerProcessCapture();
-		}
-		const CompilerProcessCapture buildStaticLibrary(
-			const std::string& archiver, 
-			const std::vector<std::string>& objects, 
-			const kul::File& out) const throw (kul::Exception){ 
+			KEXCEPT(Exception, "Not implemented in C Sharp");
 
-			KEXCEPT(Exception, "No static libraries in C Sharp");
 		}
 		const CompilerProcessCapture compileSource(
 			const std::string& compiler, 
@@ -94,7 +89,7 @@ class WINCompiler : public Compiler{
 			const std::string& in, 
 			const std::string& out) const throw (kul::Exception){
 
-			return CompilerProcessCapture();
+			KEXCEPT(Exception, "Not implemented in C Sharp");
 		}
 		virtual void preCompileHeader(			
 			const std::vector<std::string>& incs,

@@ -131,12 +131,12 @@ enum ArgType{ FLAG = 0, STRING, MAYBE};
 
 class Arg : public Cmd{
 	private:
-		const char* d;
+		const char d;
 		ArgType t;
 	public:
-		Arg(const char* d, const char* dd, ArgType t) : Cmd(dd), d(d), t(t){}
-		Arg(const char* d, const char* dd) : Cmd(dd), d(d), t(ArgType::FLAG){}
-		const char* dash() 			const { return d;}
+		Arg(const char d, const char* dd, ArgType t) : Cmd(dd), d(d), t(t){}
+		Arg(const char d, const char* dd) : Cmd(dd), d(d), t(ArgType::FLAG){}
+		const char  dash() 			const { return d;}
 		const char* dashdash() 		const { return command();}
 		const ArgType& type() 		const { return t; }
 };
@@ -154,12 +154,12 @@ class Args{
 			for(const Cmd& cmd : cmds) if(strcmp(cmd.command(), c) == 0) return cmd;
 			KEXCEPT(ArgNotFoundException, "No command " + std::string(c) + " found");
 		}
-		const Arg& dashes(const char* c){
-			for(const Arg& a : arguments()) if(strcmp(a.dash(), c) == 0) return a;
-			KEXCEPT(ArgNotFoundException, "No argument " + std::string(c) + " found");
+		const Arg& dashes(const char c){
+			for(const Arg& a : arguments()) if(a.dash() == c) return a;
+			KEXCEPT(ArgNotFoundException, "No argument " + std::to_string(c) + " found");
 		}
 		const Arg& doubleDashes(const char* c){
-			for(const Arg& a : arguments()) if(strcmp(a.dashdash(), c) == 0) return a;
+			for(const Arg& a : arguments()) if(strcmp(a.command(), c) == 0) return a;
 			KEXCEPT(ArgNotFoundException, "No argument " + std::string(c) + " found");
 		}
 		const std::vector<Cmd>& commands()	const { return cmds;}

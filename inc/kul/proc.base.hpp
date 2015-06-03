@@ -32,7 +32,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 namespace kul { 
 
 namespace this_proc{
-	const int id();
+	int id();
 }
 
 namespace proc{
@@ -95,7 +95,7 @@ class AProcess{
 			this->run();
 		}
 		const unsigned int& pid() 	const { return pi; }
-		const bool started() 		const { return pi > 0; }
+		const bool started()		const { return pi > 0; }
 		virtual std::string	toString(){
 			std::string s(argv[0]);
 			if(d.size()){

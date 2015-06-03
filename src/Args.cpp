@@ -32,15 +32,11 @@ void kul::cli::Args::process(int argc, char* argv[]) throw(ArgNotFoundException)
 	for(int i = 1; i < argc; i++)
 		cliArg += std::string(argv[i]) + " ";
 
-	for(const Arg& a : arguments())
-		if(strlen(a.dash()) > 1)
-			KEXCEPT(Exception, "Short param too long, only one character allowed");
-
 	for(const Arg& a1 : arguments())
 		for(const Arg& a2 : arguments()){
 			if(&a1 == &a2) continue;
-			if(strcmp(a1.dash(), a2.dash()) == 0
-					|| strcmp(a1.dashdash(), a2.dashdash()) == 0)
+			if((a1.dash() != ' ') && (a1.dash() == a2.dash()
+					|| strcmp(a1.dashdash(), a2.dashdash()) == 0))
 				KEXCEPT(Exception, "Duplicate argument detected");
 		}
 	for(const Cmd& c1 : commands())
@@ -91,21 +87,20 @@ void kul::cli::Args::process(int argc, char* argv[]) throw(ArgNotFoundException)
 			if(c.find("=") != std::string::npos){
 				if(c.substr(0, c.find("=")).size() > 1)
 					KEXCEPT(Exception, "Cannot mix flag and non-flag arguments");
-				arg = const_cast<Arg*>(&dashes(c.substr(0, c.find("=")).c_str()));
+				arg = const_cast<Arg*>(&dashes(c.at(0)));
 				vals[arg->dashdash()] = c.substr(c.find("=") + 1);
 				valExpected = 0;
 			}else if(c.length() > 1){
 				std::string a = c;
 				for(unsigned int i = 0; i < c.length(); i++){
-					std::string s(a.substr(0, 1));
-					arg = const_cast<Arg*>(&dashes(s.c_str()));
+					arg = const_cast<Arg*>(&dashes(a.at(0)));
 					if(arg->type() == ArgType::STRING)
 						KEXCEPT(Exception, "Cannot mix flag and non-flag arguments");
 					vals[arg->dashdash()] = "";
 					if(a.length() > 1) a = a.substr(1);
 				}
 			}else{
-				arg = const_cast<Arg*>(&dashes(c.c_str()));
+				arg = const_cast<Arg*>(&dashes(c.at(0)));
 				valExpected = arg->type();
 				vals[arg->dashdash()] = "";
 			}

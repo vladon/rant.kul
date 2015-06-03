@@ -86,57 +86,35 @@ class GCCompiler : public CCompiler{
 			}catch(const kul::proc::Exception& e){
 				pc.exception(std::current_exception());
 			}
-
+			pc.tmp(out);
 			return pc; 
 		}
-		const CompilerProcessCapture buildSharedLibrary(
-			const std::string& linker, 
+		const CompilerProcessCapture buildLibrary(
+			const std::string& proc, 
 			const std::vector<std::string>& objects, 
-			const kul::File& out) const throw (kul::Exception){ 
+			const kul::File& out, 
+			const Mode& mode) const throw (kul::Exception) {
 
-			const std::string lib = out.dir().join(sharedLib(out.name()));
-			std::string cmd = linker;
+			std::string lib = out.dir().join(sharedLib(out.name()));
+			if(mode == Mode::STAT) lib = out.dir().join(staticLib(out.name()));
+			std::string cmd = proc;
 			std::vector<std::string> bits;
-			if(linker.find(" ") != std::string::npos){
-				bits = kul::String::split(linker, ' ');
+			if(proc.find(" ") != std::string::npos){
+				bits = kul::String::split(proc, ' ');
 				cmd = bits[0];
 			}
 			kul::Process p(cmd);
 			CompilerProcessCapture pc(p);
 			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
-			p.addArg("-shared").addArg("-o").addArg(lib);
-			for(const std::string& o : objects)	p.addArg(o);	
+			if(mode == Mode::SHAR)		p.addArg("-shared");
+			p.addArg("-o").addArg(lib);
+			for(const std::string& o : objects)	p.addArg(o);
 			try{
 				p.start();
 			}catch(const kul::proc::Exception& e){
 				pc.exception(std::current_exception());
 			}
-
-			return pc; 
-		}
-		const CompilerProcessCapture buildStaticLibrary(
-			const std::string& archiver, 
-			const std::vector<std::string>& objects, 
-			const kul::File& out) const throw (kul::Exception){ 
-
-			const std::string lib = out.dir().join(staticLib(out.name()));
-			std::string cmd = archiver;
-			std::vector<std::string> bits;
-			if(archiver.find(" ") != std::string::npos){
-				bits = kul::String::split(archiver, ' ');
-				cmd = bits[0];
-			}
-			kul::Process p(cmd);
-			CompilerProcessCapture pc(p);
-			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
-			p.addArg(lib).addArg("-c");
-			for(const std::string& o : objects)	p.addArg(o);	
-			try{
-				p.start();
-			}catch(const kul::proc::Exception& e){
-				pc.exception(std::current_exception());
-			}
-
+			pc.tmp(lib);
 			return pc; 
 		}
 		const CompilerProcessCapture compileSource(
@@ -293,44 +271,21 @@ class WINCompiler : public CCompiler{
 			}catch(const kul::proc::Exception& e){
 				pc.exception(std::current_exception());
 			}
-
+			pc.tmp(exe);
 			return pc; 
 		}
-		const CompilerProcessCapture buildSharedLibrary(
-			const std::string& linker, 
+		const CompilerProcessCapture buildLibrary(
+			const std::string& proc, 
 			const std::vector<std::string>& objects, 
-			const kul::File& out) const throw (kul::Exception){ 
+			const kul::File& out, 
+			const Mode& mode) const throw (kul::Exception) {
 
-			const std::string lib = out.dir().join(sharedLib(out.name()));
-			std::string cmd = linker;
+			std::string lib = out.dir().join(sharedLib(out.name()));
+			if(mode == Mode::STAT) lib = out.dir().join(staticLib(out.name()));
+			std::string cmd = proc;
 			std::vector<std::string> bits;
-			if(linker.find(" ") != std::string::npos){
-				bits = kul::String::split(linker, ' ');
-				cmd = bits[0];
-			}
-			kul::Process p(cmd);
-			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
-			CompilerProcessCapture pc(p);
-			p.addArg("/OUT:\"" + lib + "\"").addArg("/NOLOGO");
-			for(const std::string& o : objects)	p.addArg(o);	
-			try{
-				p.start();
-			}catch(const kul::proc::Exception& e){
-				pc.exception(std::current_exception());
-			}
-
-			return pc;
-		}
-		const CompilerProcessCapture buildStaticLibrary(
-			const std::string& archiver, 
-			const std::vector<std::string>& objects, 
-			const kul::File& out) const throw (kul::Exception){ 
-
-			const std::string lib = out.dir().join(staticLib(out.name()));
-			std::string cmd = archiver;
-			std::vector<std::string> bits;
-			if(archiver.find(" ") != std::string::npos){
-				bits = kul::String::split(archiver, ' ');
+			if(proc.find(" ") != std::string::npos){
+				bits = kul::String::split(proc, ' ');
 				cmd = bits[0];
 			}
 			kul::Process p(cmd);
@@ -343,7 +298,8 @@ class WINCompiler : public CCompiler{
 			}catch(const kul::proc::Exception& e){
 				pc.exception(std::current_exception());
 			}
-			return pc;
+			pc.tmp(lib);
+			return pc; 
 		}
 		const CompilerProcessCapture compileSource(
 			const std::string& compiler, 

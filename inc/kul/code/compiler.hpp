@@ -39,6 +39,7 @@ enum Mode { NONE = 0, STAT, SHAR};
 class CompilerProcessCapture : public kul::ProcessCapture{
 	private:
 		std::exception_ptr ep;
+		std::string t;
 	public:
 		CompilerProcessCapture() : ep(){}
 		CompilerProcessCapture(kul::AProcess& p) : kul::ProcessCapture(p), ep(){}
@@ -46,6 +47,9 @@ class CompilerProcessCapture : public kul::ProcessCapture{
 
 		void exception(const std::exception_ptr& e)	{ ep = e; }
 		const std::exception_ptr& exception() const	{ return ep; }
+
+		void tmp(const std::string t) 	{ this->t = t; }
+		const std::string& tmp() const 	{ return t; }
 };
 
 class Compiler{	
@@ -63,14 +67,11 @@ class Compiler{
 			const std::vector<std::string>& libPaths,
 			const std::string& out, 
 			const Mode& mode) 			const throw (kul::Exception) = 0;
-		virtual const CompilerProcessCapture buildSharedLibrary(
-			const std::string& linker, 
+		virtual const CompilerProcessCapture buildLibrary(
+			const std::string& proc, 
 			const std::vector<std::string>& objects, 	
-			const kul::File& out) const throw (kul::Exception) = 0;
-		virtual const CompilerProcessCapture buildStaticLibrary(
-			const std::string& archiver,
-			const std::vector<std::string>& objects, 	
-			const kul::File& out) const throw (kul::Exception) = 0;
+			const kul::File& out, 
+			const Mode& mode) 			const throw (kul::Exception) = 0;
 		virtual const CompilerProcessCapture compileSource	(
 			const std::string& compiler,
 			const std::vector<std::string>& args, 		

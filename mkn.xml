@@ -28,7 +28,7 @@
 					<scr scm="git">${pugixml}</scr>
 				</dependency>
 			</dependencies>	
-			<build type="lib" mode="static" lang="cpp"/> 
+			<build type="lib" lang="cpp"/> 
 		</profile>
 		<profile name="nixc" parent="c">
 			<includes>
