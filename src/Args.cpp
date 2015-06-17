@@ -94,7 +94,9 @@ void kul::cli::Args::process(int argc, char* argv[]) throw(ArgNotFoundException)
 				std::string a = c;
 				for(unsigned int i = 0; i < c.length(); i++){
 					arg = const_cast<Arg*>(&dashes(a.at(0)));
-					if(arg->type() == ArgType::STRING)
+					if(i + 1 == c.length())
+						valExpected = arg->type();
+					else if(arg->type() == ArgType::STRING)
 						KEXCEPT(Exception, "Cannot mix flag and non-flag arguments");
 					vals[arg->dashdash()] = "";
 					if(a.length() > 1) a = a.substr(1);

@@ -37,9 +37,6 @@
 			<sources>
 				<source>./os/nixish/src</source>
 			</sources>
-			<libraries>
-				<library>pthread</library>
-			</libraries>
 			<dependencies>
 				<dependency>
 					<name>google.sparsehash</name>
