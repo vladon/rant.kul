@@ -164,9 +164,8 @@ class test{
 			for(const kul::Dir& d : kul::Dir(kul::Env::CWD()).dirs()) 
 				for(const kul::File& f : d.files()) KLOG(INF) << d.join(f.name());
 
-			kul::Process p("echo");
 			try{
-				p.addArg("Hello").addArg("World").start();
+				kul::Process("echo").addArg("Hello").addArg("World").start();
 			}catch(const kul::proc::Exception& e){ 
 				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
 				KLOG(INF) << "Error expected on windows without echo on path";
