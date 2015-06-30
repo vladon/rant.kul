@@ -89,10 +89,8 @@ class Server : public kul::http::AServer{
 		void listen() throw(kul::http::Exception);
 		void stop();
 		virtual const std::pair<kul::hash::set::String, std::string> handle(const std::string& res, const std::string& atts){
-			kul::hash::set::String rhs;
-			std::string s(res + " : " + atts);
-			rhs.insert("Content-Length: " + std::to_string(s.size()));
-			return std::pair<kul::hash::set::String, std::string>(rhs, s);
+			return std::pair<kul::hash::set::String, std::string>(
+				kul::hash::set::String(), res + " : " + atts);
 		}
 };
 
