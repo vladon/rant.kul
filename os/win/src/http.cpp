@@ -92,11 +92,11 @@ bool kul::http::Server::get(PHTTP_REQUEST req){
 		a = s.substr(s.find("?") + 1);
 		s = s.substr(0, s.find("?"));
 	}
-	std::string h(handle(s, a));
+	const std::pair<kul::hash::set::String, std::string>& p(handle(s, a));
 	if(h.size()){
 		dataChunk.DataChunkType 			= HttpDataChunkFromMemory;
-		dataChunk.FromMemory.pBuffer 		= (PVOID) h.c_str();
-		dataChunk.FromMemory.BufferLength 	= h.size();
+		dataChunk.FromMemory.pBuffer 		= (PVOID) h.second.c_str();
+		dataChunk.FromMemory.BufferLength 	= h.second.size();
 
 		response.EntityChunkCount 			= 1;
 		response.pEntityChunks 				= &dataChunk;
@@ -144,10 +144,10 @@ bool kul::http::Server::post(PHTTP_REQUEST req){
 						postClean(rstr);
 						KEXCEPT(Exception, "HttpSendHttpResponse failed with: " + std::to_string(result));
 					}
-					std::string h(handle(req->pRawUrl, atts));
+					const std::pair<kul::hash::set::String, std::string>& p(handle(s, a));
 					dataChunk.DataChunkType 			= HttpDataChunkFromMemory;
-					dataChunk.FromMemory.pBuffer 		= (PVOID) h.c_str();
-					dataChunk.FromMemory.BufferLength 	= h.size();
+					dataChunk.FromMemory.pBuffer 		= (PVOID) h.second.c_str();
+					dataChunk.FromMemory.BufferLength 	= h.second.size();
 					result = HttpSendResponseEntityBody(this->q, req->RequestId, 0, 1, &dataChunk, NULL, NULL, 0, NULL, NULL);
 					if(result != NO_ERROR){
 						postClean(rstr);
