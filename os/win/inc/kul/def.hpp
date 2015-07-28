@@ -30,9 +30,9 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
  	#define __KUL_OS__ "win"
 #endif /*  __KUL_OS__ */
 
-#ifndef __KUL_THREAD_SPAWN_UWAIT__
- 	#define __KUL_THREAD_SPAWN_UWAIT__ 0
-#endif /*  __KUL_THREAD_SPAWN_UWAIT__ */
+#ifndef __KUL_THREAD_SPAWN_WAIT__
+ 	#define __KUL_THREAD_SPAWN_WAIT__ 0
+#endif /*  __KUL_THREAD_SPAWN_WAIT__ */
 
 #ifndef PROCESS_BUFFER_SIZE
 	#define PROCESS_BUFFER_SIZE 4096
