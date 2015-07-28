@@ -71,9 +71,13 @@ void kul::Process::run() throw (kul::proc::Exception){
 			popPip[1] = outFd[0];
 			popPip[2] = errFd[0];
 
+#ifdef __KUL_PROC_BLOCK_ERR__
 			if((ret = fcntl(popPip[1], F_SETFL, O_NONBLOCK)) < 0) error(__LINE__, "Failed nonblocking for popPip[1]");
 			if((ret = fcntl(popPip[2], F_SETFL, O_NONBLOCK)) < 0) error(__LINE__, "Failed nonblocking for popPip[2]");
-
+#else
+			fcntl(popPip[1], F_SETFL, O_NONBLOCK);
+			fcntl(popPip[2], F_SETFL, O_NONBLOCK);
+#endif
 			fd_set childOutFds;
 			FD_ZERO(&childOutFds);
 			FD_SET(popPip[1], &childOutFds);
