@@ -91,13 +91,7 @@ bool kul::Dir::mk() const{
 	return mkdir(locl().c_str(), 0777) == 0;
 }
 void kul::Dir::rm() const{
-	if(is()){
-		for(const kul::File& f : files())
-			f.rm();
-		for(const kul::Dir& d : dirs())
-			d.rm();
-		rmdir(path().c_str());
-	}
+	if(is()) remove(real().c_str());	
 }
 bool kul::Dir::root() const{
 	return is() && real().size() == 1;
@@ -166,7 +160,7 @@ bool kul::File::mv(const Dir& d) const{
 }
 bool kul::File::rm() const{
 	if(is()){
-		unlink(real().c_str());
+		remove(real().c_str());
 		return true;
 	}
 	return false;
