@@ -163,7 +163,7 @@ class ThreadPool{
 				std::shared_ptr<kul::osi::AThreader> at = pT->threader();
 				at->run();
 				ts.push(at);
-				this_thread::nSleep(__KUL_THREAD_SPAWN_UWAIT__);
+				this_thread::nSleep(__KUL_THREAD_SPAWN_WAIT__);
 			}
 		}
 	public:
@@ -216,7 +216,7 @@ class PredicatedThreadPool : public ThreadPool{
 					std::shared_ptr<kul::osi::AThreader> at = pT->threader();
 					at->run();
 					ts.push(at);
-					this_thread::nSleep(__KUL_THREAD_SPAWN_UWAIT__);
+					this_thread::nSleep(__KUL_THREAD_SPAWN_WAIT__);
 				}
 				const std::shared_ptr<kul::osi::AThreader>* at = &ts.front();
 				while(at && (*at)->finished()){
