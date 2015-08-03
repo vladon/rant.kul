@@ -84,7 +84,7 @@ void kul::Process::run() throw (kul::Exception){
 		NULL,			// primary thread security attributes 
 		TRUE,			// handles are inherited 
 		0,				// creation flags		 
-		environmentVariables().size() ? chNewEnv : NULL,
+		vars().size() ? chNewEnv : NULL,
 		dir,
 		&siStartInfo,	// STARTUPINFO pointer 
 		&piProcInfo);	// receives PROCESS_INFORMATION
