@@ -32,7 +32,7 @@ const std::vector<std::string> digHostIPv4(const std::string& h){
 	kul::Process p("dig");
 	kul::ProcessCapture pc(p);
 	try{
-		p.addArg(h).addArg("+short").start();
+		p.arg(h).arg("+short").start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}
@@ -42,7 +42,7 @@ const std::vector<std::string> digHostIPv6(const std::string& h){
 	kul::Process p("dig");
 	kul::ProcessCapture pc(p);
 	try{
-		p.addArg("AAAA").addArg(h).addArg("+short").start();
+		p.arg("AAAA").arg(h).arg("+short").start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}

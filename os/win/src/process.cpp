@@ -68,7 +68,7 @@ void kul::Process::run() throw (kul::Exception){
 	TCHAR chNewEnv[PROCESS_BUFFER_SIZE];
 	LPTSTR lpszCurrentVariable;
 	lpszCurrentVariable = (LPTSTR) chNewEnv;
-	for(std::pair<const std::string , const std::string > evs : environmentVariables()){
+	for(std::pair<const std::string , const std::string > evs : vars()){
 		if(FAILED(StringCchCopy(lpszCurrentVariable, PROCESS_BUFFER_SIZE, TEXT(std::string(evs.first + "=" + evs.second).c_str())))) 
 			error(__LINE__, "String copy failed");
 		lpszCurrentVariable += lstrlen(lpszCurrentVariable) + 1;

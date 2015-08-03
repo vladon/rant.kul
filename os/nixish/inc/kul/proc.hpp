@@ -62,16 +62,16 @@ class Process : public kul::AProcess{
 		
 	protected:
 		int	child(){
-			std::string s(arguments()[0]);
-			char** args = new char*[arguments().size() + 1]; // does need deleting - process exists after method
+			std::string s(args()[0]);
+			char** as = new char*[args().size() + 1]; // does need deleting - process exists after method
 			int i = 0;
-			for(const std::string& c : arguments()){ args[i] = const_cast<char*>(c.c_str()); i++; }
-			args[i] = NULL;		
-			return execvp(s.c_str(), args);
+			for(const std::string& c : args()){ as[i] = const_cast<char*>(c.c_str()); i++; }
+			as[i] = NULL;
+			return execvp(s.c_str(), as);
 		}
 		const std::string command(){
 			std::string s;
-			for(const std::string& a : arguments()) s += " " + a;
+			for(const std::string& a : args()) s += " " + a;
 			return s;
 		}
 		void tearDown();

@@ -27,11 +27,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/cli.hpp"
 #include "kul/string.hpp"
 
-void kul::cli::Args::process(int argc, char* argv[]) throw(ArgNotFoundException) {
-	std::string cliArg = "";
-	for(int i = 1; i < argc; i++)
-		cliArg += std::string(argv[i]) + " ";
-
+void kul::cli::Args::process(int argc, char* argv[], int first) throw(ArgNotFoundException) {
 	for(const Arg& a1 : arguments())
 		for(const Arg& a2 : arguments()){
 			if(&a1 == &a2) continue;
@@ -50,7 +46,7 @@ void kul::cli::Args::process(int argc, char* argv[]) throw(ArgNotFoundException)
 	int valExpected = 0;
 	std::string valExpectedFor, c, t;
 
-	for(int i = 1; i < argc; i++){
+	for(int i = first; i < argc; i++){
 		c = argv[i];
 		t = c;
 

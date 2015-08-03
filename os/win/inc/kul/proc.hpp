@@ -49,7 +49,7 @@ class Process : public kul::AProcess{
 	protected:
 		const std::string command()	 const {
 			std::string s;
-			for(const std::string& a : arguments()) s += a + " ";
+			for(const std::string& a : args()) s += a + " ";
 			return s;
 		}
 		void tearDown();

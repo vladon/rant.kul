@@ -71,15 +71,15 @@ class GCCompiler : public CCompiler{
 				cmd = bits[0];
 			}
 			kul::Process p(cmd);
-			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
+			for(unsigned int i = 1; i < bits.size(); i++) p.arg(bits[i]);
 			CompilerProcessCapture pc(p);
-			for(const std::string& path : libPaths)	p.addArg("-L" + path);
-			if(mode == Mode::SHAR)		p.addArg("-shared");
-			else if(mode == Mode::STAT) p.addArg("-static");
-			p.addArg("-o").addArg(out);
-			for(const std::string& o : objects)	p.addArg(o);
-			for(const std::string& lib : libs)	p.addArg("-l" + lib);
-			for(const std::string& s: kul::String::split(linkerEnd, ' ')) p.addArg(s);
+			for(const std::string& path : libPaths)	p.arg("-L" + path);
+			if(mode == Mode::SHAR)		p.arg("-shared");
+			else if(mode == Mode::STAT) p.arg("-static");
+			p.arg("-o").arg(out);
+			for(const std::string& o : objects)	p.arg(o);
+			for(const std::string& lib : libs)	p.arg("-l" + lib);
+			for(const std::string& s: kul::String::split(linkerEnd, ' ')) p.arg(s);
 			
 			try{
 				p.start();
@@ -105,10 +105,10 @@ class GCCompiler : public CCompiler{
 			}
 			kul::Process p(cmd);
 			CompilerProcessCapture pc(p);
-			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
-			if(mode == Mode::SHAR)		p.addArg("-shared");
-			p.addArg("-o").addArg(lib);
-			for(const std::string& o : objects)	p.addArg(o);
+			for(unsigned int i = 1; i < bits.size(); i++) p.arg(bits[i]);
+			if(mode == Mode::SHAR)		p.arg("-shared");
+			p.arg("-o").arg(lib);
+			for(const std::string& o : objects)	p.arg(o);
 			try{
 				p.start();
 			}catch(const kul::proc::Exception& e){
@@ -131,12 +131,12 @@ class GCCompiler : public CCompiler{
 				cmd = bits[0];
 			}
 			kul::Process p(cmd);
-			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
+			for(unsigned int i = 1; i < bits.size(); i++) p.arg(bits[i]);
 			CompilerProcessCapture pc(p);
 			
-			for(const std::string& s : incs)	p.addArg("-I"+s);
-			for(const std::string& s : args)	p.addArg(s);
-			p.addArg("-o").addArg(out).addArg("-c").addArg(in);
+			for(const std::string& s : incs)	p.arg("-I"+s);
+			for(const std::string& s : args)	p.arg(s);
+			p.arg("-o").arg(out).arg("-c").arg(in);
 			try{
 				p.start();
 			}catch(const kul::proc::Exception& e){
@@ -240,31 +240,31 @@ class WINCompiler : public CCompiler{
 			}
 			kul::Process p(cmd);
 			CompilerProcessCapture pc(p);
-			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
-			for(const std::string& path : libPaths)	p.addArg("/LIBPATH:\"" + path + "\"");
-			p.addArg("/OUT:\"" + exe + "\"").addArg("/NOLOGO");	
-			for(const std::string& o : objects)	p.addArg(o);
+			for(unsigned int i = 1; i < bits.size(); i++) p.arg(bits[i]);
+			for(const std::string& path : libPaths)	p.arg("/LIBPATH:\"" + path + "\"");
+			p.arg("/OUT:\"" + exe + "\"").arg("/NOLOGO");	
+			for(const std::string& o : objects)	p.arg(o);
 			for(const std::string& lib : libs)
-				if(mode == Mode::SHAR) p.addArg(sharedLib(lib));
+				if(mode == Mode::SHAR) p.arg(sharedLib(lib));
 				else
-				if(mode == Mode::STAT) p.addArg(staticLib(lib));
+				if(mode == Mode::STAT) p.arg(staticLib(lib));
 				else
 					for(const std::string libp : libPaths){
 						bool f = 0;
 						for(const kul::File fi : kul::Dir(libp).files()){
 							if(fi.name().compare(sharedLib(lib)) == 0){
-								p.addArg(sharedLib(lib));
+								p.arg(sharedLib(lib));
 								f = 1;
 							}else
 							if(fi.name().compare(staticLib(lib)) == 0){
-								p.addArg(staticLib(lib));
+								p.arg(staticLib(lib));
 								f = 1;
 							}
 							if(f) break;
 						}
 						if(f) break;
 					}
-			for(const std::string& s: kul::String::split(linkerEnd, ' ')) p.addArg(s);
+			for(const std::string& s: kul::String::split(linkerEnd, ' ')) p.arg(s);
 
 			try{
 				p.start();
@@ -290,9 +290,9 @@ class WINCompiler : public CCompiler{
 			}
 			kul::Process p(cmd);
 			CompilerProcessCapture pc(p);
-			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
-			p.addArg("/OUT:\"" + lib + "\"").addArg("/NOLOGO").addArg("/LTCG");
-			for(const std::string& o : objects)	p.addArg(o);	
+			for(unsigned int i = 1; i < bits.size(); i++) p.arg(bits[i]);
+			p.arg("/OUT:\"" + lib + "\"").arg("/NOLOGO").arg("/LTCG");
+			for(const std::string& o : objects)	p.arg(o);	
 			try{
 				p.start();
 			}catch(const kul::proc::Exception& e){
@@ -315,11 +315,11 @@ class WINCompiler : public CCompiler{
 				cmd = bits[0];
 			}
 			kul::Process p(cmd);
-			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
+			for(unsigned int i = 1; i < bits.size(); i++) p.arg(bits[i]);
 			CompilerProcessCapture pc(p);
-			for(const std::string& s : incs)	p.addArg("/I\"" + s + "\"");
-			for(const std::string& s : args)	p.addArg(s);
-			p.addArg("/c").addArg("/Fo\"" + out + "\"").addArg("\"" + in + "\"");
+			for(const std::string& s : incs)	p.arg("/I\"" + s + "\"");
+			for(const std::string& s : args)	p.arg(s);
+			p.arg("/c").arg("/Fo\"" + out + "\"").arg("\"" + in + "\"");
 			try{
 				p.start();
 			}catch(const kul::Exception& e){

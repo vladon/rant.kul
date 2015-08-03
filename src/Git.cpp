@@ -26,10 +26,10 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 void kul::scm::Git::co(const std::string& d, const std::string& r, const std::string& v) const throw(Exception){
 	Dir dr(d, true);
 	kul::Process p("git", d);
-	p.addArg("clone").addArg(r);
-	if(!v.empty()) p.addArg("-b").addArg(v);
+	p.arg("clone").arg(r);
+	if(!v.empty()) p.arg("-b").arg(v);
 	try{
-		p.addArg(".");
+		p.arg(".");
 		std::cout << "PERFORMING: " << p.toString() << std::endl;
 		p.start();
 	}catch(const kul::proc::ExitException& e){
@@ -41,8 +41,8 @@ void kul::scm::Git::up(const std::string& d, const std::string& r, const std::st
 	if(!Dir(d).is()) co(d, r, v);
 	else{
 		kul::Process p("git", d);
-		p.addArg("pull");
-		if(!v.empty()) p.addArg("-u").addArg("origin").addArg(v);
+		p.arg("pull");
+		if(!v.empty()) p.arg("-u").arg("origin").arg(v);
 		try{
 			std::cout << "PERFORMING: " << p.toString() << std::endl;
 			p.start();
@@ -55,7 +55,7 @@ const std::string kul::scm::Git::localVersion(const std::string& d) const{
 	kul::Process p("git", d);
 	kul::ProcessCapture pc(p);
 	try{
-		p.addArg("rev-parse").addArg("HEAD").start();
+		p.arg("rev-parse").arg("HEAD").start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}
@@ -66,7 +66,7 @@ const std::string kul::scm::Git::remoteVersion(const std::string& d, const std::
 	kul::Process p("git", d);
 	kul::ProcessCapture pc(p);
 	try{		
-		p.addArg("ls-remote").addArg(url).addArg(branch).start();
+		p.arg("ls-remote").arg(url).arg(branch).start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}
@@ -79,7 +79,7 @@ const std::string kul::scm::Git::origin(const std::string& d) const{
 	kul::Process p("git", d);
 	kul::ProcessCapture pc(p);
 	try{
-		p.addArg("remote").addArg("-v").start();
+		p.arg("remote").arg("-v").start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}
@@ -90,7 +90,7 @@ bool kul::scm::Git::hasChanges(const std::string& d) const{
 	kul::Process p("git", d);
 	kul::ProcessCapture pc(p);
 	try{
-		p.addArg("status").addArg("-sb").start();
+		p.arg("status").arg("-sb").start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}
@@ -99,7 +99,7 @@ bool kul::scm::Git::hasChanges(const std::string& d) const{
 void kul::scm::Git::setOrigin(const std::string& d, const std::string& r) const{
 	kul::Process p("git", d);
 	try{
-		p.addArg("remote").addArg("set-url").addArg(r).start();
+		p.arg("remote").arg("set-url").arg(r).start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}
@@ -107,14 +107,14 @@ void kul::scm::Git::setOrigin(const std::string& d, const std::string& r) const{
 void kul::scm::Git::status(const std::string& d) const{
 	kul::Process p("git", d);
 	try{
-		p.addArg("status").start();
+		p.arg("status").start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}
 }
 void kul::scm::Git::diff(const std::string& d) const{
 	kul::Process p("git", d);
-	p.addArg("diff");
+	p.arg("diff");
 	try{
 		p.start();
 	}catch(const kul::proc::ExitException& e){

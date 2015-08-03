@@ -142,7 +142,7 @@ void kul::Process::run() throw (kul::proc::Exception){
 		if((ret = dup(errFd[1])) < 0) 	error(__LINE__, "dup err call failed");
 
 		/* SETUP EnvVars */ // SET ENV, it's a forked process so it doesn't matter - it'll die soon, like you.
-		for(const std::pair<const std::string, const std::string>& ev : environmentVariables())
+		for(const std::pair<const std::string, const std::string>& ev : vars())
 			Env::SET(ev.first.c_str(), ev.second.c_str());
 
 		if(!this->directory().empty() > 0) kul::Env::CWD(this->directory());

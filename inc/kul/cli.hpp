@@ -149,7 +149,7 @@ class Args{
 		Args();
 	public:
 		Args(const std::vector<Cmd>& cmds, const std::vector<Arg>& args) : cmds(cmds), args(args){}
-		void process(int argc, char* argv[]) throw(ArgNotFoundException);
+		void process(int argc, char* argv[], int first = 1) throw(ArgNotFoundException);
 		const Cmd& commands(const char* c){
 			for(const Cmd& cmd : cmds) if(strcmp(cmd.command(), c) == 0) return cmd;
 			KEXCEPT(ArgNotFoundException, "No command " + std::string(c) + " found");

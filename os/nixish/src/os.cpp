@@ -140,7 +140,9 @@ const std::vector<kul::File> kul::Dir::files(bool recursive) const throw(fs::Exc
 
 
 bool kul::File::is() const{
-	return (bool) std::ifstream(d.join(n).c_str());
+	// return (bool) std::ifstream(d.join(n).c_str());
+	struct stat buffer;
+	return (stat (d.join(n).c_str(), &buffer) == 0);
 }
 bool kul::File::cp(const File& f) const{
 	std::ifstream src(real(), std::ios::binary);

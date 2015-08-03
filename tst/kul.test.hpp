@@ -113,17 +113,11 @@ class TestIPC{
 class TestHTTPServer : public kul::http::Server{
 	public:
 		TestHTTPServer() : kul::http::Server(666){}
-		const std::pair<kul::hash::set::String, std::string> handle(const std::string& res, const std::string& atts){
-			std::string s("TestHTTPServer " + res + " : " + atts);
-			kul::hash::set::String set;
-			set.insert("Content-Length: " + std::to_string(s.size()));
-			return std::pair<kul::hash::set::String, std::string>(set, s);			
-		}
 };
 class TestGetRequest : public kul::http::_1_1GetRequest{
 	public:
-		void handle(const std::string& s){
-			KOUT(NON) << s;
+		void handle(const kul::hash::map::S2S& h, const std::string& b){
+			KOUT(NON) << b;
 		}
 };
 class TestHTTPThread{
@@ -165,7 +159,7 @@ class test{
 				for(const kul::File& f : d.files()) KLOG(INF) << d.join(f.name());
 
 			try{
-				kul::Process("echo").addArg("Hello").addArg("World").start();
+				kul::Process("echo").arg("Hello").arg("World").start();
 			}catch(const kul::proc::Exception& e){ 
 				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
 				KLOG(INF) << "Error expected on windows without echo on path";

@@ -72,8 +72,8 @@ class AProcess{
 		bool waitForExit()	const { return wfe; }
 		void pid(const unsigned int& pi )  { this->pi = pi; }
 
-		const std::vector<std::string>&		 									arguments()				const { return argv; };
-		const std::vector<std::pair<const std::string, const std::string> >& 	environmentVariables()	const { return evs; }
+		const std::vector<std::string>&		 									args()	const { return argv; };
+		const std::vector<std::pair<const std::string, const std::string> >& 	vars()	const { return evs; }
 		virtual void out(const std::string& s){
 			if(this->o) this->o(s);
 			else 		std::cout << s << std::endl;
@@ -87,8 +87,8 @@ class AProcess{
 			KEXCEPT(kul::proc::Exception, s);
 		}
 	public:
-		AProcess& addArg(const std::string& arg) { if(arg.size()) argv.push_back(arg); return *this; }
-		AProcess& addEnvVar(const std::string& n, const std::string& v) { evs.push_back(std::pair<const std::string, const std::string>(n, v)); return *this;}
+		AProcess& arg(const std::string& a) { if(a.size()) argv.push_back(a); return *this; }
+		AProcess& var(const std::string& n, const std::string& v) { evs.push_back(std::pair<const std::string, const std::string>(n, v)); return *this;}
 		virtual void start() throw(kul::Exception){
 			if(this->s) KEXCEPT(kul::proc::Exception, "Process is already started");
 			this->s = true;

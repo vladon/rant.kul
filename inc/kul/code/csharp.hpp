@@ -55,15 +55,15 @@ class WINCompiler : public Compiler{
 			}
 			kul::Process p(cmd);
 			CompilerProcessCapture pc(p);
-			for(unsigned int i = 1; i < bits.size(); i++) p.addArg(bits[i]);
-			p.addArg("/NOLOGO").addArg("/OUT:\"" + exe + "\"");
-			for(const std::string& path : libPaths)	p.addArg("/LIB:\"" + path + "\"");
-			for(const std::string& o : objects)	p.addArg("\""+ o + "\"");
-			for(const std::string& lib : libs)	p.addArg("/REFERENCE:\"" + lib + ".dll\"");
+			for(unsigned int i = 1; i < bits.size(); i++) p.arg(bits[i]);
+			p.arg("/NOLOGO").arg("/OUT:\"" + exe + "\"");
+			for(const std::string& path : libPaths)	p.arg("/LIB:\"" + path + "\"");
+			for(const std::string& o : objects)	p.arg("\""+ o + "\"");
+			for(const std::string& lib : libs)	p.arg("/REFERENCE:\"" + lib + ".dll\"");
 			if(linkerEnd.find(" ") != std::string::npos)
 				for(const std::string& s: kul::String::split(linkerEnd, ' '))
-					p.addArg(s);
-			else p.addArg(linkerEnd);
+					p.arg(s);
+			else p.arg(linkerEnd);
 
 			try{
 				p.start();

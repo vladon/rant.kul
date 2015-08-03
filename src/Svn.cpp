@@ -26,11 +26,11 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 void kul::scm::Svn::co(const std::string& d, const std::string& r, const std::string& v) const throw(Exception){
 	Dir dr(d, true);
 	kul::Process p("svn", d);
-	p.addArg("checkout");
-	if(v.empty()) p.addArg(r);
-	else p.addArg(r + "/" + v);
+	p.arg("checkout");
+	if(v.empty()) p.arg(r);
+	else p.arg(r + "/" + v);
 	try{
-		p.addArg(".");
+		p.arg(".");
 		std::cout << "PERFORMING: " << p.toString() << std::endl;
 		p.start();
 	}catch(const kul::proc::ExitException& e){
