@@ -88,9 +88,14 @@ class Server : public kul::http::AServer{
 		}
 		void listen() throw(kul::http::Exception);
 		void stop();
-		virtual const std::pair<kul::hash::set::String, std::string> handle(const std::string& res, const std::string& atts){
-			return std::pair<kul::hash::set::String, std::string>(
-				kul::hash::set::String(), res + " : " + atts);
+
+		virtual const std::pair<kul::hash::set::String, std::string> handle(const std::string& res, kul::hash::map::S2S atts){
+			using namespace std;
+			stringstream ss;
+			ss << res << " : ";	
+			for(const pair<string, string> p : atts) ss << p.first << "=" << p.second << " ";
+			return pair<kul::hash::set::String, string>(
+				kul::hash::set::String(), res + " : " + ss.str());
 		}
 };
 

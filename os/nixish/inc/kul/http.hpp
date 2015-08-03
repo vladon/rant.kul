@@ -24,8 +24,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_HTTP_HPP_
 #define _KUL_HTTP_HPP_
 
-#include "kul/log.hpp"
 #include "kul/byte.hpp"
+#include "kul/time.hpp"
 #include "kul/http.base.hpp"
 
 #include <netdb.h>
@@ -63,11 +63,15 @@ class Server : public kul::http::AServer{
 		}
 		void listen() throw(kul::http::Exception);
 		void stop();
-		virtual const std::pair<kul::hash::set::String, std::string> handle(const std::string& res, const std::string& atts){
-			kul::hash::set::String rhs;
-			std::string s(res + " : " + atts);
-			rhs.insert("Content-Length: " + std::to_string(s.size()));
-			return std::pair<kul::hash::set::String, std::string>(rhs, s);
+		virtual const std::pair<kul::hash::set::String, std::string> handle(const std::string& res, kul::hash::map::S2S atts){
+			using namespace std;
+			kul::hash::set::String set;
+			stringstream ss;
+			ss << res << " : ";	
+			for(const pair<string, string> p : atts)
+				ss << p.first << "=" << p.second << " ";
+			set.insert("Content-Length: " + std::to_string(ss.str().size()));
+			return std::pair<kul::hash::set::String, std::string>(set, ss.str());
 		}
 };
 

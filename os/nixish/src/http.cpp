@@ -63,7 +63,7 @@ void kul::http::Server::listen() throw(kul::http::Exception){
 		}else
 			KEXCEPT(Exception, "HTTP Server request type not handled :" + l0[0]);
 
-		const std::pair<kul::hash::set::String, std::string>& p(handle(s, a));
+		const std::pair<kul::hash::set::String, std::string>& p(handle(s, asAttributes(a)));
 		std::string ret("HTTP/1.1 200 OK\r\n");
 		ret += "Content-Type: text/html\r\n";
 		ret += "Server: kserv\r\n";
