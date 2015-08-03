@@ -92,7 +92,7 @@ bool kul::http::Server::get(PHTTP_REQUEST req){
 		a = s.substr(s.find("?") + 1);
 		s = s.substr(0, s.find("?"));
 	}
-	const std::pair<kul::hash::set::String, std::string>& p(handle(s, a));
+	const std::pair<kul::hash::set::String, std::string>& p(handle(s, asAttributes(a)));
 	if(p.second.size()){
 		dataChunk.DataChunkType 			= HttpDataChunkFromMemory;
 		dataChunk.FromMemory.pBuffer 		= (PVOID) p.second.c_str();
@@ -144,7 +144,7 @@ bool kul::http::Server::post(PHTTP_REQUEST req){
 						postClean(rstr);
 						KEXCEPT(Exception, "HttpSendHttpResponse failed with: " + std::to_string(result));
 					}
-					const std::pair<kul::hash::set::String, std::string>& p(handle(req->pRawUrl, atts));
+					const std::pair<kul::hash::set::String, std::string>& p(handle(req->pRawUrl, asAttributes(atts)));
 					dataChunk.DataChunkType 			= HttpDataChunkFromMemory;
 					dataChunk.FromMemory.pBuffer 		= (PVOID) p.second.c_str();
 					dataChunk.FromMemory.BufferLength 	= p.second.size();
