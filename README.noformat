@@ -15,13 +15,21 @@ http://www.gnu.org/licenses/lgpl-2.1
 
 
 Switches
+ 
+Key             __KUL_LOG_FRMT__ 
+Type            string
+Default         "%Y-%m-%d-%H:%M:%S:%i"
+OS              all
+Description
+Logging format in format:
+    YEAR-MONTH-DAY-HOUR:MINUTE:SECOND:MILLISECONDS
 
 Key             __KUL_THREAD_SPAWN_WAIT__
 Type             number
 Default
     nix/bsd     5000000
     win         0
-OS              nix/bsd/win
+OS              all
 Description
 Used in thread pools. The amount of time in nanoseconds waited after launching a thread. Threads launched too quickly can cause issues on nix platforms, bsd assumed similar.
 
