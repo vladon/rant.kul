@@ -14,7 +14,6 @@
 		<profile name="c">
 			<includes>
 				<include>./inc</include>
-				<include>./tst</include>
 				<include>./os/${OS}/inc</include>
 			</includes>
 			<sources>

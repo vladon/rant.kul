@@ -132,32 +132,40 @@ class TestHTTPThread{
 class TestHTTP{ 
 	public: 
 		TestHTTP(){
-			TestHTTPServer serv;
-			TestHTTPThread http(serv);
-			kul::Ref<TestHTTPThread> ref(http);
-			kul::Thread t(ref);
-			t.run();
-			kul::this_thread::sleep(1000);
-			TestGetRequest().send("localhost", "index.html", 666);
-			serv.stop();
-			t.join();
+			try{
+				TestHTTPServer serv;
+				TestHTTPThread http(serv);
+				kul::Ref<TestHTTPThread> ref(http);
+				kul::Thread t(ref);
+				t.run();
+				kul::this_thread::sleep(1000);
+				TestGetRequest().send("localhost", "index.html", 666);
+				serv.stop();
+				t.join();
+			}catch(const kul::http::Exception& e){
+				KLOG(INF) << e.what();
+			}
 		}
 };
 
 class test{ 
 	public: 
 		test(){
+			KOUT(NON) << "KOUT(NON)";
+			KOUT(INF) << "KOUT(INF)";
+			KOUT(ERR) << "KOUT(ERR)";
+			KOUT(DBG) << "KOUT(DBG)";
 			KLOG(INF);
 			KLOG(ERR);
 			KLOG(DBG);
 			KLOG(INF) << kul::Dir::SEP();
-			KLOG(INF) << kul::Env::SEP();
-			KLOG(INF) << kul::Env::CWD();
+			KLOG(INF) << kul::env::SEP();
+			KLOG(INF) << kul::env::CWD();
 			KLOG(INF) << kul::os::userDir().path();
 			KLOG(INF) << kul::os::userAppDir("maiken").path();
-			for(const kul::Dir& d : kul::Dir(kul::Env::CWD()).dirs()) 
-				for(const kul::File& f : d.files()) KLOG(INF) << d.join(f.name());
-
+			for(const kul::Dir& d : kul::Dir(kul::env::CWD()).dirs()) 
+				for(const kul::File& f : d.files()) 
+					KLOG(INF) << d.join(f.name());
 			try{
 				kul::Process("echo").arg("Hello").arg("World").start();
 			}catch(const kul::proc::Exception& e){ 

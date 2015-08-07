@@ -67,23 +67,16 @@ class CmdIn{
 			static CmdIn instance;
 			return instance;
 		}
-		virtual bool receiveBool(const std::string txt) {
+		virtual bool receiveBool(const std::string& txt) {
 			std::string t = receive(txt);
 			kul::String::trim(t);
-			std::vector<std::string> pos; 
-			pos.push_back("yes"); pos.push_back("y");  pos.push_back("true");
-			std::vector<std::string> neg; 
-			neg.push_back("no"); neg.push_back("n");  neg.push_back("false");
-
+			std::vector<std::string> pos {"yes", "y", "true", "1"}; 
+			std::vector<std::string> neg {"no", "n", "false", "0"}; 
 			for(const std::string& s : pos) if(kul::String::cicmp(t, s)) return true;
 			for(const std::string& s : neg) if(kul::String::cicmp(t, s)) return false;
-
-			if(t.compare("1") == 0) return true;
-			if(t.compare("0") == 0) return false;
-
 			KEXCEPT(ParseException, "input not bool-able");
 		}
-		virtual const std::string receive(const std::string t){
+		virtual const std::string receive(const std::string& t){
 			std::string s;
 			std::cout << t << std::endl;
 			std::getline(std::cin, s);
@@ -116,12 +109,12 @@ class EnvVar{
 			std::string var(value());
 			kul::String::replaceAll(var, kul::os::newLine(), "");
 			kul::String::trim(var);
-			std::string ev(Env::GET(name()));
+			std::string ev(env::GET(name()));
 			if(ev.compare("") != 0){
 				if 		(mode() == EnvVarMode::PREP)
-					var = var + std::string(kul::Env::SEP()) + ev;
+					var = var + std::string(kul::env::SEP()) + ev;
 				else if (mode() == EnvVarMode::APPE)
-					var = ev + std::string(kul::Env::SEP()) + var;
+					var = ev + std::string(kul::env::SEP()) + var;
 			}
 			return var;
 		}
@@ -162,10 +155,16 @@ class Args{
 			for(const Arg& a : arguments()) if(strcmp(a.command(), c) == 0) return a;
 			KEXCEPT(ArgNotFoundException, "No argument " + std::string(c) + " found");
 		}
-		const std::vector<Cmd>& commands()	const { return cmds;}
-		const std::vector<Arg>& arguments() const { return args;}
-		const hash::map::S2S& 	values() 	const { return vals; }
-		bool contains(const std::string& s) { 
+		const std::vector<Cmd>& commands()	const  { return cmds;}
+		const std::vector<Arg>& arguments() const  { return args;}
+		const std::string& get(const std::string& s){
+			if(has(s)) return (*vals.find(s)).second;
+			KEXCEPT(ArgNotFoundException, "No value " + s + " found");
+		}
+		bool empty(){
+			return vals.size() == 0;
+		}
+		bool has(const std::string& s) {
 			return vals.count(s);
 		}
 };

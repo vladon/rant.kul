@@ -36,6 +36,10 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/string.hpp"
 #include "kul/threads.base.hpp"
 
+#ifndef __KUL_LOG_FRMT__
+#define __KUL_LOG_FRMT__ "%Y-%m-%d-%H:%M:%S:%i"
+#endif
+
 namespace kul{ namespace log{
 
 enum mode { NON = 0, INF, ERR, DBG};
@@ -63,7 +67,7 @@ class Logger{
 			std::string tr(kul::this_thread::id());
 			tid = tr.size() > tid ? tr.size() : tid;
 			kul::String::pad(tr, tid);
-			ss << mode << " : " << tr << " - " << kul::DateTime::NOW().substr(4) << " : " << f << " : " << l << " " << s << kul::os::newLine();
+			ss << mode << " : " << tr << " - " << kul::DateTime::NOW(__KUL_LOG_FRMT__) << " : " << f << " : " << l << " " << s << kul::os::newLine();
 			out(ss.str(), m);
 		}
 		const std::string modeTxt(const log::mode& m) const{
@@ -80,7 +84,7 @@ class LogMan{
 		log::mode m;
 		const Logger logger;
 		LogMan() : m(kul::log::mode::NON), logger(){
-			const char* klog = kul::Env::GET("KLOG");
+			const char* klog = kul::env::GET("KLOG");
 			if(klog){
 				bool e = 0;
 				std::string s(klog);

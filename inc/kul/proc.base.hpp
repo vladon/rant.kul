@@ -76,11 +76,11 @@ class AProcess{
 		const std::vector<std::pair<const std::string, const std::string> >& 	vars()	const { return evs; }
 		virtual void out(const std::string& s){
 			if(this->o) this->o(s);
-			else 		std::cout << s << std::endl;
+			else 		printf("%s", s.c_str());
 		}
 		virtual void err(const std::string& s){
 			if(this->e) this->e(s);
-			else 		std::cerr << s << std::endl;
+			else 		fprintf(stderr, "%s", s.c_str());
 		}
 		void error(const int line, std::string s) throw (kul::Exception){
 			tearDown();
@@ -110,16 +110,16 @@ class AProcess{
 
 class ProcessCapture{
 	private:
-		std::vector<std::string> oV;
-		std::vector<std::string> eV;
+		std::stringstream so;
+		std::stringstream se;
 	protected:
 		ProcessCapture(){}
-		ProcessCapture(const ProcessCapture& pc) : oV(pc.oV), eV(pc.eV){}
+		ProcessCapture(const ProcessCapture& pc) : so(pc.so.str()), se(pc.se.str()){}
 		virtual void out(const std::string& s){
-			oV.push_back(s);
+			so << s;
 		}
 		virtual void err(const std::string& s){
-			eV.push_back(s);
+			se << s;
 		}
 	public:
 		ProcessCapture(AProcess& p){
@@ -127,8 +127,8 @@ class ProcessCapture{
 			p.setErr(std::bind(&ProcessCapture::err, std::ref(*this), std::placeholders::_1));
 		}
 		virtual ~ProcessCapture(){}
-		const std::vector<std::string> outs() const { return oV; }
-		const std::vector<std::string> errs() const { return eV; }
+		const std::string outs() const { return so.str(); }
+		const std::string errs() const { return se.str(); }
 };
 
 }

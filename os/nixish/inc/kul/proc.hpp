@@ -59,7 +59,7 @@ class Process : public kul::AProcess{
 			return ret;
 		}
 		void run() throw (kul::proc::Exception);
-		
+		friend std::ostream& operator<<(std::ostream&, const Process&);
 	protected:
 		int	child(){
 			std::string s(args()[0]);
@@ -69,19 +69,20 @@ class Process : public kul::AProcess{
 			as[i] = NULL;
 			return execvp(s.c_str(), as);
 		}
-		const std::string command(){
-			std::string s;
-			for(const std::string& a : args()) s += " " + a;
-			return s;
-		}
 		void tearDown();
 		void finish()	{ }
 		void preStart()	{ }
 	public:
 		Process(const std::string& cmd, const bool& wfe = true)							: kul::AProcess(cmd, wfe){}
 		Process(const std::string& path, const std::string& cmd, const bool& wfe = true): kul::AProcess(path, cmd, wfe){}
+		const std::string toString() const{
+			std::string s;
+			for(const std::string& a : args()) s += " " + a;
+			return s;
+		}
 };
 
+std::ostream& operator<<(std::ostream &s, const Process &p);
 
 }
 #endif /* _KUL_PROC_HPP_ */

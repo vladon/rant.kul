@@ -46,6 +46,7 @@ class Exception : public std::runtime_error{
 };
 
 #define KEXCEPT(c, m) throw c(__FILE__, __LINE__, m)
+#define KEXCEPTION(m) throw Exception(__FILE__, __LINE__, m)
 
 }
 #endif /* _KUL_EXCEPT_HPP_ */

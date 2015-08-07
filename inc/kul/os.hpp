@@ -48,17 +48,16 @@ class Exception : public kul::Exception{
 class Dir;
 class File;
 
-class Env{
-public:
-	static const char*		 	CWD();
-	static bool					CWD(const char* c);
-	static bool					CWD(const Dir& d);
+namespace env{
+const char*		 	CWD();
+bool				CWD(const char* c);
+bool				CWD(const Dir& d);
 
-	static const char*			GET(const char* c);
-	static void					SET(const char* var, const char* val);
+const char*			GET(const char* c);
+void				SET(const char* var, const char* val);
 
-	static const char*		 	SEP();
-};
+const char*		 	SEP();
+}
 
 class Dir{
 	private:
@@ -71,9 +70,9 @@ class Dir{
 			return kul::Dir(p).root() ? p : s.substr(0, s.rfind(SEP()));
 		}
 		static const std::string MINI(const std::string& a){
-			return a.find(Env::CWD()) == std::string::npos ? a 
-				: a.compare(Env::CWD()) == 0 ? a.substr(std::string(Env::CWD()).size()) 
-				: a.substr(std::string(Env::CWD()).size() + 1);
+			return a.find(env::CWD()) == std::string::npos ? a 
+				: a.compare(env::CWD()) == 0 ? a.substr(std::string(env::CWD()).size()) 
+				: a.substr(std::string(env::CWD()).size() + 1);
 		}
 	public:
 		Dir(const std::string& p, bool m = false) throw(fs::Exception) : p(Dir::LOCL(p)) {
@@ -120,7 +119,7 @@ class File{
 				try{
 					d = Dir(Dir::PRNT(Dir::REAL(this->n)), m);
 				}catch(const kul::fs::Exception& e){
-					this->d = Dir(Env::CWD());
+					this->d = Dir(env::CWD());
 				}
 			if(this->n.find(d.path()) != std::string::npos)
 				this->n = this->n.substr(d.path().size() + 1);

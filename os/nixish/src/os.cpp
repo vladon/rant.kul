@@ -45,22 +45,22 @@ int kul::os::exec(const std::string& cmd, char*const args[]){
 	return execvp(cmd.c_str(), args);
 }
 
-const char* kul::Env::CWD(){
+const char* kul::env::CWD(){
 	return getcwd(NULL, 0);
 }
-bool kul::Env::CWD(const char* c){
+bool kul::env::CWD(const char* c){
 	return chdir(c);
 }
-bool kul::Env::CWD(const kul::Dir& d){
+bool kul::env::CWD(const kul::Dir& d){
 	return chdir(d.path().c_str());
 }
-const char* kul::Env::GET(const char* c){
+const char* kul::env::GET(const char* c){
 	return getenv(c);
 }
-void kul::Env::SET(const char* var, const char* val){
+void kul::env::SET(const char* var, const char* val){
 	setenv(var, val, 1);
 }
-const char* kul::Env::SEP(){
+const char* kul::env::SEP(){
 	return ":";
 }
 
@@ -169,10 +169,10 @@ bool kul::File::rm() const{
 }
 
 const kul::Dir kul::os::userDir(){
-	return Dir(Env::GET("HOME"));
+	return Dir(env::GET("HOME"));
 }
 const kul::Dir kul::os::userAppDir(const std::string& app){
-	return Dir(Dir::JOIN(Env::GET("HOME"), "." + app));
+	return Dir(Dir::JOIN(env::GET("HOME"), "." + app));
 }
 const std::string kul::os::newLine(){
 	return "\n";

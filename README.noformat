@@ -26,7 +26,7 @@ Description
 Used in thread pools. The amount of time in nanoseconds waited after launching a thread. Threads launched too quickly can cause issues on nix platforms, bsd assumed similar.
 
 Key             __KUL_PROC_BLOCK_ERR__ 
-Type             flag
+Type            flag
 Default         disabled
 OS              nix/bsd
 Description

@@ -31,6 +31,12 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/string.hpp"
 
 namespace kul {
+namespace time{
+class Exception : public kul::Exception{
+	public:
+		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
+};
+}
 
 class Now{
 	public:
@@ -41,19 +47,28 @@ class Now{
 
 class DateTime{
 	private:
-		static const std::string millis(){
-			std::stringstream ss;
-			ss << Now::MILLIS();
-			std::string s(ss.str());
+		static const std::string MILLIS(){
+			std::string s(std::to_string(Now::MILLIS()));
 			return s.substr(s.length() - 3);
 		}
 	public:
-		static const std::string NOW() {
-			std::time_t result = std::time(NULL);
-			std::string s(std::asctime(std::localtime(&result)));
-			s = s.substr(0, 19) + ":" + millis() + " " + s.substr(20);
-			kul::String::replaceAll(s, kul::os::newLine(), "");
+		static const std::string AS(const std::time_t t, const std::string& f = "%Y-%m-%d-%H:%M:%S"){
+			char buffer [80];
+			std::strftime(buffer,80, f.c_str(), std::localtime(&t));
+			std::string s(buffer);
+			if(f.find("%i") != std::string::npos)
+				kul::String::replace(s, "%i", MILLIS());
 			return s;
+		}
+		static const std::string AS(const std::string& epoch, const std::string& f = "%Y-%m-%d-%H:%M:%S"){
+			ulong e = 0;
+			std::stringstream ss(epoch);
+			ss >> e;
+			if(!e) KEXCEPT(time::Exception, "Invalid time used :" + epoch);
+			return AS(e, f);
+		}
+		static const std::string NOW(const std::string& f = "%Y-%m-%d-%H:%M:%S"){
+			return AS(std::time(NULL), f);
 		}
 };
 }

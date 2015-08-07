@@ -45,19 +45,21 @@ class Process : public kul::AProcess{
 		HANDLE g_hChildStd_OUT_Wr;
 		HANDLE g_hChildStd_ERR_Rd;
 		HANDLE g_hChildStd_ERR_Wr;
-
+		friend std::ostream& operator<<(std::ostream&, const Process&);
 	protected:
-		const std::string command()	 const {
-			std::string s;
-			for(const std::string& a : args()) s += a + " ";
-			return s;
-		}
 		void tearDown();
 		void run() throw (kul::Exception);
 	public:
 		Process(const std::string& cmd, const bool& wfe = true) 						: kul::AProcess(cmd, wfe), g_hChildStd_OUT_Rd(NULL), g_hChildStd_OUT_Wr(NULL), g_hChildStd_ERR_Rd(NULL), g_hChildStd_ERR_Wr(NULL){ }
 		Process(const std::string& path, const std::string cmd, const bool& wfe = true): kul::AProcess(path, cmd, wfe), g_hChildStd_OUT_Rd(NULL), g_hChildStd_OUT_Wr(NULL), g_hChildStd_ERR_Rd(NULL), g_hChildStd_ERR_Wr(NULL){}
+		const std::string toString() const {
+			std::string s;
+			for(const std::string& a : args()) s += a + " ";
+			return s;
+		}
 };
+
+std::ostream& operator<<(std::ostream &s, const Process &p);
 
 }
 #endif /* _KUL_PROC_HPP_ */

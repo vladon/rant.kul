@@ -25,6 +25,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define _KUL_BASH_HPP_
 
 #include "kul/proc.hpp"
+#include "kul/string.hpp"
 
 namespace kul{ namespace bash{
 
@@ -36,7 +37,7 @@ const std::vector<std::string> digHostIPv4(const std::string& h){
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}
-	return pc.outs();
+	return kul::String::lines(pc.outs());
 }
 const std::vector<std::string> digHostIPv6(const std::string& h){
 	kul::Process p("dig");
@@ -46,7 +47,7 @@ const std::vector<std::string> digHostIPv6(const std::string& h){
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}
-	return pc.outs();
+	return kul::String::lines(pc.outs());
 }
 
 }// END NAMESPACE bash

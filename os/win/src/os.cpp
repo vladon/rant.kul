@@ -56,22 +56,22 @@ int kul::os::exec(const std::string& cmd, char*const args[]){
 	return execvp(cmd.c_str(), args);
 }
 
-const char* kul::Env::CWD(){
+const char* kul::env::CWD(){
 	return getcwd(NULL, 0);
 }
-bool kul::Env::CWD(const char* c){
+bool kul::env::CWD(const char* c){
 	return _chdir(c);
 }
-bool kul::Env::CWD(const kul::Dir& d){
+bool kul::env::CWD(const kul::Dir& d){
 	return _chdir(d.path().c_str());
 }
-const char* kul::Env::GET(const char* c){
+const char* kul::env::GET(const char* c){
 	return getenv(c);
 }
-void kul::Env::SET(const char* var, const char* val){
+void kul::env::SET(const char* var, const char* val){
 	putenv(std::string(std::string(var) + "=" + std::string(val)).c_str());
 }
-const char* kul::Env::SEP(){
+const char* kul::env::SEP(){
 	return ";";
 }
 
@@ -190,9 +190,9 @@ bool kul::File::mv(const Dir& d) const{
 }
 
 const kul::Dir kul::os::userDir(){
-	const char* h = Env::GET("HOME");
+	const char* h = env::GET("HOME");
 	if(h) return kul::Dir(h);
-	return kul::Dir(std::string(Env::GET("HOMEDRIVE")) + std::string(Env::GET("HOMEPATH")));
+	return kul::Dir(std::string(env::GET("HOMEDRIVE")) + std::string(env::GET("HOMEPATH")));
 }
 const kul::Dir kul::os::userAppDir(const std::string& app){
 	return kul::Dir(userDir().join(app));

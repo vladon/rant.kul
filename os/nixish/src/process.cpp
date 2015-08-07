@@ -24,6 +24,9 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/log.hpp"
 #include "kul/proc.hpp"
 
+std::ostream& kul::operator<<(std::ostream &s, const kul::Process &p) {
+	return s << p.toString();
+}
 
 int kul::this_proc::id(){
 	return getpid();
@@ -39,7 +42,7 @@ void kul::Process::waitExit() throw (kul::proc::ExitException){
 	cec = WEXITSTATUS(cStat);
 	if(cec != 0)
 		kul::LogMan::INSTANCE().err()
-		? KEXCEPT(kul::proc::ExitException, "Process exit code: " + std::to_string(cec) + kul::os::newLine() + command())
+		? KEXCEPT(kul::proc::ExitException, "Process exit code: " + std::to_string(cec) + kul::os::newLine() + toString())
 		: KEXCEPT(kul::proc::ExitException, "Process exit code: " + std::to_string(cec));
 	finish();
 }
@@ -87,42 +90,36 @@ void kul::Process::run() throw (kul::proc::Exception){
 
 			do {
 				alive = kill(pid(), 0) == 0;
-				kul::this_thread::sleep(10);
 				if(FD_ISSET(popPip[1], &childOutFds)) {
 					bool b = 0;
 					do {
-						int ret = 0;
-						char cOut[2048] = {'\0'};
-						ret = recall(read(popPip[1], cOut, sizeof(cOut)));
+						char cOut[1024] = {'\0'};
+						int ret = recall(read(popPip[1], cOut, sizeof(cOut)));
+						cOut[ret > 0 ? ret : 0] = 0;
 						if (ret < 0){
 							if(b && ((errno != EAGAIN) || (errno != EWOULDBLOCK)))
 								error(__LINE__, "read on childout failed");
 							if(((errno != EAGAIN) || (errno != EWOULDBLOCK))) b = 1;
 						}
-						else if (ret)
-							for(const std::string& s : kul::String::lines(cOut))
-								out(s);
+						else if (ret) out(cOut);
 						else waitForStatus();
 					} while(ret > 0);
 				}
 				if(FD_ISSET(popPip[2], &childOutFds)) {
 					bool b = 0;
 					do {
-						int ret = 0;
-						char cErr[2048] = {'\0'};
-						ret = recall(read(popPip[2], cErr, sizeof(cErr)));
+						char cErr[1024] = {'\0'};
+						int ret = recall(read(popPip[2], cErr, sizeof(cErr)));
+						cErr[ret > 0 ? ret : 0] = 0;
 						if (ret < 0){
 							if(b && ((errno != EAGAIN) || (errno != EWOULDBLOCK)))
 								error(__LINE__, "read on childout failed");
 							if(((errno != EAGAIN) || (errno != EWOULDBLOCK))) b = 1;
 						}
-						else if (ret)
-							for(const std::string& s : kul::String::lines(cErr))
-								err(s);
+						else if (ret) err(cErr);
 						else waitForStatus();
 					} while(ret > 0);
 				}
-
 				recall(waitpid(pid(), &cStat, WNOHANG));
 			}while(alive);
 
@@ -143,9 +140,9 @@ void kul::Process::run() throw (kul::proc::Exception){
 
 		/* SETUP EnvVars */ // SET ENV, it's a forked process so it doesn't matter - it'll die soon, like you.
 		for(const std::pair<const std::string, const std::string>& ev : vars())
-			Env::SET(ev.first.c_str(), ev.second.c_str());
+			env::SET(ev.first.c_str(), ev.second.c_str());
 
-		if(!this->directory().empty() > 0) kul::Env::CWD(this->directory());
+		if(!this->directory().empty() > 0) kul::env::CWD(this->directory());
 		exit(this->child());
 	}else error(__LINE__, "Unhandled process id for child: " + std::to_string(pid()));
 }
