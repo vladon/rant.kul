@@ -52,13 +52,11 @@ class DateTime{
 			return s.substr(s.length() - 3);
 		}
 	public:
-		static const std::string AS(const std::time_t t, const std::string& f = "%Y-%m-%d-%H:%M:%S"){
+		static const std::string AS(const std::time_t t, std::string f = "%Y-%m-%d-%H:%M:%S"){
+			kul::String::replace(f, "%i", MILLIS());
 			char buffer [80];
-			std::strftime(buffer,80, f.c_str(), std::localtime(&t));
-			std::string s(buffer);
-			if(f.find("%i") != std::string::npos)
-				kul::String::replace(s, "%i", MILLIS());
-			return s;
+			std::strftime(buffer, 80, f.c_str(), std::localtime(&t));
+			return std::string(buffer);
 		}
 		static const std::string AS(const std::string& epoch, const std::string& f = "%Y-%m-%d-%H:%M:%S"){
 			ulong e = 0;
