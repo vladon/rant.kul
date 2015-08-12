@@ -34,7 +34,7 @@ namespace kul {
 class String{
 	public:
 		static void replace(std::string& s, const std::string& f, const std::string& r){
-			uint p = 0;
+			size_t p = 0;
 			if((p = s.find(f)) != std::string::npos)
 				s.replace(p, f.size(), r);
 		}
