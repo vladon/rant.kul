@@ -77,7 +77,8 @@ class Process : public kul::AProcess{
 		Process(const std::string& path, const std::string& cmd, const bool& wfe = true): kul::AProcess(path, cmd, wfe){}
 		const std::string toString() const{
 			std::string s;
-			for(const std::string& a : args()) s += " " + a;
+			for(const std::string& a : args()) s += a + " ";
+			s.pop_back();
 			return s;
 		}
 };

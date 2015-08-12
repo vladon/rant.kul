@@ -71,8 +71,14 @@ const char* kul::env::GET(const char* c){
 void kul::env::SET(const char* var, const char* val){
 	putenv(std::string(std::string(var) + "=" + std::string(val)).c_str());
 }
-const char* kul::env::SEP(){
-	return ";";
+const char kul::env::SEP(){
+	return ';';
+}
+bool kul::env::WHICH(const char* c){
+	for(auto& s : kul::String::split(std::string(env::GET("PATH")), std::string(env::SEP())))
+		for(auto& f : kul::Dir(s).files())
+			if(f.name().compare(c) == 0) return 1;
+	return false;
 }
 
 const std::string kul::Dir::LOCL(std::string s){
@@ -185,8 +191,8 @@ bool kul::File::cp(const File& f) const{
 	std::ofstream dst(f.dir().join(f.name()), std::ios::binary);
 	return (bool) (dst << src.rdbuf());
 }
-bool kul::File::mv(const Dir& d) const{
-	return false;
+bool kul::File::mv(const File& f) const{
+	return std::rename(this->full().c_str(), f.full().c_str());
 }
 
 const kul::Dir kul::os::userDir(){

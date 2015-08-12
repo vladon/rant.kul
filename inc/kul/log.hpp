@@ -36,8 +36,14 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/string.hpp"
 #include "kul/threads.base.hpp"
 
+#include <iostream>
+
+#ifndef __KUL_LOG_TIME_FRMT__
+#define __KUL_LOG_TIME_FRMT__ "%Y-%m-%d-%H:%M:%S:%i"
+#endif
+
 #ifndef __KUL_LOG_FRMT__
-#define __KUL_LOG_FRMT__ "%Y-%m-%d-%H:%M:%S:%i"
+#define __KUL_LOG_FRMT__ "[%M] : %T - %D : %F : %L - %S"
 #endif
 
 namespace kul{ namespace log{
@@ -61,20 +67,25 @@ class Logger{
 				fprintf(stderr, "%s", s.c_str());
 		}
 		void log(const char* f, const int& l, const std::string& s, const log::mode& m) const{
-			std::stringstream ss;
-			std::string mode("[" + modeTxt(m) + "]");
-			kul::String::pad(mode, 7);
+			std::string mode(modeTxt(m));
 			std::string tr(kul::this_thread::id());
 			tid = tr.size() > tid ? tr.size() : tid;
 			kul::String::pad(tr, tid);
-			ss << mode << " : " << tr << " - " << kul::DateTime::NOW(__KUL_LOG_FRMT__) << " : " << f << " : " << l << " " << s << kul::os::newLine();
-			out(ss.str(), m);
+			std::string str(__KUL_LOG_FRMT__);
+			kul::String::replace(str, "%M", mode);
+			kul::String::replace(str, "%T", tr);
+			kul::String::replace(str, "%D", kul::DateTime::NOW(__KUL_LOG_TIME_FRMT__));
+			kul::String::replace(str, "%F", f);
+			kul::String::replace(str, "%L", std::to_string(l));
+			kul::String::replace(str, "%S", s);
+			str += kul::os::newLine();
+			out(str, m);
 		}
 		const std::string modeTxt(const log::mode& m) const{
-			std::string s("NONE");
-			if(m == 1)		s = "INFO";
-			else if(m == 2)	s = "ERROR";
-			else if(m == 3) s = "DEBUG";
+			std::string s("NON");
+			if(m == 1)		s = "INF";
+			else if(m == 2)	s = "ERR";
+			else if(m == 3) s = "DBG";
 			return s;
 		}
 };

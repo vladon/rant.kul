@@ -98,9 +98,7 @@ class AProcess{
 		const bool started()		const { return pi > 0; }
 		virtual std::string	toString(){
 			std::string s(argv[0]);
-			if(d.size()){
-				s = kul::Dir(d.c_str()).join(argv[0]);
-			}
+			if(d.size()) s = kul::Dir(d.c_str()).join(argv[0]);
 			for(unsigned int i = 1; i < argv.size(); i++) s += " " + argv[i];
 			return s;
 		}

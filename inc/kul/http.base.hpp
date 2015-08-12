@@ -47,19 +47,23 @@ class ARequest{
 			std::string line;
 			std::stringstream ss(b);
 			while(std::getline(ss, line)){
-				if(line.size() <=2) break;
+				if(line.size() <=2) {
+					b.erase(0, b.find("\n") + 1);
+					break;
+				}
 				kul::String::trim(line);
+				line.pop_back();
 				if(line.find(":") != std::string::npos){
 					std::vector<std::string> bits = kul::String::split(line, ':');
 					std::string l(bits[0]);
 					std::string r(bits[1]);
 					kul::String::trim(l);
 					kul::String::trim(r);
-					h[l] = r;
+					h.insert(l, r);
 				}else
-					h[line] = "";
+					h.insert(line, "");
 				b.erase(0, b.find("\n") + 1);
-			}			
+			}
 			handle(h, b);
 		}		
 	public:

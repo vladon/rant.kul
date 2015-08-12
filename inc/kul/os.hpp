@@ -49,14 +49,15 @@ class Dir;
 class File;
 
 namespace env{
-const char*		 	CWD();
-bool				CWD(const char* c);
-bool				CWD(const Dir& d);
+const char*	CWD();
+bool		CWD(const char* c);
+bool		CWD(const Dir& d);
 
-const char*			GET(const char* c);
-void				SET(const char* var, const char* val);
+const char*	GET(const char* c);
+void		SET(const char* var, const char* val);
 
-const char*		 	SEP();
+const char	SEP();
+bool  		WHICH(const char* c);
 }
 
 class Dir{
@@ -132,7 +133,7 @@ class File{
 		bool cp(const File& f) const;
 		bool is() const;
 		bool mk() const;
-		bool mv(const Dir& d) const;
+		bool mv(const File& f) const;
 		bool rm() const;
 
 		const std::string& name() const { return n; }
@@ -157,6 +158,5 @@ const kul::Dir userDir();
 const kul::Dir userAppDir(const std::string& app);
 
 } // END NAMESPACE os
-
 } // END NAMESPACE kul
 #endif /* _KUL_OS_HPP_ */

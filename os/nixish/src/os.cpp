@@ -60,8 +60,8 @@ const char* kul::env::GET(const char* c){
 void kul::env::SET(const char* var, const char* val){
 	setenv(var, val, 1);
 }
-const char* kul::env::SEP(){
-	return ":";
+const char kul::env::SEP(){
+	return ':';
 }
 
 const std::string kul::Dir::LOCL(std::string s){
@@ -157,8 +157,8 @@ bool kul::File::mk() const{
 	}
 	return pFile != NULL;
 }
-bool kul::File::mv(const Dir& d) const{
-	return false;
+bool kul::File::mv(const File& f) const{
+	return std::rename(this->full().c_str(), f.full().c_str());
 }
 bool kul::File::rm() const{
 	if(is()){

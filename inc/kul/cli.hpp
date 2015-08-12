@@ -112,9 +112,9 @@ class EnvVar{
 			std::string ev(env::GET(name()));
 			if(ev.compare("") != 0){
 				if 		(mode() == EnvVarMode::PREP)
-					var = var + std::string(kul::env::SEP()) + ev;
+					var = var + kul::env::SEP() + ev;
 				else if (mode() == EnvVarMode::APPE)
-					var = ev + std::string(kul::env::SEP()) + var;
+					var = ev + kul::env::SEP() + var;
 			}
 			return var;
 		}
@@ -124,11 +124,13 @@ enum ArgType{ FLAG = 0, STRING, MAYBE};
 
 class Arg : public Cmd{
 	private:
+		bool man;
 		const char d;
 		ArgType t;
 	public:
-		Arg(const char d, const char* dd, ArgType t) : Cmd(dd), d(d), t(t){}
-		Arg(const char d, const char* dd) : Cmd(dd), d(d), t(ArgType::FLAG){}
+		Arg(const char d, const char* dd, ArgType t, bool m = false) : Cmd(dd), man(m), d(d), t(t){}
+		Arg(const char d, const char* dd, bool m = false) : Cmd(dd), man(m), d(d), t(ArgType::FLAG){}
+		bool mandatory() 			const { return man;}
 		const char  dash() 			const { return d;}
 		const char* dashdash() 		const { return command();}
 		const ArgType& type() 		const { return t; }
