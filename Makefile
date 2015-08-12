@@ -1,5 +1,5 @@
 
-VER_GIT=$(VER_GIT)
+VER_GIT=master
 
 OS =
 CXX=g++
