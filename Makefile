@@ -1,5 +1,5 @@
 
-VER_GIT=master
+VER_GIT=$(VER_GIT)
 
 OS =
 CXX=g++
@@ -8,8 +8,8 @@ CXXFLAGS=-std=c++1y -O3 -g0 -Wall -c -fmessage-length=0
 INCS = 	-I$(CURDIR)/inc \
 		-I$(CURDIR)/os/$(OS)/inc \
 		-I$(CURDIR)/os/nixish/inc \
-		-I$(CURDIR)/ext/pugixml/master/src \
-		-I$(CURDIR)/ext/sparsehash/master/include
+		-I$(CURDIR)/ext/pugixml/$(VER_GIT)/src \
+		-I$(CURDIR)/ext/sparsehash/$(VER_GIT)/include
 LIB = bin/libkul.a
 
 entry:
@@ -56,22 +56,22 @@ libs:
 	$(MAKE) pugi
 
 hash:
-	@if [ ! -d "$(CURDIR)/ext/sparsehash/master" ]; then \
-		git clone http://github.com/dekken/google.sparsehash ext/sparsehash/master; \
-		cd ./ext/sparsehash/master; bash ./configure --prefix=$(CURDIR)/ext/sparsehash/master; \
-		$(MAKE) -C $(CURDIR)/ext/sparsehash/master; \
-		$(MAKE) -C $(CURDIR)/ext/sparsehash/master install; \
+	@if [ ! -d "$(CURDIR)/ext/sparsehash/$(VER_GIT)" ]; then \
+		git clone http://github.com/dekken/google.sparsehash --branch $(VER_GIT) ext/sparsehash/$(VER_GIT); \
+		cd ./ext/sparsehash/$(VER_GIT); bash ./configure --prefix=$(CURDIR)/ext/sparsehash/$(VER_GIT); \
+		$(MAKE) -C $(CURDIR)/ext/sparsehash/$(VER_GIT); \
+		$(MAKE) -C $(CURDIR)/ext/sparsehash/$(VER_GIT) install; \
 	fi;
 
 pugi:
-	@if [ ! -d "$(CURDIR)/ext/pugixml/master" ]; then \
-		git clone https://github.com/dekken/pugixml ext/pugixml/master; \
+	@if [ ! -d "$(CURDIR)/ext/pugixml/$(VER_GIT)" ]; then \
+		git clone https://github.com/dekken/pugixml --branch $(VER_GIT) ext/pugixml/$(VER_GIT); \
 	fi;
-	@if [ ! -d "$(CURDIR)/ext/pugixml/master/bin" ]; then \
-		mkdir ext/pugixml/master/bin; \
+	@if [ ! -d "$(CURDIR)/ext/pugixml/$(VER_GIT)/bin" ]; then \
+		mkdir ext/pugixml/$(VER_GIT)/bin; \
 	fi;
-	$(CXX) $(CXXFLAGS) -I$(CURDIR)/ext/pugixml/master/src -o "$(CURDIR)/ext/pugixml/master/bin/pugixml.o" "$(CURDIR)/ext/pugixml/master/src/pugixml.cpp";
-	ar -r $(CURDIR)/ext/pugixml/master/bin/libpugixml.a "$(CURDIR)/ext/pugixml/master/bin/pugixml.o"
+	$(CXX) $(CXXFLAGS) -I$(CURDIR)/ext/pugixml/$(VER_GIT)/src -o "$(CURDIR)/ext/pugixml/$(VER_GIT)/bin/pugixml.o" "$(CURDIR)/ext/pugixml/$(VER_GIT)/src/pugixml.cpp";
+	ar -r $(CURDIR)/ext/pugixml/$(VER_GIT)/bin/libpugixml.a "$(CURDIR)/ext/pugixml/$(VER_GIT)/bin/pugixml.o"
 
 clean:
 	rm -rf bin

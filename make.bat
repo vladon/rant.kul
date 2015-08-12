@@ -10,11 +10,12 @@ CALL :get
 GOTO eof
 
 :get
-IF NOT EXIST %PWD%\ext\sparsehash\master (
-	git clone http://github.com/dekken/google.sparsehash %PWD%/ext/sparsehash/master
+SET GIT_VER=master
+IF NOT EXIST %PWD%\ext\sparsehash\%GIT_VER% (
+	git clone http://github.com/dekken/google.sparsehash --branch %GIT_VER% %PWD%/ext/sparsehash/%GIT_VER%
 )
-IF NOT EXIST %PWD%\ext\pugixml\master (
-	git clone https://github.com/dekken/pugixml %PWD%/ext/pugixml/master
+IF NOT EXIST %PWD%\ext\pugixml\%GIT_VER% (
+	git clone https://github.com/dekken/pugixml --branch %GIT_VER% %PWD%/ext/pugixml/%GIT_VER%
 )
 GOTO eof
 
@@ -24,10 +25,10 @@ SET PWD=%CD%\ext\kul\%GIT_VER%
 
 CALL :get
 
-RD /S/Q %PWD%\ext\pugixml\master\bin
-MKDIR %PWD%\ext\pugixml\master\bin
-%VSCC% %CXXFLAGS%  %INCLUDES% /c /Fo"%PWD%\ext\pugixml\master\bin\pugixml.o" "%PWD%\ext\pugixml\master\src\pugixml.cpp"
-%VSCAR% /OUT:"%PWD%\ext\pugixml\master\bin\pugixml.lib" /NOLOGO /LTCG %PWD%\ext\pugixml\master\bin\pugixml.o
+RD /S/Q %PWD%\ext\pugixml\%GIT_VER%\bin
+MKDIR %PWD%\ext\pugixml\%GIT_VER%\bin
+%VSCC% %CXXFLAGS%  %INCLUDES% /c /Fo"%PWD%\ext\pugixml\%GIT_VER%\bin\pugixml.o" "%PWD%\ext\pugixml\%GIT_VER%\src\pugixml.cpp"
+%VSCAR% /OUT:"%PWD%\ext\pugixml\%GIT_VER%\bin\pugixml.lib" /NOLOGO /LTCG %PWD%\ext\pugixml\%GIT_VER%\bin\pugixml.o
 
 RD /S/Q %PWD%\bin
 MKDIR %PWD%\bin
