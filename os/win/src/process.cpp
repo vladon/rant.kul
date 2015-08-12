@@ -80,7 +80,7 @@ void kul::Process::run() throw (kul::Exception){
 	*lpszCurrentVariable = (TCHAR)0; 
 
 	const char* dir = directory().empty() ? 0 : directory().c_str();
-	LPSTR szCmdline = _strdup(command().c_str());
+	LPSTR szCmdline = _strdup(toString().c_str());
 	// Create the child process. 
 	bSuccess = CreateProcess(NULL, 
 		szCmdline,		// command line 
@@ -126,7 +126,7 @@ void kul::Process::run() throw (kul::Exception){
 			KEXCEPT(kul::proc::Exception, "GetExitCodeProcess failure");
 		if(ec != 0)
 			kul::LogMan::INSTANCE().err()
-			? KEXCEPT(kul::proc::ExitException, "Process exit code: " + std::to_string(ec) + kul::os::newLine() + command())
+			? KEXCEPT(kul::proc::ExitException, "Process exit code: " + std::to_string(ec) + kul::os::newLine() + toString())
 			: KEXCEPT(kul::proc::ExitException, "Process exit code: " + std::to_string(ec));
 	}
 	finish();
