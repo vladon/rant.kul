@@ -112,5 +112,5 @@ void kul::cli::Args::process(int argc, char* argv[], int first) throw(ArgNotFoun
 		vals[c] = "";
 	}
 	if(valExpected == 1) KEXCEPT(Exception, "Value expected for argument: \""+ valExpectedFor + "\"");
-	for(const Arg& a : args) if(a.mandatory()) vals[a.dashdash()];
+	for(const Arg& a : args) if(a.mandatory()) get(a.dashdash());
 }
