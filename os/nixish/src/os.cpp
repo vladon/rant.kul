@@ -123,9 +123,8 @@ const std::vector<kul::File> kul::Dir::files(bool recursive) const throw(fs::Exc
 	DIR *dir = opendir(path().c_str());
 	struct dirent *entry = readdir(dir);
 	while (entry != NULL){
-		if (entry->d_type == DT_REG){
+		if(!kul::Dir(JOIN(real(), entry->d_name)).is())
 			fs.push_back(File(entry->d_name, *this));
-		}
 		entry = readdir(dir);
 	}
 	closedir(dir);
