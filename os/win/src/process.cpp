@@ -25,10 +25,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/proc.hpp"
 #include "kul/string.hpp"
 
-std::ostream& kul::operator<<(std::ostream &s, const kul::Process &p) {
-	return s << p.toString();
-}
-
 int kul::this_proc::id(){
 	return GetCurrentProcessId();;
 }

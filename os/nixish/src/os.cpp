@@ -138,9 +138,7 @@ const std::vector<kul::File> kul::Dir::files(bool recursive) const throw(fs::Exc
 	return fs;
 }
 
-
 bool kul::File::is() const{
-	// return (bool) std::ifstream(d.join(n).c_str());
 	struct stat buffer;
 	return (stat (d.join(n).c_str(), &buffer) == 0);
 }

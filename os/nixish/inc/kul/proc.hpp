@@ -59,11 +59,10 @@ class Process : public kul::AProcess{
 			return ret;
 		}
 		void run() throw (kul::proc::Exception);
-		friend std::ostream& operator<<(std::ostream&, const Process&);
 	protected:
 		int	child(){
 			std::string s(args()[0]);
-			char** as = new char*[args().size() + 1]; // does need deleting - process exists after method
+			char** as = new char*[args().size() + 1]; // doesnt' need deleting - process exists after method
 			int i = 0;
 			for(const std::string& c : args()){ as[i] = const_cast<char*>(c.c_str()); i++; }
 			as[i] = NULL;
@@ -74,16 +73,9 @@ class Process : public kul::AProcess{
 		void preStart()	{ }
 	public:
 		Process(const std::string& cmd, const bool& wfe = true)							: kul::AProcess(cmd, wfe){}
-		Process(const std::string& path, const std::string& cmd, const bool& wfe = true): kul::AProcess(path, cmd, wfe){}
-		const std::string toString() const{
-			std::string s;
-			for(const std::string& a : args()) s += a + " ";
-			s.pop_back();
-			return s;
-		}
+		Process(const std::string& cmd, const std::string& path, const bool& wfe = true): kul::AProcess(cmd, path, wfe){}
 };
 
-std::ostream& operator<<(std::ostream &s, const Process &p);
 
 }
 #endif /* _KUL_PROC_HPP_ */

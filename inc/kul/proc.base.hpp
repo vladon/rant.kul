@@ -24,6 +24,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_PROC_BASE_HPP_
 #define _KUL_PROC_BASE_HPP_
 
+#include <vector>
+#include <sstream>
 #include <iostream>
 #include <functional>
 
@@ -58,7 +60,7 @@ class AProcess{
 		std::function<void(std::string)> o;
 		std::vector<std::string> argv;
 		std::vector<std::pair<const std::string, const std::string> > evs;
-
+		friend std::ostream& operator<<(std::ostream&, const AProcess&);
 	protected:
 		AProcess(const std::string& cmd, const bool& wfe) : wfe(wfe), s(0), pi(0), d(){ argv.push_back(cmd); }
 		AProcess(const std::string& cmd, const std::string& d, const bool& wfe) : wfe(wfe), s(0), d(d){ argv.push_back(cmd); }
@@ -96,15 +98,17 @@ class AProcess{
 		}
 		const unsigned int& pid() 	const { return pi; }
 		const bool started()		const { return pi > 0; }
-		virtual std::string	toString(){
-			std::string s(argv[0]);
-			if(d.size()) s = kul::Dir(d.c_str()).join(argv[0]);
-			for(unsigned int i = 1; i < argv.size(); i++) s += " " + argv[i];
+		virtual const std::string toString() const{
+			std::string s;
+			for(const std::string& a : args()) s += a + " ";
+			s.pop_back();
 			return s;
 		}
 		void setOut(std::function<void(std::string)> o) { this->o = o; }
 		void setErr(std::function<void(std::string)> e) { this->e = e; }
 };
+
+std::ostream& operator<<(std::ostream &s, const AProcess &p);
 
 class ProcessCapture{
 	private:

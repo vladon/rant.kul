@@ -67,6 +67,7 @@ class Set : google::sparse_hash_set<T, HashFcn, EqualKey>{
 		const_iterator 				end() 											const   { return Hash::end(); }
 		size_type 					size() 											const   { return Hash::size(); }
 		void	 					setDeletedKey(const key_type& key)						{ Hash::set_deleted_key(key); }
+		void 						clear() 												{ Hash::clear(); }
 };
 
 namespace set{
@@ -93,6 +94,7 @@ class Map : google::sparse_hash_map<K, V, HashFcn, EqualKey>{
 		const_iterator 				end() 								const   { return map::end(); }
 		const_iterator 				find(const key_type& key) 			const 	{ return map::find(key); }
 		void	 					setDeletedKey(const key_type& key)			{ map::set_deleted_key(key); }
+		void 						clear() 									{ map::clear(); }
 };
 
 namespace map{
@@ -119,6 +121,7 @@ class S2T : google::sparse_hash_map<std::string, T, HashFcn, EqualKey>{
 		const_iterator 				find(const key_type& key) 						const 	{ return s2T::find(key); }
 		size_type 					size() 											const   { return s2T::size(); }
 		void	 					setDeletedKey(const key_type& key)						{ s2T::set_deleted_key(key); }
+		void 						clear() 												{ s2T::clear(); }
 };
 
 typedef S2T<std::string, std::tr1::hash<std::string>, StdStringComparator> S2S;
@@ -142,6 +145,7 @@ class S2VT : google::sparse_hash_map<std::string, std::vector<T>, HashFcn, Equal
 		const_iterator 				end() 														const 	{ return s2VT::end(); }
 		const_iterator 				find(const key_type& key) 									const 	{ return s2VT::find(key); }
 		size_type 					size() 														const   { return s2VT::size(); }
+		void 						clear() 															{ s2VT::clear(); }
 };
 
 template <class T, class HashFcn = std::tr1::hash<std::string>, class EqualKey = StdStringComparator, class Alloc = libc_allocator_with_realloc<std::pair<const std::string, S2T<T> > > >
@@ -164,6 +168,7 @@ class S2S2T : google::sparse_hash_map<std::string, S2T<T>, HashFcn, EqualKey>{
 		const_iterator 				begin() 											const   { return s2T2T::begin(); }
 		const_iterator 				end() 												const   { return s2T2T::end(); }
 		const_iterator 				find(const key_type& key) 							const 	{ return s2T2T::find(key); }
+		void 						clear() 													{ s2T2T::clear(); }
 };
 }
 

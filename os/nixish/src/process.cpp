@@ -24,10 +24,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/log.hpp"
 #include "kul/proc.hpp"
 
-std::ostream& kul::operator<<(std::ostream &s, const kul::Process &p) {
-	return s << p.toString();
-}
-
 int kul::this_proc::id(){
 	return getpid();
 }
@@ -142,7 +138,7 @@ void kul::Process::run() throw (kul::proc::Exception){
 		for(const std::pair<const std::string, const std::string>& ev : vars())
 			env::SET(ev.first.c_str(), ev.second.c_str());
 
-		if(!this->directory().empty() > 0) kul::env::CWD(this->directory());
+		if(!this->directory().empty()) kul::env::CWD(this->directory());
 		exit(this->child());
 	}else error(__LINE__, "Unhandled process id for child: " + std::to_string(pid()));
 }
