@@ -104,12 +104,12 @@ const std::vector<kul::Dir> kul::Dir::dirs(bool incHidden) const throw(fs::Excep
 	DIR *dir = opendir(real().c_str());
 	struct dirent *entry = readdir(dir);
 	while (entry != NULL){
-		if (entry->d_type == DT_DIR){
-			std::string d(entry->d_name);
-			if(d.compare(".") != 0 && d.compare("..") != 0
-				&& !(d.substr(0, 1).compare(".") == 0 && !incHidden))
-			ds.push_back(Dir(JOIN(real(), entry->d_name)));
-		}
+		std::string d(entry->d_name);
+		kul::Dir dd(JOIN(real(), entry->d_name));
+		if(d.compare(".") != 0 && d.compare("..") != 0
+			&& !(d.substr(0, 1).compare(".") == 0 && !incHidden)
+			&& dd.is())
+			ds.push_back(dd);
 		entry = readdir(dir);
 	}
 	closedir(dir);
@@ -123,15 +123,14 @@ const std::vector<kul::File> kul::Dir::files(bool recursive) const throw(fs::Exc
 	DIR *dir = opendir(path().c_str());
 	struct dirent *entry = readdir(dir);
 	while (entry != NULL){
-		if (entry->d_type == DT_REG){
+		if(!kul::Dir(JOIN(real(), entry->d_name)).is())
 			fs.push_back(File(entry->d_name, *this));
-		}
 		entry = readdir(dir);
 	}
 	closedir(dir);
 	if(recursive){
 		for(const kul::Dir& d : dirs()){
-			std::vector<kul::File> tFs = d.files(true);
+			const std::vector<kul::File>& tFs = d.files(true);
 			fs.insert(fs.end(), tFs.begin(), tFs.end());
 		}
 	}

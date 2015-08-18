@@ -92,18 +92,19 @@ void kul::http::_1_1GetRequest::send(const std::string& h, const std::string& re
 	memset(&servAddr, 0, sizeof(servAddr));
 	servAddr.sin_family   = AF_INET;
 	int r = 0;
-	if(h.compare("localhost") == 0 || h.compare("127.0.0.1") == 0){
-		servAddr.sin_port = kul::byte::isBigEndian() ? htons(p) : kul::byte::LittleEndian::UINT32(p);
+	servAddr.sin_port = !kul::byte::isBigEndian() ? htons(p) : kul::byte::LittleEndian::UINT32(p);
+	if(h.compare("localhost") == 0 || h.compare("127.0.0.1") == 0){		
 		servAddr.sin_addr.s_addr = INADDR_ANY;
-		r = connect(sck, (struct sockaddr*) &servAddr, sizeof(servAddr));
+		r = ::connect(sck, (struct sockaddr*) &servAddr, sizeof(servAddr));
 	}
+	else if(inet_pton(AF_INET, &h[0], &(servAddr.sin_addr)))
+		r = ::connect(sck, (struct sockaddr*) &servAddr, sizeof(servAddr));
 	else{
 		std::vector<std::string> ips(kul::bash::digHostIPv4(h));
-		if(ips.empty()) KEXCEPT(Exception, "HTTP GET No such host: " + h);
-		servAddr.sin_port = htons(p);
+		if(ips.empty()) KEXCEPT(Exception, "HTTP GET No such host: " + h);		
 		for(std::string& ip : ips){
 			servAddr.sin_addr.s_addr = inet_addr(&ip[0]);
-			if((r = connect(sck, (struct sockaddr*) &servAddr, sizeof(servAddr))) == 0) break;
+			if((r = ::connect(sck, (struct sockaddr*) &servAddr, sizeof(servAddr))) == 0) break;
 		}
 	}
 	if(r < 0) KEXCEPT(Exception, "HTTP GET failed to connect to host: " + h);
@@ -122,27 +123,27 @@ void kul::http::_1_1GetRequest::send(const std::string& h, const std::string& re
 
 void kul::http::_1_1PostRequest::send(const std::string& h, const std::string& res, const int& p){
 	int32_t sck = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (sck < 0)
-		KEXCEPT(Exception, "HTTP GET error opening socket");
+	if (sck < 0) KEXCEPT(Exception, "HTTP POST error opening socket");
 	struct sockaddr_in servAddr;
 	memset(&servAddr, 0, sizeof(servAddr));
 	servAddr.sin_family   = AF_INET;
 	int r = 0;
+	servAddr.sin_port = !kul::byte::isBigEndian() ? htons(p) : kul::byte::LittleEndian::UINT32(p);
 	if(h.compare("localhost") == 0 || h.compare("127.0.0.1") == 0){
-		servAddr.sin_port = kul::byte::isBigEndian() ? htons(p) : kul::byte::LittleEndian::UINT32(p);
 		servAddr.sin_addr.s_addr = INADDR_ANY;
-		r = connect(sck, (struct sockaddr*) &servAddr, sizeof(servAddr));
+		r = ::connect(sck, (struct sockaddr*) &servAddr, sizeof(servAddr));
 	}
+	else if(inet_pton(AF_INET, &h[0], &(servAddr.sin_addr)))
+		r = ::connect(sck, (struct sockaddr*) &servAddr, sizeof(servAddr));
 	else{
 		std::vector<std::string> ips(kul::bash::digHostIPv4(h));
-		if(ips.empty()) KEXCEPT(Exception, "HTTP GET No such host: " + h);
-		servAddr.sin_port = htons(p);
+		if(ips.empty()) KEXCEPT(Exception, "HTTP POST No such host: " + h);
 		for(std::string& ip : ips){
 			servAddr.sin_addr.s_addr = inet_addr(&ip[0]);
-			if((r = connect(sck, (struct sockaddr*) &servAddr, sizeof(servAddr))) == 0) break;
+			if((r = ::connect(sck, (struct sockaddr*) &servAddr, sizeof(servAddr))) == 0) break;
 		}
 	}
-	if(r < 0) KEXCEPT(Exception, "HTTP GET failed to connect to host: " + h);
+	if(r < 0) KEXCEPT(Exception, "HTTP POST failed to connect to host: " + h);
 	std::string req(toString(h, res));
 	::send(sck, req.c_str(), req.size(), 0); 
 	char buffer[10000];
