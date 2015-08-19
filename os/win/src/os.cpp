@@ -97,15 +97,13 @@ bool kul::Dir::is() const{
 }
 bool kul::Dir::mk() const{
 	if(path().empty()) return false;
-	if(!prnt().is()) prnt().mk();
+	if(!parent().is()) parent().mk();
 	return CreateDirectory(locl().c_str(), NULL);
 }
 void kul::Dir::rm() const{
 	if(is()){
-		for(const kul::File& f : files(false))
-			unlink(f.name().c_str());
-		for(const kul::Dir& d : dirs())
-			d.rm();
+		for(const auto& a : files()) a.rm();
+		for(const auto& a : dirs())  a.rm();
 		_rmdir(path().c_str());
 	}
 }

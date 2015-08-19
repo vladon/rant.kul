@@ -77,7 +77,7 @@ class AThreader{
 
 		virtual void act() 														= 0;		
 		virtual void join() 													= 0;
-		virtual void detach() 													= 0;
+		virtual bool detach() 													= 0;
 		virtual void interrupt() throw(kul::threading::InterruptionException) 	= 0;
 		virtual void run() throw(kul::threading::Exception) 					= 0;
 		void setFinished()									{ f = true;}
@@ -114,7 +114,7 @@ class Thread{
 		}
 		void join()						{ if(s) th->join();	}
 		void sleep(const ulong& mil)	{ if(s) this_thread::sleep(mil); }
-		void detach()					{ if(s) th->detach(); }
+		bool detach()					{ if(s) return th->detach(); return 0;}
 		bool finished()					{ return s && th->finished(); }
 		void interrupt() throw(kul::threading::InterruptionException){
 			th->interrupt();

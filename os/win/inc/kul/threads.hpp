@@ -73,7 +73,7 @@ class AThreader : public kul::osi::AThreader{
 		void join(){
 			while(!finished()) this_thread::sleep(1);
 		}
-		void detach(){}
+		bool detach(){ return CloseHandle(h); }
 		void interrupt() throw(kul::threading::InterruptionException){}
 		void run() throw(kul::threading::Exception){ 
 			h = CreateThread(0, 5120000, thread, this, 0, 0);

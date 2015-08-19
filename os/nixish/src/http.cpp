@@ -27,6 +27,18 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <arpa/inet.h>
 
 void kul::http::Server::listen() throw(kul::http::Exception){
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (sockfd < 0) KEXCEPT(Exception, "HTTP Server error opening socket");
+	sockets.push(sockfd);
+	bzero((char *) &serv_addr, sizeof(serv_addr));
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_addr.s_addr = INADDR_ANY;
+	serv_addr.sin_port = !kul::byte::isBigEndian() ? htons(this->port()) : kul::byte::LittleEndian::UINT32(this->port());
+	if (bind(sockfd, (struct sockaddr*) &serv_addr, sizeof(serv_addr)) < 0)
+		KEXCEPT(Exception, "HTTP Server error on binding");
+
+	::listen(sockfd, 5);
+	clilen = sizeof(cli_addr);
 	int32_t newsockfd;
 	int  r;
 	char buffer[256];
@@ -86,8 +98,7 @@ void kul::http::Server::stop(){
 
 void kul::http::_1_1GetRequest::send(const std::string& h, const std::string& res, const int& p){
 	int32_t sck = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (sck < 0)
-		KEXCEPT(Exception, "HTTP GET error opening socket");
+	if (sck < 0) KEXCEPT(Exception, "HTTP GET error opening socket");
 	struct sockaddr_in servAddr;
 	memset(&servAddr, 0, sizeof(servAddr));
 	servAddr.sin_family   = AF_INET;

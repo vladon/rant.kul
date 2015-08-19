@@ -51,6 +51,16 @@ class Process : public kul::AProcess{
 	public:
 		Process(const std::string& cmd, const bool& wfe = true) 						: kul::AProcess(cmd, wfe), g_hChildStd_OUT_Rd(NULL), g_hChildStd_OUT_Wr(NULL), g_hChildStd_ERR_Rd(NULL), g_hChildStd_ERR_Wr(NULL){ }
 		Process(const std::string& cmd, const std::string path&, const bool& wfe = true): kul::AProcess(cmd, path, wfe), g_hChildStd_OUT_Rd(NULL), g_hChildStd_OUT_Wr(NULL), g_hChildStd_ERR_Rd(NULL), g_hChildStd_ERR_Wr(NULL){}
+		bool kill(int k = 6){
+			DWORD dwDesiredAccess = PROCESS_TERMINATE;
+			bool  bInheritHandle  = 0;
+			HANDLE hProcess = OpenProcess(dwDesiredAccess, bInheritHandle, pid());
+			if (hProcess == NULL) return 0;
+			bool r = TerminateProcess(hProcess, uExitCode);
+			CloseHandle(hProcess);
+			setFinished();
+			return r;
+		}
 };
 
 

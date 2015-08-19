@@ -74,6 +74,14 @@ class Process : public kul::AProcess{
 	public:
 		Process(const std::string& cmd, const bool& wfe = true)							: kul::AProcess(cmd, wfe){}
 		Process(const std::string& cmd, const std::string& path, const bool& wfe = true): kul::AProcess(cmd, path, wfe){}
+		bool kill(int k = 6){
+			if(started()){
+				bool b = ::kill(pid(), k) == 0;
+				if(::kill(pid(), 0) == 0) setFinished();
+				return b;
+			}
+			return 0;
+		}
 };
 
 

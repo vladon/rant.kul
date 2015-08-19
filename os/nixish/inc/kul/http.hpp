@@ -46,21 +46,7 @@ class Server : public kul::http::AServer{
 
 		std::queue<int> sockets;
 	public:
-		Server(const short& p) : AServer(p){
-			sockfd = socket(AF_INET, SOCK_STREAM, 0);
-			if (sockfd < 0)
-				KEXCEPT(Exception, "HTTP Server error opening socket");
-			sockets.push(sockfd);
-			bzero((char *) &serv_addr, sizeof(serv_addr));
-			serv_addr.sin_family = AF_INET;
-			serv_addr.sin_addr.s_addr = INADDR_ANY;
-			serv_addr.sin_port = !kul::byte::isBigEndian() ? htons(this->port()) : kul::byte::LittleEndian::UINT32(this->port());
-			if (bind(sockfd, (struct sockaddr*) &serv_addr, sizeof(serv_addr)) < 0)
-				KEXCEPT(Exception, "HTTP Server error on binding");
-
-			::listen(sockfd, 5);
-			clilen = sizeof(cli_addr);
-		}
+		Server(const short& p) : AServer(p){}
 		void listen() throw(kul::http::Exception);
 		void stop();
 		virtual const std::pair<kul::hash::set::String, std::string> handle(const std::string& res, kul::hash::map::S2S atts){

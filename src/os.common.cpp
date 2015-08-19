@@ -29,3 +29,19 @@ bool kul::env::WHICH(const char* c){
 			if(f.name().compare(c) == 0) return 1;
 	return false;
 }
+
+bool kul::Dir::cp(const Dir& d) const{
+	if(!d.is() && !d.mk()) KEXCEPT(fs::Exception, "Directory: \"" + d.path() + "\" is not valid");
+	Dir c(d.join(name()));
+	c.mk();
+	for(const auto& f : files())
+		f.cp(c);
+	for(const auto& dd : dirs())
+		dd.cp(c);
+	return 1;
+}
+
+bool kul::File::cp(const Dir& d) const{
+	if(!d.is() && !d.mk()) KEXCEPT(fs::Exception, "Directory: \"" + d.path() + "\" is not valid");
+	return cp(kul::File(name(), d));
+}

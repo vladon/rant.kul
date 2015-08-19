@@ -41,6 +41,7 @@ void kul::Process::waitExit() throw (kul::proc::ExitException){
 		? KEXCEPT(kul::proc::ExitException, "Process exit code: " + std::to_string(cec) + kul::os::newLine() + toString())
 		: KEXCEPT(kul::proc::ExitException, "Process exit code: " + std::to_string(cec));
 	finish();
+	setFinished();
 }
 
 void kul::Process::tearDown(){
@@ -85,7 +86,7 @@ void kul::Process::run() throw (kul::proc::Exception){
 			bool alive = true;
 
 			do {
-				alive = kill(pid(), 0) == 0;
+				alive = ::kill(pid(), 0) == 0;
 				if(FD_ISSET(popPip[1], &childOutFds)) {
 					bool b = 0;
 					do {

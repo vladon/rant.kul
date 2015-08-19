@@ -81,9 +81,12 @@ class AThreader : public kul::osi::AThreader{
 		void join(){
 			while(!finished()) this_thread::sleep(1);
 		}
-		void detach()		{}
+		bool detach(){
+			return pthread_detach(thread);
+		}
 		void interrupt() throw(kul::threading::InterruptionException){ 
 			pthread_cancel(thread);
+			setFinished();
 		}
 		void run() throw(kul::threading::Exception){
 			pthread_create(&thread, NULL, AThreader::threadFunction, this);

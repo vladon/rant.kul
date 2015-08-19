@@ -52,8 +52,8 @@ class ExitException : public kul::proc::Exception{
 
 class AProcess{
 	private:
+		bool f, s;
 		const bool wfe;
-		bool s;
 		unsigned int pi;
 		const std::string d;
 		std::function<void(std::string)> e;
@@ -62,11 +62,13 @@ class AProcess{
 		std::vector<std::pair<const std::string, const std::string> > evs;
 		friend std::ostream& operator<<(std::ostream&, const AProcess&);
 	protected:
-		AProcess(const std::string& cmd, const bool& wfe) : wfe(wfe), s(0), pi(0), d(){ argv.push_back(cmd); }
-		AProcess(const std::string& cmd, const std::string& d, const bool& wfe) : wfe(wfe), s(0), d(d){ argv.push_back(cmd); }
+		AProcess(const std::string& cmd, const bool& wfe) : wfe(wfe), f(0), s(0), pi(0), d(){ argv.push_back(cmd); }
+		AProcess(const std::string& cmd, const std::string& d, const bool& wfe) : wfe(wfe), f(0), s(0), d(d){ argv.push_back(cmd); }
 		virtual ~AProcess(){}
 
 		const std::string&	directory()const { return d; }
+		void setFinished()	{ f = 1; }
+		virtual bool kill(int k = 6) = 0;
 		virtual void preStart() {}
 		virtual void finish()	{}
 		virtual void tearDown()	{}
@@ -89,6 +91,12 @@ class AProcess{
 			KEXCEPT(kul::proc::Exception, s);
 		}
 	public:
+		template <class T> AProcess& arg(const T& a) { 
+			std::stringstream ss;
+			ss << a;
+			if(ss.str().size()) argv.push_back(ss.str());
+			return *this; 
+		}
 		AProcess& arg(const std::string& a) { if(a.size()) argv.push_back(a); return *this; }
 		AProcess& var(const std::string& n, const std::string& v) { evs.push_back(std::pair<const std::string, const std::string>(n, v)); return *this;}
 		virtual void start() throw(kul::Exception){
@@ -97,7 +105,8 @@ class AProcess{
 			this->run();
 		}
 		const unsigned int& pid() 	const { return pi; }
-		const bool started()		const { return pi > 0; }
+		bool started()		const { return pi > 0; }
+		bool finished()		const { return f; }
 		virtual const std::string toString() const{
 			std::string s;
 			for(const std::string& a : args()) s += a + " ";

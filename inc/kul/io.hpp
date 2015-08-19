@@ -112,7 +112,9 @@ class Writer: public AWriter{
 	private:
 		std::ofstream f;
 	public:
-		Writer(const char*c) : f(c, std::ios::out){ 
+		Writer(const char*c, bool a = 0){ 
+			if(a) f.open(c, std::ios::out | std::ios::app);
+			else  f.open(c, std::ios::out);
 			if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");
 		}
 		~Writer() { f.close();}

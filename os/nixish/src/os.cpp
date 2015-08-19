@@ -87,11 +87,15 @@ bool kul::Dir::is() const{
 }
 bool kul::Dir::mk() const{
 	if(path().empty()) return false;
-	if(!prnt().is()) prnt().mk();
+	if(!parent().is()) parent().mk();
 	return mkdir(locl().c_str(), 0777) == 0;
 }
 void kul::Dir::rm() const{
-	if(is()) remove(real().c_str());	
+	if(is()){
+		for(const auto& a : files()) a.rm();
+		for(const auto& a : dirs())  a.rm();
+		remove(real().c_str());
+	}
 }
 bool kul::Dir::root() const{
 	return is() && real().size() == 1;
@@ -141,6 +145,7 @@ bool kul::File::is() const{
 	struct stat buffer;
 	return (stat (d.join(n).c_str(), &buffer) == 0);
 }
+
 bool kul::File::cp(const File& f) const{
 	std::ifstream src(real(), std::ios::binary);
 	std::ofstream dst(f.real(), std::ios::binary);

@@ -81,6 +81,7 @@ class Dir{
 		}
 		Dir(const Dir& d) : p(d.p){}
 
+		bool cp(const Dir& d) const;
 		bool is() const;
 		bool mk() const;
 		void rm() const;
@@ -89,12 +90,15 @@ class Dir{
 		const std::string join(const std::string& s) const{ 
 			return p.size() == 0 ? s : root() ? path() + s : JOIN(path(), s); 
 		}
+		const std::string name() const{
+			return root() ? path() : path().substr(path().rfind(SEP()));
+		}
 		const std::string  locl() const { return LOCL(path()); }
 		const std::string& path() const { return p;}
 		const std::string  real() const { return REAL(path()); }
 		const std::string  mini() const { return MINI(real()); }
 
-		const Dir prnt() const { return Dir(PRNT(path())); }
+		const Dir parent() const { return Dir(PRNT(path())); }
 
 		const std::vector<Dir> 	dirs(bool incHidden = false) const throw(fs::Exception);
 		const std::vector<File> files(bool recursive = false) const throw(fs::Exception);
@@ -130,6 +134,7 @@ class File{
 		File(const std::string& n, const std::string& d1) : n(n), d(d1){}
 		File(const File& f) : n(f.n), d(f.d){}
 
+		bool cp(const Dir& f) const;
 		bool cp(const File& f) const;
 		bool is() const;
 		bool mk() const;
