@@ -42,7 +42,7 @@ void kul::scm::Git::up(const std::string& d, const std::string& r, const std::st
 	else{
 		kul::Process p("git", d);
 		p.arg("pull");
-		if(!v.empty()) p.arg("-u").arg("origin").arg(v);
+		if(!v.empty()) p.arg("-u").arg(r).arg(v);
 		try{
 			std::cout << "PERFORMING: " << p.toString() << std::endl;
 			p.start();
@@ -62,15 +62,15 @@ const std::string kul::scm::Git::localVersion(const std::string& d) const{
 	if(pc.outs().empty()) KEXCEPT(Exception, "SCM ERROR: Directory may not be git repository : " + d);
 	return kul::String::lines(pc.outs())[0];
 }
-const std::string kul::scm::Git::remoteVersion(const std::string& d, const std::string& url, const std::string& branch) const throw(Exception){
+const std::string kul::scm::Git::remoteVersion(const std::string& d, const std::string& url, const std::string& b) const throw(Exception){
 	kul::Process p("git", d);
 	kul::ProcessCapture pc(p);
 	try{		
-		p.arg("ls-remote").arg(url).arg(branch).start();
+		p.arg("ls-remote").arg(url).arg(b).start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}
-	if(pc.outs().empty()) KEXCEPT(Exception, "SCM ERROR URL OR BRANCH MAY NOT EXIST: " + url + " / " + branch);
+	if(pc.outs().empty()) KEXCEPT(Exception, "SCM ERROR URL OR BRANCH MAY NOT EXIST: " + url + " / " + b);
 	std::string s(kul::String::lines(pc.outs())[0]);
 	kul::String::trim(s);
 	return s.substr(0, s.find("	"));
