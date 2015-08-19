@@ -30,7 +30,7 @@ void kul::scm::Git::co(const std::string& d, const std::string& r, const std::st
 	if(!v.empty()) p.arg("-b").arg(v);
 	try{
 		p.arg(".");
-		std::cout << "PERFORMING: " << p.toString() << std::endl;
+		std::cout << "PERFORMING: " << p << std::endl;
 		p.start();
 	}catch(const kul::proc::ExitException& e){
 		dr.rm();
@@ -44,7 +44,7 @@ void kul::scm::Git::up(const std::string& d, const std::string& r, const std::st
 		p.arg("pull");
 		if(!v.empty()) p.arg("-u").arg(r).arg(v);
 		try{
-			std::cout << "PERFORMING: " << p.toString() << std::endl;
+			std::cout << "PERFORMING: " << p << std::endl;
 			p.start();
 		}catch(const kul::proc::ExitException& e){
 			KEXCEPT(Exception, "SCM ERROR - Check remote dependency location / version");
