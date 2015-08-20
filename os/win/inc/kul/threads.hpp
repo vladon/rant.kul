@@ -24,7 +24,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_THREADS_HPP_
 #define _KUL_THREADS_HPP_
 
-#include <windows.h>
+#include <Windows.h>
 
 #include "kul/threads.base.hpp"
 

@@ -49,7 +49,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <http.h>
 #include <stdio.h>
-#include <windows.h>
+#include <Windows.h>
 #include <winsock2.h>
 
 #pragma comment(lib, "httpapi.lib")

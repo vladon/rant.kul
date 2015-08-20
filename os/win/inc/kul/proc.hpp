@@ -29,7 +29,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <sstream>
 #include <strsafe.h>
-#include <windows.h> 
+#include <Windows.h> 
 
 #include "kul/os.hpp"
 #include "kul/def.hpp"
