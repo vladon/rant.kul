@@ -103,14 +103,14 @@ void kul::Process::run() throw (kul::Exception){
 			for (;;) { 
 				bSuccess = ReadFile( g_hChildStd_OUT_Rd, chBuf, PROCESS_BUFFER_SIZE, &dwRead, NULL);
 				if(!bSuccess || dwRead == 0 ) break;
-				for(const std::string& l : kul::String::lines(std::string(chBuf, dwRead))) out(l);
+				out(std::string(chBuf, dwRead));
 				dwRead = 0;
 			} 
 			dwRead = 0;
 			for (;;) { 
 				bSuccess=ReadFile( g_hChildStd_ERR_Rd, chBuf, PROCESS_BUFFER_SIZE, &dwRead, NULL);
 				if(!bSuccess || dwRead == 0 ) break; 
-				for(const std::string& l : kul::String::lines(std::string(chBuf, dwRead))) err(l);
+				err(std::string(chBuf, dwRead));
 				dwRead = 0;
 			} 
 		}while(WaitForSingleObject(piProcInfo.hProcess, 1) == WAIT_TIMEOUT);
