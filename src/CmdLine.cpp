@@ -26,6 +26,13 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/cli.hpp"
 #include "kul/string.hpp"
 
+const std::string kul::cli::receive(const std::string& t){
+	if(!t.empty()) std::cout << t << std::endl;
+	std::string s;
+	std::getline(std::cin, s);
+	return s;
+}
+
 std::vector<std::string> kul::cli::CmdLine::asArgs(const std::string& cmd) throw (ArgParsingException){
 	std::vector<std::string> args;
 	

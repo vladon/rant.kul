@@ -76,6 +76,7 @@ class Reader : public AReader{
 		Reader(const char* c) : f(c, std::ios::in) { 
 			if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");
 		}
+		Reader(const File& c) : Reader(c.full().c_str()){}
 		~Reader() { f.close();}
 		const std::string* readLine(){
 			return AReader::readLine(f);
@@ -91,6 +92,7 @@ class BinaryReader : public AReader{
 		BinaryReader(const char* c) : f(c, std::ios::in |std::ios::binary){
 			if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");
 		}
+		BinaryReader(const File& c) : BinaryReader(c.full().c_str()){}
 		~BinaryReader() { f.close();}
 		const std::string* readLine(){
 			return AReader::readLine(f);
@@ -117,6 +119,7 @@ class Writer: public AWriter{
 			else  f.open(c, std::ios::out);
 			if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");
 		}
+		Writer(const File& c, bool a = 0) : Writer(c.full().c_str(), a){}
 		~Writer() { f.close();}
 		void write(const char*c, bool nl = false){
 			return AWriter::write(f, c, nl);
@@ -134,6 +137,7 @@ class BinaryWriter : public AWriter{
 			if(!f) KEXCEPT(Exception, "FileException : file \"" + std::string(c) + "\" not found");
 			f.unsetf(std::ios_base::skipws);
 		}
+		BinaryWriter(const File& c) : BinaryWriter(c.full().c_str()){}
 		~BinaryWriter() { f.close();}
 		void write(const char*c, bool nl = false){
 			return AWriter::write(f, c, nl);

@@ -35,6 +35,9 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace kul{  namespace cli {
 
+const std::string receive(const std::string& t = "");
+const std::string hidden(const std::string& t = "");
+
 class Exception : public kul::Exception{
 	public:
 		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
@@ -59,29 +62,6 @@ class CmdLine{
 	public:
 		static std::vector<std::string> asArgs(const std::string& cmd) throw(ArgParsingException);
 		static void print(const std::vector<std::string>& ss, bool tab = true);		
-};
-
-class CmdIn{
-	public:
-		static CmdIn& INSTANCE(){
-			static CmdIn instance;
-			return instance;
-		}
-		virtual bool receiveBool(const std::string& txt) {
-			std::string t = receive(txt);
-			kul::String::trim(t);
-			std::vector<std::string> pos {"yes", "y", "true", "1"}; 
-			std::vector<std::string> neg {"no", "n", "false", "0"}; 
-			for(const std::string& s : pos) if(kul::String::cicmp(t, s)) return true;
-			for(const std::string& s : neg) if(kul::String::cicmp(t, s)) return false;
-			KEXCEPT(ParseException, "input not bool-able");
-		}
-		virtual const std::string receive(const std::string& t){
-			std::string s;
-			std::cout << t << std::endl;
-			std::getline(std::cin, s);
-			return s;
-		}
 };
 
 class Cmd{
