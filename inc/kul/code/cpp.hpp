@@ -242,7 +242,7 @@ class WINCompiler : public CCompiler{
 			CompilerProcessCapture pc(p);
 			for(unsigned int i = 1; i < bits.size(); i++) p.arg(bits[i]);
 			for(const std::string& path : libPaths)	p.arg("/LIBPATH:\"" + path + "\"");
-			p.arg("/OUT:\"" + exe + "\"").arg("/NOLOGO");	
+			p.arg("/OUT:\"" + exe + "\"").arg("/nologo");	
 			for(const std::string& o : objects)	p.arg(o);
 			for(const std::string& lib : libs)
 				if(mode == Mode::SHAR) p.arg(sharedLib(lib));
@@ -291,7 +291,7 @@ class WINCompiler : public CCompiler{
 			kul::Process p(cmd);
 			CompilerProcessCapture pc(p);
 			for(unsigned int i = 1; i < bits.size(); i++) p.arg(bits[i]);
-			p.arg("/OUT:\"" + lib + "\"").arg("/NOLOGO").arg("/LTCG");
+			p.arg("/OUT:\"" + lib + "\"").arg("/nologo").arg("/LTCG");
 			for(const std::string& o : objects)	p.arg(o);	
 			try{
 				p.start();
