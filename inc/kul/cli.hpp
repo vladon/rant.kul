@@ -37,6 +37,7 @@ namespace kul{  namespace cli {
 
 const std::string receive(const std::string& t = "");
 const std::string hidden(const std::string& t = "");
+void show();
 
 class Exception : public kul::Exception{
 	public:

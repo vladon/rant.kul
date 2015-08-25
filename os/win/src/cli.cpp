@@ -36,3 +36,10 @@ const std::string kul::cli::hidden(const std::string& t){
 	SetConsoleMode(hStdin, mode);
 	return s;
 }
+
+void kul::cli::show(){
+	HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE); 
+    DWORD mode = 0;
+    GetConsoleMode(hStdin, &mode);
+    SetConsoleMode(hStdin, mode | (ENABLE_ECHO_INPUT));
+}

@@ -110,7 +110,7 @@ class S2T : google::sparse_hash_map<std::string, T, HashFcn, EqualKey>{
 		std::pair<iterator, bool> 	insert(const std::pair<std::string, T>& obj) 			{ return s2T::insert(obj); }
 		std::pair<iterator, bool> 	insert(const std::string& s, const T& t)				{ return insert(std::pair<std::string, T>(s, t)); }
 		T&							operator[](const key_type& key)							{ return s2T::operator[](key); }
-		T& 							get(const key_type& key)								{ return (*s2T::find(key)).second; }
+		T&							get(const key_type& key)								{ return (*find(key)).second; }
 		size_type 					count(const key_type& key) 						const   { return s2T::count(key); }
 		size_type 					erase(const key_type& key) 								{ return s2T::erase(key); }
 		iterator 					begin()               									{ return s2T::begin(); }
@@ -156,6 +156,7 @@ class S2S2T : google::sparse_hash_map<std::string, S2T<T>, HashFcn, EqualKey>{
 		typedef typename s2T2T::key_type key_type;
 		typedef typename s2T2T::iterator iterator;
 		typedef typename s2T2T::const_iterator const_iterator;
+
 		std::pair<iterator, bool> 	insert(const std::pair<std::string, S2T<T> >& obj) 			{ return s2T2T::insert(obj); }
 		std::pair<iterator, bool> 	insert(const std::string s, S2T<T> t) 						{ return insert(std::pair<std::string, S2T<T> >(s, t)); }
 		S2T<T>&						operator[](const key_type& key)								{ return s2T2T::operator[](key); }

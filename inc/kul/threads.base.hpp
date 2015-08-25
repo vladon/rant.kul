@@ -115,6 +115,7 @@ class Thread{
 		void join()						{ if(s) th->join();	}
 		void sleep(const ulong& mil)	{ if(s) this_thread::sleep(mil); }
 		bool detach()					{ if(s) return th->detach(); return 0;}
+		bool started() 					{ return s; }
 		bool finished()					{ return s && th->finished(); }
 		void interrupt() throw(kul::threading::InterruptionException){
 			th->interrupt();
