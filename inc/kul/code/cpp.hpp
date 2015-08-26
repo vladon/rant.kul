@@ -316,6 +316,7 @@ class WINCompiler : public CCompiler{
 			}
 			kul::Process p(cmd);
 			for(unsigned int i = 1; i < bits.size(); i++) p.arg(bits[i]);
+			p.arg("/nologo");
 			CompilerProcessCapture pc(p);
 			for(const std::string& s : incs)	p.arg("/I\"" + s + "\"");
 			for(const std::string& s : args)	p.arg(s);
