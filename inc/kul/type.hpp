@@ -27,12 +27,11 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/except.hpp"
 #include "kul/string.hpp"
 
-namespace kul { namespace type{
-class Exception : public kul::Exception{
+namespace kul { 
+class TypeException : public kul::Exception{
 	public:
-		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
+		TypeException(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
-}
 
 class Bool{
 	public:
@@ -43,20 +42,26 @@ class Bool{
 			std::transform(s.begin(), s.end(), s.begin(), ::tolower);
 			if (std::find(pos.begin(), pos.end(), s) != pos.end()) return true;
 			if (std::find(neg.begin(), neg.end(), s) != neg.end()) return false;
-			KEXCEPTION("input not bool-able");
+			KEXCEPT(TypeException, "input not bool-able");
 		}
 
 };
 
+template <class T>
 class Type{
+	private:
+		static int GET(const std::string& s){
+			try{ 
+				return std::stoi(s); }
+			catch(const std::invalid_argument& e){
+				KEXCEPT(TypeException, "stoi failed");
+			}
+		}
 	public:
-		template <class T>
-		static T FROM(std::string s){
-			T t = 0;
-			std::stringstream ss(s);
-			ss >> t;
-			return t;
+		static T FROM(const std::string& s){
+			return GET(s);
 		}
 };
+
 }
 #endif /* _KUL_TYPE_HPP_ */

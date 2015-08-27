@@ -110,7 +110,7 @@ class Thread{
 		void run() throw(kul::threading::Exception){ 
 			if(s) KEXCEPT(threading::Exception, "Thread already started");
 			s = true;
-			th->run();			
+			th->run();
 		}
 		void join()						{ if(s) th->join();	}
 		void sleep(const ulong& mil)	{ if(s) this_thread::sleep(mil); }
@@ -120,6 +120,7 @@ class Thread{
 		void interrupt() throw(kul::threading::InterruptionException){
 			th->interrupt();
 		}
+		const std::exception_ptr& exception() 		const	{ return th->exception();}
 };
 
 namespace threading{

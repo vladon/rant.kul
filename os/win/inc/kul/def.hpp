@@ -42,9 +42,9 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #pragma warning(disable : 4503)
 #pragma warning(disable : 4800)
 
-#ifndef NOEXCEPT
-	#define NOEXCEPT
-#endif /*  NOEXCEPT */
+#ifndef KNOEXCEPT
+	#define KNOEXCEPT
+#endif /*  KNOEXCEPT */
 
 #ifndef INTMAX_MAX
 	#define INTMAX_MAX _I64_MAX

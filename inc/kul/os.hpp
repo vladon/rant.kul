@@ -62,7 +62,6 @@ bool  		WHICH(const char* c);
 
 class Dir{
 	private:
-		Dir(){}
 		std::string p;
 
 		static const std::string LOCL(std::string s);
@@ -76,10 +75,12 @@ class Dir{
 				: a.substr(std::string(env::CWD()).size() + 1);
 		}
 	public:
+		Dir(){}
 		Dir(const std::string& p, bool m = false) throw(fs::Exception) : p(Dir::LOCL(p)) {
 			if(m && !is() && !mk()) KEXCEPT(fs::Exception, "Invalid directory path provided");
 		}
 		Dir(const Dir& d) : p(d.p){}
+		Dir(const std::string& s, const Dir& d) : p(d.join(s)){}
 
 		bool cp(const Dir& d) const;
 		bool is() const;
@@ -116,6 +117,7 @@ class File{
 		std::string n;
 		Dir d;
 	public:
+		File(){}
 		File(const std::string& n, bool m = false) : n(Dir::LOCL(n)){
 			if(n.find(Dir::SEP()) != std::string::npos){
 				this->d = Dir(n.substr(0, n.rfind(Dir::SEP())));

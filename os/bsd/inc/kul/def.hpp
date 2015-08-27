@@ -34,8 +34,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
  	#define __KUL_THREAD_SPAWN_WAIT__ 5000000
 #endif /*  __KUL_THREAD_SPAWN_WAIT__ */
 
-#ifndef NOEXCEPT
-	#define NOEXCEPT noexcept
-#endif /*  NOEXCEPT */
+#ifndef KNOEXCEPT
+	#define KNOEXCEPT noexcept
+#endif /*  KNOEXCEPT */
 
 #endif /* _KUL_DEF_HPP_ */
