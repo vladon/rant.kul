@@ -182,9 +182,6 @@ bool kul::File::cp(const File& f) const{
 	std::ofstream dst(f.dir().join(f.name()), std::ios::binary);
 	return (bool) (dst << src.rdbuf());
 }
-bool kul::File::mv(const File& f) const{
-	return std::rename(this->full().c_str(), f.full().c_str());
-}
 
 const kul::Dir kul::os::userDir(){
 	const char* h = env::GET("HOME");

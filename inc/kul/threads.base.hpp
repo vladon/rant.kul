@@ -121,6 +121,7 @@ class Thread{
 			th->interrupt();
 		}
 		const std::exception_ptr& exception() 		const	{ return th->exception();}
+		void rethrow(){ if(th->exception()) std::rethrow_exception(th->exception()); }
 };
 
 namespace threading{

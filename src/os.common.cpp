@@ -41,7 +41,15 @@ bool kul::Dir::cp(const Dir& d) const{
 	return 1;
 }
 
+bool kul::Dir::mv(const Dir& d) const{
+	return std::rename(this->path().c_str(), d.path().c_str());
+}
+
 bool kul::File::cp(const Dir& d) const{
 	if(!d.is() && !d.mk()) KEXCEPT(fs::Exception, "Directory: \"" + d.path() + "\" is not valid");
 	return cp(kul::File(name(), d));
+}
+
+bool kul::File::mv(const File& f) const{
+	return std::rename(this->full().c_str(), f.full().c_str());
 }

@@ -85,6 +85,7 @@ class Dir{
 		bool cp(const Dir& d) const;
 		bool is() const;
 		bool mk() const;
+		bool mv(const Dir& d) const;
 		void rm() const;
 		bool root() const;
 
@@ -92,7 +93,7 @@ class Dir{
 			return p.size() == 0 ? s : root() ? path() + s : JOIN(path(), s); 
 		}
 		const std::string name() const{
-			return root() ? path() : path().substr(path().rfind(SEP()));
+			return root() ? path() : path().substr(path().rfind(SEP()) + 1);
 		}
 		const std::string  locl() const { return LOCL(path()); }
 		const std::string& path() const { return p;}

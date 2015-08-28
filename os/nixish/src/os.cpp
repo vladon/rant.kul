@@ -159,9 +159,6 @@ bool kul::File::mk() const{
 	}
 	return pFile != NULL;
 }
-bool kul::File::mv(const File& f) const{
-	return std::rename(this->full().c_str(), f.full().c_str());
-}
 bool kul::File::rm() const{
 	if(is()){
 		remove(real().c_str());
