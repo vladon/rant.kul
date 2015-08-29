@@ -1,6 +1,6 @@
 /**
 
-./inc/kul/threading/thread.hpp
+./inc/kul/threading/thread.base.hpp
 
 Created on: 1 Jan 2013
 
@@ -30,214 +30,74 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <thread>
 
 #include "kul/defs.hpp" 
+#include "kul/type.hpp" 
 #include "kul/except.hpp"
 
 namespace kul{ 
-
 namespace this_thread{	
-	const std::string id();
-	void sleep(const unsigned long& millis);
-	void uSleep(const unsigned long& micros);
-	void nSleep(const unsigned long& nanos);
+inline void sleep(const unsigned long& millis) { std::this_thread::sleep_for(std::chrono::milliseconds(millis));}
+inline void uSleep(const unsigned long& micros){ std::this_thread::sleep_for(std::chrono::microseconds(micros));}
+inline void nSleep(const unsigned long& nanos) { std::this_thread::sleep_for(std::chrono::nanoseconds(nanos));}
 }// END NAMESPACE this_thread
-
-namespace threading{
-
-class Exception : public kul::Exception{
-	public:
-		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
-};
-
-class InterruptionException : public Exception{
-	public:
-		InterruptionException(const char*f, const int l, const std::string& s) : Exception(f, l, s){}
-};
-}// END NAMESPACE threading
-
-template <class T>
-class Ref{
-	private:
-		T& t;
-	public:
-		Ref(T& t) : t(t){}
-		T& get() const{ return t;}
-};
 
 class Thread;
 class ThreadPool;
 template<class P> class PredicatedThreadPool;
 
-namespace osi{
-class AThreader{
-	private:
-		bool f;
-	protected:
-		AThreader() : f(0){}
-		std::exception_ptr eP;
-
-		virtual void act() 														= 0;		
-		virtual void join() 													= 0;
-		virtual bool detach() 													= 0;
-		virtual void interrupt() throw(kul::threading::InterruptionException) 	= 0;
-		virtual void run() throw(kul::threading::Exception) 					= 0;
-		void setFinished()									{ f = true;}
-		bool finished(	)	 						const 	{ return f;}
-		const std::exception_ptr& exception() 		const	{ return eP;}
-		void exception(const std::exception_ptr& e)	{ eP = e;}
-
-	public:
-		virtual ~AThreader(){}
-		friend class kul::Thread;
-		friend class kul::ThreadPool;
-		template<class P> friend class kul::PredicatedThreadPool;
-};
-}// END NAMESPACE OSI OS Independent
-
-class ThreaderService{
-	public:
-		template <class T> static std::shared_ptr<kul::osi::AThreader> threader(const T& t);
-		template <class T> static std::shared_ptr<kul::osi::AThreader> refThreader(const Ref<T>& ref);
-};
-
-class Thread{
-	private:
-		bool s;
-		std::shared_ptr<kul::osi::AThreader> th;
-	protected:
-	public:
-		template <class T> Thread(T t) 					: s(0), th(ThreaderService::threader(t))		{ }
-		template <class T> Thread(const Ref<T>& ref) 	: s(0), th(ThreaderService::refThreader(ref))	{ }
-		void run() throw(kul::threading::Exception){ 
-			if(s) KEXCEPT(threading::Exception, "Thread already started");
-			s = true;
-			th->run();
-		}
-		void join()						{ if(s) th->join();	}
-		void sleep(const ulong& mil)	{ if(s) this_thread::sleep(mil); }
-		bool detach()					{ if(s) return th->detach(); return 0;}
-		bool started() 					{ return s; }
-		bool finished()					{ return s && th->finished(); }
-		void interrupt() throw(kul::threading::InterruptionException){
-			th->interrupt();
-		}
-		const std::exception_ptr& exception() 		const	{ return th->exception();}
-		void rethrow(){ if(th->exception()) std::rethrow_exception(th->exception()); }
-};
-
 namespace threading{
-class APooledThreader{
+class Exception : public kul::Exception{
 	public:
-		virtual ~APooledThreader(){}
-		virtual std::shared_ptr<kul::osi::AThreader> threader() const = 0;
+		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
+};
+class InterruptionException : public Exception{
+	public:
+		InterruptionException(const char*f, const int l, const std::string& s) : Exception(f, l, s){}
+};
+
+class ThreadObject{
+	private:		
+		virtual void act() = 0;
+		friend class kul::Thread;
+	public:
+		virtual ~ThreadObject(){}
 };
 template <class T>
-class PooledThreader : public APooledThreader{
+class ThreadCopy : public ThreadObject{
 	private:
-		const T t;
+		T t;
+		void act(){ t(); } 
 	public:
-		PooledThreader(const T& t) : t(t){}
-		std::shared_ptr<kul::osi::AThreader> threader() const { return ThreaderService::threader(t);}
+		ThreadCopy(T t) : t(t){}
 };
 template <class T>
-class PooledRefThreader : public APooledThreader{
+class ThreadRef : public ThreadObject{
 	private:
-		const Ref<T>& r;
+		const Ref<T>& t;
+		void act(){ t.get()(); } 
 	public:
-		PooledRefThreader(const Ref<T>& ref) : r(ref){}
-		std::shared_ptr<kul::osi::AThreader> threader() const { return ThreaderService::refThreader(r);}
+		ThreadRef(const Ref<T>& t) : t(t){}
 };
-}// END NAMESPACE threading
 
-class ThreadPool{
+class AThread{
 	protected:
-		bool d, s;
-		unsigned int m;	
-		kul::Ref<ThreadPool> re;
-		kul::Thread th;
-		std::shared_ptr<kul::threading::APooledThreader> pT;
-		std::queue<std::shared_ptr<kul::osi::AThreader> > ts;
-		std::vector<std::exception_ptr> ePs;
-		void setStarted()	{ s = true; }
-		bool started()		{ return s; }
-		virtual void start() throw (std::exception) {
-			if(started()) KEXCEPT(Exception, "ThreadPool is already started");
-			setStarted();
-			for(unsigned int i = 0 ; i < m; i++){
-				std::shared_ptr<kul::osi::AThreader> at = pT->threader();
-				at->run();
-				ts.push(at);
-				this_thread::nSleep(__KUL_THREAD_SPAWN_WAIT__);
-			}
-		}
+		AThread(const std::shared_ptr<ThreadObject>& t) : to(t), f(0), s(0){ /*to.reset(t);*/ }
+		template <class T> AThread(const T& t) : to(std::make_shared<ThreadCopy<T>>(t)), f(0), s(0){}
+		template <class T> AThread(const Ref<T>& t) : to(std::make_shared<ThreadRef<T>>(t)), f(0), s(0){}
+		AThread() : f(0), s(0){}
+		bool f, s;
+		std::exception_ptr ep;
+		std::shared_ptr<threading::ThreadObject> to;
 	public:
-		template <class T> ThreadPool(const T& t) 			: d(0), s(0), m(1), re(*this), th(re), pT(std::make_shared<kul::threading::PooledThreader<T> >(t)){}
-		template <class T> ThreadPool(const Ref<T>& ref) 	: d(0), s(0), m(1), re(*this), th(re), pT(std::make_shared<kul::threading::PooledRefThreader<T> >(ref)){}
-		void setMax(const int& max) { m = max;}
-		void run(){
-			th.run();
+		virtual ~AThread(){}
+		void join(){
+			while(!finished()) this_thread::sleep(11);
 		}
-		void operator()(){
-			start();
-		}
-		virtual void join() throw (std::exception){
-			th.join();
-			while(ts.size()){
-				const std::shared_ptr<kul::osi::AThreader>& at = ts.front();
-				if(at->finished()){
-					if(at->exception() != std::exception_ptr()){
-						if(!d) std::rethrow_exception(at->exception());
-						ePs.push_back(at->exception());
-					}
-					ts.pop();
-				}
-				this_thread::sleep(1);
-			}
-		}
-		void detach(){
-			d = true;
-			th.detach();
-		}
-		void interrupt() throw(kul::threading::InterruptionException)	{ }
-		const std::vector<std::exception_ptr> exceptionPointers() {
-			return ePs;
-		}
+		bool started() { return s; }
+		bool finished(){ return f; }		
+		const std::exception_ptr& exception(){ return ep;}
+		void rethrow(){ if(ep) std::rethrow_exception(ep);}
 };
 
-template<class P>
-class PredicatedThreadPool : public ThreadPool{
-	private:
-		P& p;
-		unsigned int ps;
-	protected:
-		void start() throw (std::exception) {
-			if(started()) KEXCEPT(Exception, "ThreadPool is already started");
-			setStarted();
-			unsigned int c = 0;
-			while(c < ps){
-				for(unsigned int i = ts.size(); i < m && c < ps; i++){
-					c++;
-					std::shared_ptr<kul::osi::AThreader> at = pT->threader();
-					at->run();
-					ts.push(at);
-					this_thread::nSleep(__KUL_THREAD_SPAWN_WAIT__);
-				}
-				const std::shared_ptr<kul::osi::AThreader>* at = &ts.front();
-				while(at && (*at)->finished()){
-					if((*at)->exception() != std::exception_ptr()){
-						if(!d) std::rethrow_exception((*at)->exception());
-						ePs.push_back((*at)->exception());
-					}
-					ts.pop();
-					at = 0;
-					if(ts.size()) at = &ts.front();
-					this_thread::sleep(1);
-				}
-			}
-		}
-	public:
-		template <class T> PredicatedThreadPool(const T& t, P& pr) 			: ThreadPool(t) 	, p(pr), ps(p.size()){}
-		template <class T> PredicatedThreadPool(const Ref<T>& ref, P& pr) 	: ThreadPool(ref)	, p(pr), ps(p.size()){}
-};
-}// END NAMESPACE kul
-
+} // END NAMESPACE threading
+} // END NAMESPACE kul
 #endif /* _KUL_THREADS_BASE_HPP_ */

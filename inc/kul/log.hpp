@@ -34,7 +34,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/time.hpp"
 #include "kul/except.hpp"
 #include "kul/string.hpp"
-#include "kul/threads.base.hpp"
+#include "kul/threads.os.hpp"
 
 #ifndef __KUL_LOG_TIME_FRMT__
 #define __KUL_LOG_TIME_FRMT__ "%Y-%m-%d-%H:%M:%S:%i"

@@ -28,6 +28,17 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/string.hpp"
 
 namespace kul { 
+
+template <class T>
+class Ref{
+	private:
+		T& t;
+		void operator()(){ t(); }
+	public:
+		Ref(T& t) : t(t){}
+		T& get() const{ return t;}
+};
+	
 class TypeException : public kul::Exception{
 	public:
 		TypeException(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
