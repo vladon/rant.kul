@@ -56,15 +56,7 @@ class Mutex{
 };
 
 namespace threading{
-inline DWORD WINAPI threadFunction(LPVOID th){
-	try{
-		reinterpret_cast<Thread*>(th)->to->act(); 
-	}catch(const std::exception& e){ 
-		reinterpret_cast<Thread*>(th)->ep = std::current_exception();
-	}
-	reinterpret_cast<Thread*>(th)->f = 1;
-	return 0;
-}
+DWORD WINAPI threadFunction(LPVOID th);
 }
 
 class Thread : public threading::AThread{
@@ -85,6 +77,19 @@ class Thread : public threading::AThread{
 			h = CreateThread(0, 5120000, threading::threadFunction, this, 0, 0);
 		}
 };
+
+namespace threading{
+inline DWORD WINAPI threadFunction(LPVOID th){
+	try{
+		reinterpret_cast<Thread*>(th)->to->act(); 
+	}catch(const std::exception& e){ 
+		reinterpret_cast<Thread*>(th)->ep = std::current_exception();
+	}
+	reinterpret_cast<Thread*>(th)->f = 1;
+	return 0;
+}
+}
+
 
 }// END NAMESPACE kul
 #endif /* _KUL_THREADS_OS_HPP_ */
