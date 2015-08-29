@@ -62,7 +62,10 @@ DWORD WINAPI threadFunction(LPVOID th);
 class Thread : public threading::AThread{
 	private:
 		HANDLE h;
-		friend DWORD WINAPI threadFunction(LPVOID);
+		friend DWORD WINAPI threading::threadFunction(LPVOID);
+		void act(){ to->act(); }
+		void exp(const std::exception_ptr& e){ ep = e; }
+		void fin(){ f = 1; }
 	public:
 		Thread(const std::shared_ptr<threading::ThreadObject>& t) : AThread(t){}
 		template <class T> Thread(const T& t) : AThread(t){}
@@ -81,11 +84,11 @@ class Thread : public threading::AThread{
 namespace threading{
 inline DWORD WINAPI threadFunction(LPVOID th){
 	try{
-		reinterpret_cast<Thread*>(th)->to->act(); 
+		reinterpret_cast<Thread*>(th)->act(); 
 	}catch(const std::exception& e){ 
-		reinterpret_cast<Thread*>(th)->ep = std::current_exception();
+		reinterpret_cast<Thread*>(th)->exp(std::current_exception());
 	}
-	reinterpret_cast<Thread*>(th)->f = 1;
+	reinterpret_cast<Thread*>(th)->fin();
 	return 0;
 }
 }
