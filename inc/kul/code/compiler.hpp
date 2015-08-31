@@ -43,7 +43,7 @@ class CompilerProcessCapture : public kul::ProcessCapture{
 	public:
 		CompilerProcessCapture() : ep(){}
 		CompilerProcessCapture(kul::AProcess& p) : kul::ProcessCapture(p), ep(){}
-		CompilerProcessCapture(const CompilerProcessCapture& cp) : kul::ProcessCapture(cp), ep(cp.ep){}
+		CompilerProcessCapture(const CompilerProcessCapture& cp) : kul::ProcessCapture(cp), ep(cp.ep), t(cp.t){}
 
 		void exception(const std::exception_ptr& e)	{ ep = e; }
 		const std::exception_ptr& exception() const	{ return ep; }
