@@ -40,7 +40,6 @@ inline void uSleep(const unsigned long& micros){ std::this_thread::sleep_for(std
 inline void nSleep(const unsigned long& nanos) { std::this_thread::sleep_for(std::chrono::nanoseconds(nanos));}
 }// END NAMESPACE this_thread
 
-class AThread;
 class ThreadPool;
 template<class P> class PredicatedThreadPool;
 
@@ -54,6 +53,7 @@ class InterruptionException : public Exception{
 		InterruptionException(const char*f, const int l, const std::string& s) : Exception(f, l, s){}
 };
 
+class AThread;
 class ThreadObject{
 	private:		
 		virtual void act() = 0;
