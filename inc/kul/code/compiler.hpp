@@ -48,7 +48,7 @@ class CompilerProcessCapture : public kul::ProcessCapture{
 		void exception(const std::exception_ptr& e)	{ ep = e; }
 		const std::exception_ptr& exception() const	{ return ep; }
 
-		void tmp(const std::string t) 	{ this->t = t; }
+		void tmp(const std::string& tm) { this->t = tm; }
 		const std::string& tmp() const 	{ return t; }
 };
 
