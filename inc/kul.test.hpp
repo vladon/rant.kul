@@ -42,16 +42,20 @@ class TestThreadObject{
 		int i;
 	public:
 		TestThreadObject() : i(0){}
+		void print(){ KLOG(INF) << "i = " << i;}
+		friend class kul::ThreadCopy<TestThreadObject>;
+		friend class kul::ThreadRef<TestThreadObject>;
+	protected:
 		void operator()(){
 			KLOG(INF) << "THREAD RUNNING";
 			i++;
 			KLOG(INF) << "THREAD FINISHED";
 		}
-		void operator()() const{
+	public:
+		void operator()() const {
 			KLOG(INF) << "CONST THREAD RUNNING";
 			KLOG(INF) << "CONST THREAD FINISHED";
 		}
-		void print(){ KLOG(INF) << "i = " << i;}
 };
 
 class TestThreadPoolObject{
@@ -182,6 +186,9 @@ class test{
 
 			KLOG(INF) << "kul::DateTime::NOW();  " << kul::DateTime::NOW();
 
+			KLOG(INF) << "CPU CORES: " << kul::cpu::cores();
+			KLOG(INF) << "MAX THREADS: " << kul::cpu::threads();
+
 			TestThreadObject tto1;
 			kul::Ref<TestThreadObject> ref(tto1);
 			kul::Thread th(ref);
@@ -234,9 +241,6 @@ class test{
 			tp2.run();
 			tp2.join();
 			ttpo2.print();
-
-			KLOG(INF) << "CPU CORES: " << kul::cpu::cores();
-			KLOG(INF) << "MAX THREADS: " << kul::cpu::threads();
 
 			TestIPC ipc;
 			TestHTTP http;

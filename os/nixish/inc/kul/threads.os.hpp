@@ -64,12 +64,7 @@ class Thread : public threading::AThread{
 	private:
 		pthread_t thr;
 		static void* threadFunction(void* th){
-			try{
-				reinterpret_cast<Thread*>(th)->to->act(); 
-			}catch(const std::exception& e){ 
-				reinterpret_cast<Thread*>(th)->ep = std::current_exception();
-			}
-			reinterpret_cast<Thread*>(th)->f = 1;
+			reinterpret_cast<Thread*>(th)->act(); 
 			return 0;
 		}
 	public:
@@ -85,7 +80,7 @@ class Thread : public threading::AThread{
 			f = 1;
 		}
 		void run() throw(kul::threading::Exception){
-			if(s) 
+			if(s) KEXCEPTION("Thread running");
 			f = 0;
 			pthread_create(&thr, NULL, Thread::threadFunction, this);
 			s = 1;

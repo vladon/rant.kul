@@ -40,7 +40,7 @@ inline void uSleep(const unsigned long& micros){ std::this_thread::sleep_for(std
 inline void nSleep(const unsigned long& nanos) { std::this_thread::sleep_for(std::chrono::nanoseconds(nanos));}
 }// END NAMESPACE this_thread
 
-class Thread;
+class AThread;
 class ThreadPool;
 template<class P> class PredicatedThreadPool;
 
@@ -57,12 +57,13 @@ class InterruptionException : public Exception{
 class ThreadObject{
 	private:		
 		virtual void act() = 0;
-		friend class kul::Thread;
+		friend class AThread;
 	public:
 		virtual ~ThreadObject(){}
 };
+}
 template <class T>
-class ThreadCopy : public ThreadObject{
+class ThreadCopy : public threading::ThreadObject{
 	private:
 		T t;
 		void act(){ t(); } 
@@ -70,14 +71,14 @@ class ThreadCopy : public ThreadObject{
 		ThreadCopy(T t) : t(t){}
 };
 template <class T>
-class ThreadRef : public ThreadObject{
+class ThreadRef : public threading::ThreadObject{
 	private:
 		const Ref<T>& t;
 		void act(){ t.get()(); } 
 	public:
 		ThreadRef(const Ref<T>& t) : t(t){}
 };
-
+namespace threading{
 class AThread{
 	protected:
 		AThread(const std::shared_ptr<ThreadObject>& t) : to(t), f(0), s(0){ /*to.reset(t);*/ }
@@ -87,13 +88,22 @@ class AThread{
 		bool f, s;
 		std::exception_ptr ep;
 		std::shared_ptr<threading::ThreadObject> to;
+		void act(){
+			try{
+				to->act(); 
+			}catch(const std::exception& e){ 
+				ep = std::current_exception();
+			}
+			f = 1;
+			s = 0;
+		}
 	public:
 		virtual ~AThread(){}
 		void join(){
 			while(!finished()) this_thread::sleep(11);
 		}
 		bool started() { return s; }
-		bool finished(){ return f; }		
+		bool finished(){ return f; }
 		const std::exception_ptr& exception(){ return ep;}
 		void rethrow(){ if(ep) std::rethrow_exception(ep);}
 };

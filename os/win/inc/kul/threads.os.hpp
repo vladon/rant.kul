@@ -63,9 +63,6 @@ class Thread : public threading::AThread{
 	private:
 		HANDLE h;
 		friend DWORD WINAPI threading::threadFunction(LPVOID);
-		void act(){ to->act(); }
-		void exp(const std::exception_ptr& e){ ep = e; }
-		void fin(){ f = 1; }
 	public:
 		Thread(const std::shared_ptr<threading::ThreadObject>& t) : AThread(t){}
 		template <class T> Thread(const T& t) : AThread(t){}
@@ -75,20 +72,21 @@ class Thread : public threading::AThread{
 			while(!finished()) this_thread::sleep(1);
 		}
 		bool detach(){ return CloseHandle(h); }
-		void interrupt() throw(kul::threading::InterruptionException){}
-		void run() throw(kul::threading::Exception){ 
+		void interrupt() throw(kul::threading::InterruptionException){
+			TerminateThread(h, 1);
+			f = 0;
+		}
+		void run() throw(kul::threading::Exception){
+			if(s) KEXCEPTION("Thread running");
+			s = 1;
 			h = CreateThread(0, 5120000, threading::threadFunction, this, 0, 0);
+			f = 0;
 		}
 };
 
 namespace threading{
 inline DWORD WINAPI threadFunction(LPVOID th){
-	try{
-		reinterpret_cast<Thread*>(th)->act(); 
-	}catch(const std::exception& e){ 
-		reinterpret_cast<Thread*>(th)->exp(std::current_exception());
-	}
-	reinterpret_cast<Thread*>(th)->fin();
+	reinterpret_cast<Thread*>(th)->act(); 	
 	return 0;
 }
 }

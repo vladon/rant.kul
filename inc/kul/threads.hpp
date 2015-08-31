@@ -62,8 +62,8 @@ class ThreadPool{
 			}
 		}
 	public:
-		template <class T> ThreadPool(const T& t) 			: d(0), s(0), m(1), re(*this), th(re), to(std::make_shared<kul::threading::ThreadCopy<T> >(t)){}
-		template <class T> ThreadPool(const Ref<T>& ref) 	: d(0), s(0), m(1), re(*this), th(re), to(std::make_shared<kul::threading::ThreadRef<T> >(ref)){}
+		template <class T> ThreadPool(const T& t) 			: d(0), s(0), m(1), re(*this), th(re), to(std::make_shared<kul::ThreadCopy<T> >(t)){}
+		template <class T> ThreadPool(const Ref<T>& ref) 	: d(0), s(0), m(1), re(*this), th(re), to(std::make_shared<kul::ThreadRef<T> >(ref)){}
 		void setMax(const int& max) { m = max;}
 		void run(){
 			th.run();
