@@ -33,10 +33,9 @@ template <class T>
 class Ref{
 	private:
 		T& t;
-		void operator()(){ t(); }
 	public:
 		Ref(T& t) : t(t){}
-		T& get() const{ return t;}
+		T& get() const { return t;}
 };
 	
 class TypeException : public kul::Exception{
