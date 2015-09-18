@@ -81,13 +81,14 @@ class ThreadRef : public threading::ThreadObject{
 namespace threading{
 class AThread{
 	protected:
-		AThread(const std::shared_ptr<ThreadObject>& t) : to(t), f(0), s(0){ /*to.reset(t);*/ }
-		template <class T> AThread(const T& t) : to(std::make_shared<ThreadCopy<T>>(t)), f(0), s(0){}
-		template <class T> AThread(const Ref<T>& t) : to(std::make_shared<ThreadRef<T>>(t)), f(0), s(0){}
-		AThread() : f(0), s(0){}
 		bool f, s;
 		std::exception_ptr ep;
 		std::shared_ptr<threading::ThreadObject> to;
+
+		AThread(const std::shared_ptr<ThreadObject>& t) : f(0), s(0), to(t){}
+		template <class T> AThread(const T& t) : f(0), s(0), to(std::make_shared<ThreadCopy<T>>(t)){}
+		template <class T> AThread(const Ref<T>& t) : f(0), s(0), to(std::make_shared<ThreadRef<T>>(t)){}
+		AThread() : f(0), s(0){}
 		void act(){
 			try{
 				to->act(); 
