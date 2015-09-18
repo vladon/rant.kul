@@ -54,13 +54,12 @@ class Bool{
 			if (std::find(neg.begin(), neg.end(), s) != neg.end()) return false;
 			KEXCEPT(TypeException, "input not bool-able");
 		}
-
 };
 
 template <class T>
 class Type{
 	private:
-		static int GET(const std::string& s){
+		static int GET(const std::string& s) throw(TypeException){
 			try{ 
 				return std::stoi(s); }
 			catch(const std::invalid_argument& e){

@@ -28,6 +28,9 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 int kul::this_proc::id(){
 	return GetCurrentProcessId();;
 }
+void kul::this_proc::kill(const int& e){
+	TerminateProcess(OpenProcess(PROCESS_TERMINATE, 0, kul::this_proc::id()), 128+e);
+}
 
 void kul::Process::tearDown(){
 	CloseHandle(g_hChildStd_OUT_Rd);

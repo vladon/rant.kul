@@ -130,7 +130,7 @@ class TestHTTPThread{
 	public:
 		TestHTTPThread(TestHTTPServer& serv) : s(serv){}
 		void operator()(){
-			s.listen();
+			s.start();
 		}
 };
 class TestHTTP{ 

@@ -50,7 +50,7 @@ class Scm{
 		virtual void co(const std::string& l, const std::string& r, const std::string& v) const throw(Exception) = 0;
 		virtual void up(const std::string& l, const std::string& r, const std::string& v) const throw(Exception) = 0;
 		virtual const std::string origin(const std::string& d) const = 0;
-		virtual const std::string localVersion(const std::string& d) const = 0;
+		virtual const std::string localVersion(const std::string& d, const std::string& b) const = 0;
 		virtual const std::string remoteVersion(const std::string& d, const std::string& url, const std::string& branch) const throw(Exception) = 0;
 
 		virtual bool hasChanges(const std::string& d) const = 0;
@@ -65,7 +65,7 @@ class Git : public Scm{
 		void co(const std::string& l, const std::string& r, const std::string& v) const throw(Exception);
 		void up(const std::string& l, const std::string& r, const std::string& v) const throw(Exception);
 		const std::string origin(const std::string& d) const;
-		const std::string localVersion(const std::string& d) const;
+		const std::string localVersion(const std::string& d, const std::string& b) const;
 		const std::string remoteVersion(const std::string& d, const std::string& url, const std::string& branch) const throw(Exception);
 
 		bool hasChanges(const std::string& d) const;
@@ -81,7 +81,7 @@ class Svn : public Scm{
 		void co(const std::string& l, const std::string& r, const std::string& v) const throw(Exception);
 		void up(const std::string& l, const std::string& r, const std::string& v) const throw(Exception);
 		const std::string origin(const std::string& d) const;
-		const std::string localVersion(const std::string& d) const;
+		const std::string localVersion(const std::string& d, const std::string& b) const;
 		const std::string remoteVersion(const std::string& d, const std::string& url, const std::string& branch) const throw(Exception);
 
 		bool hasChanges(const std::string& d) const;

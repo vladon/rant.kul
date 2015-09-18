@@ -68,9 +68,8 @@ class CmdLine{
 class Cmd{
 	private:
 		const char* c;
-		const char* h;
 	public:
-		Cmd(const char* c, const char* h = "") : c(c), h(h){}
+		Cmd(const char* c) : c(c){}
 		const char* command() 	const { return c;}
 };
 
@@ -118,50 +117,40 @@ class Arg : public Cmd{
 };
 
 class Args{
-	private:
-		const std::vector<Cmd>& cmds;
-		const std::vector<Arg>& args;
+		std::vector<Cmd> cmds;
+		std::vector<Arg> args;
 		hash::map::S2S vals;
-		Args();
 	public:
+		Args(){}
 		Args(const std::vector<Cmd>& cmds, const std::vector<Arg>& args) : cmds(cmds), args(args){}
+		void arg(const Arg& a){ args.push_back(a); }
+		void cmd(const Cmd& c){ cmds.push_back(c); }
 		void process(int argc, char* argv[], int first = 1) throw(ArgNotFoundException);
-		const Cmd& commands(const char* c){
+		const Cmd& commands(const char* c) const {
 			for(const Cmd& cmd : cmds) if(strcmp(cmd.command(), c) == 0) return cmd;
 			KEXCEPT(ArgNotFoundException, "No command " + std::string(c) + " found");
 		}
-		const Arg& dashes(const char c){
+		const Arg& dashes(const char c) const {
 			for(const Arg& a : arguments()) if(a.dash() == c) return a;
-			KEXCEPT(ArgNotFoundException, "No argument " + std::to_string(c) + " found");
+			KEXCEPT(ArgNotFoundException, "No argument " + std::string(1, c) + " found");
 		}
-		const Arg& doubleDashes(const char* c){
+		const Arg& doubleDashes(const char* c) const {
 			for(const Arg& a : arguments()) if(strcmp(a.command(), c) == 0) return a;
 			KEXCEPT(ArgNotFoundException, "No argument " + std::string(c) + " found");
 		}
 		const std::vector<Cmd>& commands()	const  { return cmds;}
 		const std::vector<Arg>& arguments() const  { return args;}
-		const std::string& get(const std::string& s){
+		const std::string& get(const std::string& s) const {
 			if(has(s)) return (*vals.find(s)).second;
 			KEXCEPT(ArgNotFoundException, "No value " + s + " found");
 		}
-		bool empty(){
+		bool empty() const {
 			return vals.size() == 0;
 		}
-		bool has(const std::string& s) {
+		bool has(const std::string& s) const {
 			return vals.count(s);
 		}
 };
-
-class AWritable{
-	public:
-		virtual const char* msg() const = 0;
-};
-
-class AWriter{
-	protected:
-		virtual void error(const AWritable& a) const = 0;
-};
-
 
 } // END NAMESPACE cli
 } // END NAMESPACE kul

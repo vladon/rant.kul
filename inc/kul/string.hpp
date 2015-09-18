@@ -78,7 +78,7 @@ class String{
 			}
 			ss.push_back(l);
 			return ss;
-		}		
+		}
 		static bool cicmp(const std::string& a, const std::string& b){
 			    std::string aCpy(a);
 			    std::string bCpy(b);

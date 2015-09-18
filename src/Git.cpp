@@ -51,11 +51,11 @@ void kul::scm::Git::up(const std::string& d, const std::string& r, const std::st
 		}
 	}
 }
-const std::string kul::scm::Git::localVersion(const std::string& d) const{
+const std::string kul::scm::Git::localVersion(const std::string& d, const std::string& b) const{
 	kul::Process p("git", d);
 	kul::ProcessCapture pc(p);
 	try{
-		p.arg("rev-parse").arg("HEAD").start();
+		p.arg("rev-parse").arg(b).start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}

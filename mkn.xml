@@ -3,7 +3,7 @@
 	<properties>
 		<github>http://www.github.com/Dekken</github>
 		<spash>${github}/google.sparsehash</spash>
-		<pugixml>${github}/pugixml</pugixml>
+		<pugixml>${github}/xml.pugi</pugixml>
 	</properties>
 	<project>
 		<name>kul</name>		
@@ -22,7 +22,7 @@
 			</sources>
 			<dependencies>
 				<dependency>
-					<name>pugixml</name>
+					<name>xml.pugi</name>
 					<version>master</version>
 					<scr scm="git">${pugixml}</scr>
 				</dependency>

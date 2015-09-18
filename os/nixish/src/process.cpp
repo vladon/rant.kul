@@ -27,6 +27,9 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 int kul::this_proc::id(){
 	return getpid();
 }
+void kul::this_proc::kill(const int& e){
+	::kill(kul::this_proc::id(), e);
+}
 
 void kul::Process::waitForStatus(){
 	int ret = 0;

@@ -46,8 +46,9 @@ class Server : public kul::http::AServer{
 
 		std::queue<int> sockets;
 	public:
-		Server(const short& p) : AServer(p){}
-		void listen() throw(kul::http::Exception);
+		Server(const short& p, const std::string& w = "localhost") : AServer(p){}
+		void start() throw(kul::http::Exception);
+		bool started(){ return sockets.size(); }
 		void stop();
 		virtual const std::pair<kul::hash::set::String, std::string> handle(const std::string& res, kul::hash::map::S2S atts){
 			using namespace std;

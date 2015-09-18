@@ -35,6 +35,7 @@ namespace kul {
 
 namespace this_proc{
 	int id();
+	void kill(const int& e);
 }
 
 namespace proc{

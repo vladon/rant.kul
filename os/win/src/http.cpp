@@ -25,7 +25,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/log.hpp"
 #include "kul/http.hpp"
 
-void kul::http::Server::listen() throw(kul::http::Exception){
+void kul::http::Server::start() throw(kul::http::Exception){
 	ULONG RequestBufferLength 	= sizeof(HTTP_REQUEST) + 2048;
 	PCHAR pRequestBuffer 		= (PCHAR) wAlloc(RequestBufferLength);
 	if(pRequestBuffer == NULL)
@@ -65,6 +65,7 @@ void kul::http::Server::stop(){
 	ULONG r = 0;
 	HttpShutdownRequestQueue(q);
 	if(r != NO_ERROR) KEXCEPT(Exception, "HttpShutdownRequestQueue failed: " + std::to_string(r));
+	if(q) CloseHandle(q);
 }
 
 void kul::http::Server::initialiseReponse(HTTP_RESPONSE& response, int status, PSTR reason){

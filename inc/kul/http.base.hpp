@@ -152,7 +152,8 @@ class AServer{
 	public:
 		AServer(const short& p) : p(p), s(kul::Now::MILLIS()){}
 		virtual ~AServer(){}
-		virtual void listen() throw(kul::http::Exception) = 0;
+		virtual bool started() = 0;
+		virtual void start() throw(kul::http::Exception) = 0;
 		virtual void stop() = 0;
 		
 		virtual const std::pair<kul::hash::set::String, std::string> handle(const std::string& res, kul::hash::map::S2S atts){

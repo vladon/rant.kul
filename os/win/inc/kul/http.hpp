@@ -86,7 +86,8 @@ class Server : public kul::http::AServer{
 			if(q) CloseHandle(q);
 			HttpTerminate(HTTP_INITIALIZE_SERVER, NULL);
 		}
-		void listen() throw(kul::http::Exception);
+		void start() throw(kul::http::Exception);
+		bool started(){ q; }
 		void stop();
 
 		virtual const std::pair<kul::hash::set::String, std::string> handle(const std::string& res, kul::hash::map::S2S atts){

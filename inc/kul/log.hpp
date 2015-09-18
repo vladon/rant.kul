@@ -126,6 +126,9 @@ class LogMan{
 		void out(const log::mode& m, const std::string& s){
 			if(this->m >= m) logger.out(s + kul::os::newLine(), m);
 		}
+		void err(const log::mode& m, const std::string& s){
+			logger.out(s + kul::os::newLine(), m);
+		}
 };
 
 class Message{
@@ -157,6 +160,13 @@ class OutMessage : public Message{
 		}
 		OutMessage(const log::mode& m = kul::log::mode::NON) : Message(m){}
 };
+class ErrMessage : public Message{
+	public:
+		~ErrMessage(){
+			LogMan::INSTANCE().err(m, ss.str());
+		}
+		ErrMessage() : Message(log::mode::ERR){}
+};
 
 #define KLOG_INF 	kul::LogMessage(__FILE__, __LINE__, kul::log::mode::INF)
 #define KLOG_ERR 	kul::LogMessage(__FILE__, __LINE__, kul::log::mode::ERR)
@@ -168,6 +178,8 @@ class OutMessage : public Message{
 #define KOUT_ERR 	kul::OutMessage(kul::log::mode::ERR)
 #define KOUT_DBG 	kul::OutMessage(kul::log::mode::DBG)
 #define KOUT(sev) KOUT_ ## sev
+
+#define KERR 		kul::ErrMessage()
 
 } // END NAMESPACE kul
 #endif /* _KUL_LOG_HPP_ */
