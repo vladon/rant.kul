@@ -28,7 +28,6 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/cli.hpp"
 #include "kul/ipc.hpp"
 #include "kul/log.hpp"
-#include "kul/http.hpp"
 #include "kul/math.hpp"
 #include "kul/proc.hpp"
 #include "kul/time.hpp"
@@ -114,80 +113,43 @@ class TestIPC{
 		}
 };
 
-class TestHTTPServer : public kul::http::Server{
-	public:
-		TestHTTPServer() : kul::http::Server(666){}
-};
-class TestGetRequest : public kul::http::_1_1GetRequest{
-	public:
-		void handle(const kul::hash::map::S2S& h, const std::string& b){
-			KOUT(NON) << b;
-		}
-};
-class TestHTTPThread{
-	private:
-		TestHTTPServer& s;
-	public:
-		TestHTTPThread(TestHTTPServer& serv) : s(serv){}
-		void operator()(){
-			s.start();
-		}
-};
-class TestHTTP{ 
+class Test{ 
 	public: 
-		TestHTTP(){
-			try{
-				TestHTTPServer serv;
-				TestHTTPThread http(serv);
-				kul::Ref<TestHTTPThread> ref(http);
-				kul::Thread t(ref);
-				t.run();
-				kul::this_thread::sleep(1000);
-				TestGetRequest().send("localhost", "index.html", 666);
-				serv.stop();
-				t.join();
-			}catch(const kul::http::Exception& e){
-				KLOG(INF) << e.what();
-			}
-		}
-};
-
-class test{ 
-	public: 
-		test(){
+		Test(){
+			KERR << "KERR";
 			KOUT(NON) << "KOUT(NON)";
 			KOUT(INF) << "KOUT(INF)";
 			KOUT(ERR) << "KOUT(ERR)";
 			KOUT(DBG) << "KOUT(DBG)";
-			KLOG(INF);
-			KLOG(ERR);
-			KLOG(DBG);
-			KLOG(INF) << kul::Dir::SEP();
-			KLOG(INF) << kul::env::SEP();
-			KLOG(INF) << kul::env::CWD();
-			KLOG(INF) << kul::os::userDir().path();
+			KLOG(INF) << "KLOG(INF)";
+			KLOG(ERR) << "KLOG(ERR)";
+			KLOG(DBG) << "KLOG(DBG)";
+			KOUT(NON) << kul::Dir::SEP();
+			KOUT(NON) << kul::env::SEP();
+			KOUT(NON) << kul::env::CWD();
+			KOUT(NON) << kul::os::userDir().path();
 			KLOG(INF) << kul::os::userAppDir("maiken").path();
 			for(const kul::Dir& d : kul::Dir(kul::env::CWD()).dirs()) 
 				for(const kul::File& f : d.files()) 
-					KLOG(INF) << d.join(f.name());
+					KOUT(NON) << d.join(f.name());
 			try{
 				kul::Process("echo").arg("Hello").arg("World").start();
 			}catch(const kul::proc::Exception& e){ 
-				KLOG(INF) << e.debug()<< " : " << typeid(e).name();
-				KLOG(INF) << "Error expected on windows without echo on path";
+				KERR << e.debug()<< " : " << typeid(e).name();
+				KERR << "Error expected on windows without echo on path";
 			}
 
 			for(const std::string& arg : kul::cli::CmdLine::asArgs("/path/to \"words in quotes\" words\\ not\\ in\\ quotes end"))
-				KLOG(INF) << "ARG: " << arg;
+				KOUT(NON) << "ARG: " << arg;
 
-			KLOG(INF) << "kul::Now::MILLIS(); " << kul::Now::MILLIS();
-			KLOG(INF) << "kul::Now::MICROS(); " << kul::Now::MICROS();
-			KLOG(INF) << "kul::Now::NANOS();  " << kul::Now::NANOS();
+			KOUT(NON) << "kul::Now::MILLIS(); " << kul::Now::MILLIS();
+			KOUT(NON) << "kul::Now::MICROS(); " << kul::Now::MICROS();
+			KOUT(NON) << "kul::Now::NANOS();  " << kul::Now::NANOS();
 
-			KLOG(INF) << "kul::DateTime::NOW();  " << kul::DateTime::NOW();
+			KOUT(NON) << "kul::DateTime::NOW();  " << kul::DateTime::NOW();
 
-			KLOG(INF) << "CPU CORES: " << kul::cpu::cores();
-			KLOG(INF) << "MAX THREADS: " << kul::cpu::threads();
+			KOUT(NON) << "CPU CORES: " << kul::cpu::cores();
+			KOUT(NON) << "MAX THREADS: " << kul::cpu::threads();
 
 			TestThreadObject tto1;
 			kul::Ref<TestThreadObject> ref(tto1);
@@ -220,7 +182,7 @@ class test{
 				kul::ScopeLock lock(mutex);
 			}
 
-			KLOG(INF) << "LAUNCHING THREAD POOL";
+			KOUT(NON) << "LAUNCHING THREAD POOL";
 			TestThreadPoolObject ttpo1(mutex);
 			kul::Ref<TestThreadPoolObject> ref2(ttpo1);
 			kul::ThreadPool tp1(ref2);
@@ -232,7 +194,7 @@ class test{
 
 			std::queue<int> q;
 			for(int i = 0; i < 10; i++) q.push(i);
-			KLOG(INF) << "LAUNCHING PREDICATED THREAD POOL";
+			KOUT(NON) << "LAUNCHING PREDICATED THREAD POOL";
 			TestThreadPoolQObject ttpo2(mutex, q);
 			kul::Ref<TestThreadPoolQObject> ref3(ttpo2);
 			kul::PredicatedThreadPool<std::queue<int> > tp2(ref3, q);
@@ -243,29 +205,27 @@ class test{
 			ttpo2.print();
 
 			TestIPC ipc;
-			TestHTTP http;
 
-			KLOG(INF) << kul::math::abs(-1);
+			KOUT(NON) << kul::math::abs(-1);
 
-			KLOG(INF) << kul::math::root(16);
-			KLOG(INF) << kul::math::root(64, 3);
-			KLOG(INF) << std::setprecision(16) << kul::math::root<double>(64, 6);
-			KLOG(INF) << kul::math::root(64, 6, 8);
-			KLOG(INF) << kul::math::root(64, 6, 3, 3);
+			KOUT(NON) << kul::math::root(16);
+			KOUT(NON) << kul::math::root(64, 3);
+			KOUT(NON) << std::setprecision(16) << kul::math::root<double>(64, 6);
+			KOUT(NON) << kul::math::root(64, 6, 8);
+			KOUT(NON) << kul::math::root(64, 6, 3, 3);
 			// kul::math::root(root of, nth root, iterations, starting guess);
 
-			KLOG(INF) << std::setprecision(6) << kul::math::root(2, 2);
-			KLOG(INF) << std::setprecision(16) << kul::math::root<double>(2, 3);
+			KOUT(NON) << std::setprecision(6) << kul::math::root(2, 2);
+			KOUT(NON) << std::setprecision(16) << kul::math::root<double>(2, 3);
 
-			KLOG(INF) << kul::math::pow(-2, 0);
-			KLOG(INF) << kul::math::pow(2, 5);
-			KLOG(INF) << kul::math::pow(2, -5);
-			KLOG(INF) << kul::math::pow(2.2974, 5);
-			KLOG(INF) << kul::math::pow(2, 6);
+			KOUT(NON) << kul::math::pow(-2, 0);
+			KOUT(NON) << kul::math::pow(2, 5);
+			KOUT(NON) << kul::math::pow(2, -5);
+			KOUT(NON) << kul::math::pow(2.2974, 5);
+			KOUT(NON) << kul::math::pow(2, 6);
 		}
 };
 
 
 }
 #endif /* _KUL_TEST_HPP_ */
-	

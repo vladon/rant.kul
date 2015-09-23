@@ -58,5 +58,14 @@
 				</dependency>
 			</dependencies>	
 		</profile>
+		<profile name="test">
+			<dependencies>
+				<dependency>
+					<name>kul</name>
+					<version>master</version>
+				</dependency>
+			</dependencies>	
+			<build type="exe" main="test.cpp"/>
+		</profile>
 	</profiles>
 </maiken>

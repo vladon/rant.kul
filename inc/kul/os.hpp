@@ -111,6 +111,10 @@ class Dir{
 		friend class File;
 
 		Dir& operator=(const Dir& d) = default;
+		bool operator==(const Dir& d) const {
+			if(is() && d.is()) return real().compare(d.real()) == 0;
+			return path().compare(d.path()) == 0;
+		}
 };
 
 class File{
@@ -152,6 +156,10 @@ class File{
 		const Dir& dir() const { return d; }
 
 		File& operator=(const File& f) = default;
+		bool operator==(const File& f) const {
+			if(is() && f.is()) return real().compare(f.real()) == 0;
+			return full().compare(f.full()) == 0;
+		}
 };
 
 namespace os{
