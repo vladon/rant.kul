@@ -176,3 +176,4 @@ const kul::Dir kul::os::userAppDir(const std::string& app){
 const std::string kul::os::newLine(){
 	return "\n";
 }
+

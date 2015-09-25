@@ -95,13 +95,13 @@ class TestIPCServer : public kul::ipc::Server{
 		}
 };
 class TestIPCThread{
-	public: 
+	public:
 		void operator()(){
 			TestIPCServer().listen();
 		}
 };
-class TestIPC{ 
-	public: 
+class TestIPC{
+	public:
 		TestIPC(){
 			TestIPCThread ipc;
 			kul::Ref<TestIPCThread> ref(ipc);
@@ -113,8 +113,8 @@ class TestIPC{
 		}
 };
 
-class Test{ 
-	public: 
+class Test{
+	public:
 		Test(){
 			KERR << "KERR";
 			KOUT(NON) << "KOUT(NON)";
@@ -129,12 +129,12 @@ class Test{
 			KOUT(NON) << kul::env::CWD();
 			KOUT(NON) << kul::os::userDir().path();
 			KLOG(INF) << kul::os::userAppDir("maiken").path();
-			for(const kul::Dir& d : kul::Dir(kul::env::CWD()).dirs()) 
-				for(const kul::File& f : d.files()) 
+			for(const kul::Dir& d : kul::Dir(kul::env::CWD()).dirs())
+				for(const kul::File& f : d.files())
 					KOUT(NON) << d.join(f.name());
 			try{
 				kul::Process("echo").arg("Hello").arg("World").start();
-			}catch(const kul::proc::Exception& e){ 
+			}catch(const kul::proc::Exception& e){
 				KERR << e.debug()<< " : " << typeid(e).name();
 				KERR << "Error expected on windows without echo on path";
 			}
@@ -173,7 +173,7 @@ class Test{
 			th1.run();
 			th1.join();
 			tto3.print();
-			
+
 			kul::Mutex mutex;
 			{
 				{
@@ -229,3 +229,4 @@ class Test{
 
 }
 #endif /* _KUL_TEST_HPP_ */
+

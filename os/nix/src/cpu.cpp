@@ -40,3 +40,4 @@ unsigned int kul::cpu::cores() {
 unsigned int kul::cpu::threads() {
 	return std::thread::hardware_concurrency();
 }
+

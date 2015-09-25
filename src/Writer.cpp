@@ -28,16 +28,16 @@ class NodeWriterService{
  		static std::vector<std::vector<std::pair<std::string, std::string> > > attributes(const kul::xml::NodeValidator& v){
 
  			std::vector<std::vector<std::pair<std::string, std::string> > > entries;
- 			
- 			for(const kul::xml::NodeAttributeValidator& nav : v.getAtVals()){ 				
+
+ 			for(const kul::xml::NodeAttributeValidator& nav : v.getAtVals()){
 				std::vector<std::pair<std::string, std::string> > attPairs;
-				for(const std::pair<std::string, std::vector<std::string > >& atts : nav.allowedValues())	
+				for(const std::pair<std::string, std::vector<std::string > >& atts : nav.allowedValues())
 					if(atts.second.size() == 0)
-						attPairs.push_back(std::pair<std::string, std::string>(atts.first, atts.first));						
+						attPairs.push_back(std::pair<std::string, std::string>(atts.first, atts.first));
 					else if(atts.second.size() == 1)
 						for(const std::string& val : atts.second)
-							attPairs.push_back(std::pair<std::string, std::string>(atts.first, val));					
-					else{												
+							attPairs.push_back(std::pair<std::string, std::string>(atts.first, val));
+					else{
 						for(const std::string& val : atts.second){
 							std::vector<std::string> values; values.push_back(val);
 							kul::hash::map::S2VT<std::string> valMap;
@@ -46,7 +46,7 @@ class NodeWriterService{
 								for(const std::pair<std::string, std::vector<std::string > >& atts1 : nav1.allowedValues()){
 									if(atts.first.compare(atts1.first) == 0 && atts1.second.size() > 1)
 										continue;
-									valMap.insert(atts1);											
+									valMap.insert(atts1);
 								}
 							std::vector<kul::xml::NodeAttributeValidator> newNAVs;
 							newNAVs.push_back(kul::xml::NodeAttributeValidator(valMap, 0, 0));
@@ -56,8 +56,8 @@ class NodeWriterService{
 							entries.insert(entries.begin(), nEntries.begin(), nEntries.end());
 						}
 						return entries;
-					}				
-				entries.push_back(attPairs);			
+					}
+				entries.push_back(attPairs);
 			}
  			return entries;
  		}
@@ -92,15 +92,15 @@ void kul::xml::NodeFactory::writeToFile(const char*n, const NodeValidator& v, ku
 	if(comment) NodeWriterService::openingComment(s);
 
 	if(!v.getAtVals().empty()){
-				
+
 		for(const std::vector<std::pair<std::string, std::string> >&  vecPairs : NodeWriterService::attributes(v)){
 			s = t + "<" + std::string(n) + ">";
 			if(comment) NodeWriterService::openingComment(s);
 			std::string a;
 			for(std::pair<std::string, std::string>  pairs : vecPairs)
 				a += " " + pairs.first+"=\"" + pairs.second + "\"";
-			NodeWriterService::addAttributes(s, a);	
-			
+			NodeWriterService::addAttributes(s, a);
+
 			writer.write(s.c_str(), !v.isText());
 			for(const std::pair<std::string, NodeValidator>& pair  : v.getChildren()){
 				writeToFile(pair.first.c_str(), pair.second, writer, ++tabs);
@@ -111,7 +111,7 @@ void kul::xml::NodeFactory::writeToFile(const char*n, const NodeValidator& v, ku
 			if(comment) NodeWriterService::closingComment(s);
 
 			writer.write(s.c_str(), true);
-			int i = 0;			
+			int i = 0;
 			if(v.maximum() > 0 && i == v.maximum()){ // print the remaining possibile attributes values
 				break;
 			}
@@ -131,4 +131,5 @@ void kul::xml::NodeFactory::writeToFile(const char*n, const NodeValidator& v, ku
 		writer.write(s.c_str(), true);
 	}
 }
+
 

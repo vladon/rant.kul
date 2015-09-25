@@ -26,3 +26,4 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 std::ostream& kul::operator<<(std::ostream &s, const kul::AProcess &p) {
 	return s << p.toString();
 }
+

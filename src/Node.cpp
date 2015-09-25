@@ -62,3 +62,4 @@ bool kul::xml::Node::hasAtt(const std::string& s) const{
 	}catch(const kul::xml::Exception& e){}
 	return 0;
 }
+

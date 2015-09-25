@@ -1,4 +1,4 @@
-/** 
+/**
 
 ./src/kul/ipc.cpp
 
@@ -33,7 +33,7 @@ void kul::ipc::Server::listen() throw(kul::ipc::Exception){
 		memset(buff, 0, BUFSIZE);
 		fd = open(uuid.full().c_str(), O_RDONLY);
 		if (fd == -1) KEXCEPT(kul::ipc::Exception, "Cannot open FIFO for read");
-		// uncomment to check for PID 
+		// uncomment to check for PID
 		// read(fd, buff, 9);
 		// std::istringstream sspid(buff);
 		// int pid;
@@ -55,7 +55,7 @@ void kul::ipc::Server::listen() throw(kul::ipc::Exception){
 }
 
 void kul::ipc::Client::send(const std::string& m) const throw(kul::ipc::Exception){
-	// uncomment to check for PID 
+	// uncomment to check for PID
 	// writePID();
 	writeLength(m);
 	write(fd, m.c_str(), m.size());
@@ -68,3 +68,4 @@ void kul::ipc::Client::start() throw(kul::ipc::Exception){
 void kul::ipc::Client::stop() const throw(kul::ipc::Exception){
 	close(fd);
 }
+

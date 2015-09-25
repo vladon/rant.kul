@@ -71,7 +71,7 @@ void kul::cli::Args::process(int argc, char* argv[], int first) throw(ArgNotFoun
 			valExpectedFor = c.substr(0, c.find("="));
 			arg = const_cast<Arg*>(&doubleDashes(valExpectedFor.c_str()));
 			valExpected = arg->type();
-			if(valExpected == 0) 
+			if(valExpected == 0)
 				KEXCEPT(Exception, "Found = when no value is expected for arg " + valExpectedFor);
 			c = c.substr(c.find("=") + 1);
 			vals[arg->dashdash()] = c;
@@ -113,3 +113,4 @@ void kul::cli::Args::process(int argc, char* argv[], int first) throw(ArgNotFoun
 	if(valExpected == 1) KEXCEPT(Exception, "Value expected for argument: \""+ valExpectedFor + "\"");
 	for(const Arg& a : args) if(a.mandatory()) get(a.dashdash());
 }
+

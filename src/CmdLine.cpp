@@ -35,7 +35,7 @@ const std::string kul::cli::receive(const std::string& t){
 
 std::vector<std::string> kul::cli::CmdLine::asArgs(const std::string& cmd) throw (ArgParsingException){
 	std::vector<std::string> args;
-	
+
 	std::string arg;
 	bool openQuotesS = false;
 	bool openQuotesD = false;
@@ -47,17 +47,17 @@ std::vector<std::string> kul::cli::CmdLine::asArgs(const std::string& cmd) throw
 			continue;
 		}
 		switch(c){
-			case ' ': 
+			case ' ':
 				if(!openQuotesD && !openQuotesS){               //     ||||| ||||| ||||| ||||| |||||
 					if(arg.size() > 0) args.push_back(arg);	    //	   ||    || || || || ||    ||
 					arg.clear();                                //	   ||||| ||||| ||||| ||    |||||
 					continue;	                                //		  || ||    || || ||    ||
-				}		                                        //	   ||||| ||    || || ||||| ||||| 				
+				}		                                        //	   ||||| ||    || || ||||| |||||
 				break;                                          // 										The final frontier																																																																				... or is it?
-			case '"': 
+			case '"':
 				if(openQuotesD && !openQuotesS){
 					openQuotesD = false;
-					arg += c;					
+					arg += c;
 					args.push_back(arg);
 					arg.clear();
 					continue;
@@ -67,7 +67,7 @@ std::vector<std::string> kul::cli::CmdLine::asArgs(const std::string& cmd) throw
 			case '\'':
 				if(openQuotesS && !openQuotesD){
 					openQuotesS = false;
-					arg += c;					
+					arg += c;
 					args.push_back(arg);
 					arg.clear();
 					continue;
@@ -76,7 +76,7 @@ std::vector<std::string> kul::cli::CmdLine::asArgs(const std::string& cmd) throw
 				break;
 			case '\\':
 				if(!openQuotesS && !openQuotesD){
-					backSlashed = true; 
+					backSlashed = true;
 					continue;
 				}
 				break;
@@ -93,7 +93,7 @@ void kul::cli::CmdLine::print(const std::vector<std::string>& ss, bool tab){
 		for(const std::string& s : ss){
 			unsigned int c = kul::String::split(s, '\t').size();
 			if(c > cols) cols = c;
-		}		
+		}
 		std::vector<unsigned int> p;
 		for(unsigned int i = 0; i < cols; i++)
 			p.push_back(i);
@@ -103,7 +103,7 @@ void kul::cli::CmdLine::print(const std::vector<std::string>& ss, bool tab){
 			for(const std::string b : kul::String::split(s, '\t')){
 				if(b.size() > p[c]) p[c] = b.size();
 				c++;
-			}			
+			}
 		}
 		for(const std::string& s : ss){
 			unsigned int c = 0;
@@ -113,11 +113,11 @@ void kul::cli::CmdLine::print(const std::vector<std::string>& ss, bool tab){
 					for(int i = 0; i < std::ceil((p[c]) / b.size()); i++) line = line + "\t";
 
 				line = line + 	" " + b;
-				c++;				
+				c++;
 			}
 			std::cout << line << std::endl;
 		}
-	}else 
+	}else
 		for(const std::string& s : ss)
 			std::cout << s << std::endl;
 }

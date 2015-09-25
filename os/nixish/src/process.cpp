@@ -146,3 +146,4 @@ void kul::Process::run() throw (kul::proc::Exception){
 		exit(this->child());
 	}else error(__LINE__, "Unhandled process id for child: " + std::to_string(pid()));
 }
+

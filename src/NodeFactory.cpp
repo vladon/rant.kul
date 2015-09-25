@@ -36,7 +36,7 @@ std::vector<kul::xml::Node> kul::xml::NodeFactory::validate(std::vector<Node> ns
 								if(attVals.first.compare(std::string(a.name())) == 0){ attFound = true; break;}
 							}
 							if(attFound) break;
-						}	
+						}
 						if(!attFound) {
 							KEXCEPT(Exception, "XML Exception: Attribute: \"" + std::string(a.name()) + "\" for Element : \"" + std::string(n.name()) + "\" is unknown");
 						}
@@ -156,11 +156,11 @@ void kul::xml::NodeFactory::validateAttributes(const Node& node, const NodeValid
 }
 
 const std::shared_ptr<const kul::xml::Node> kul::xml::NodeFactory::create(const char*f, const char* root, const NodeValidator& v){
-	pugi::xml_document doc;	
+	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(f);
 	if(!result){
 		//TODO GET LINE # OF ERROR IN FILE
-		if(result.status == pugi::xml_parse_status::status_end_element_mismatch)	
+		if(result.status == pugi::xml_parse_status::status_end_element_mismatch)
 			KEXCEPT(Exception, "PUGIXML Exception: " + std::string(result.description()) + " at " + (f + result.offset));
 		KEXCEPT(Exception, "PUGIXML Exception: " + std::string(result.description()) + " : " + f);
 	}

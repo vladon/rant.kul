@@ -35,8 +35,8 @@ void kul::scm::Git::co(const std::string& d, const std::string& r, const std::st
 	}catch(const kul::proc::ExitException& e){
 		dr.rm();
 		KEXCEPT(Exception, "SCM ERROR - Check remote dependency location / version");
-	}			
-}		
+	}
+}
 void kul::scm::Git::up(const std::string& d, const std::string& r, const std::string& v) const throw(Exception){
 	if(!Dir(d).is()) co(d, r, v);
 	else{
@@ -65,7 +65,7 @@ const std::string kul::scm::Git::localVersion(const std::string& d, const std::s
 const std::string kul::scm::Git::remoteVersion(const std::string& d, const std::string& url, const std::string& b) const throw(Exception){
 	kul::Process p("git", d);
 	kul::ProcessCapture pc(p);
-	try{		
+	try{
 		p.arg("ls-remote").arg(url).arg(b).start();
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
@@ -121,3 +121,4 @@ void kul::scm::Git::diff(const std::string& d) const{
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}
 }
+
