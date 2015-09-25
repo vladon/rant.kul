@@ -46,13 +46,10 @@ class AReader{
 	protected:
 		const std::string* readLine(std::ifstream& f){
 			str.reset();
-			std::string s;
 			if(f.good()){
-				std::vector<char> v;
-				v.resize(512);
-				f.getline(&v[0], 512);
-				v.resize(f.gcount());
-				str = std::make_unique<std::string>(std::string(v.begin(), v.end()));
+				std::string s;
+				std::getline(f, s);
+				str = std::make_unique<std::string>(s);
 			}
 			return str.get();
 		}
@@ -60,7 +57,6 @@ class AReader{
 			str.reset();
 			if(f.good()){
 				std::vector<char> v;
-				std::stringstream ss;
 				v.resize(s);
 				f.read(&v[0], s);
 				v.resize(f.gcount());
