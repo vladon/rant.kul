@@ -146,11 +146,6 @@ bool kul::File::is() const{
 	return (stat (d.join(n).c_str(), &buffer) == 0);
 }
 
-bool kul::File::cp(const File& f) const{
-	std::ifstream src(real(), std::ios::binary);
-	std::ofstream dst(f.real(), std::ios::binary);
-	return (bool) (dst << src.rdbuf());
-}
 bool kul::File::mk() const{
 	FILE* pFile;
 	pFile = fopen(full().c_str(),"w");

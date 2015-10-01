@@ -1,0 +1,48 @@
+
+
+name: kul
+version: master
+properties:
+    github: http://www.github.com/Dekken
+    spash: ${github}/google.sparsehash
+scm:
+    type: git
+    remote: ${github}/kul.git
+profiles:
+  - name: c
+    include: ./inc ./os/${OS}/inc
+    source:  ./src ./os/${OS}/src
+  - parent: c
+    name: nixc    
+    include: ./os/nixish/inc
+    source:  ./os/nixish/src
+    dependencies:
+      - name: google.sparsehash
+        version: master
+        scm:
+            type: git
+            remote: ${spash}
+            run: sh make.sh
+  - parent: nixc
+    name: nix  
+    os: nix
+  - parent: nixc
+    name: bsd
+    os: bsd
+  - parent: c
+    name: win  
+    os: win
+    include: ./ext/msinttypes-r26
+    dependencies:
+      - name: google.sparsehash
+        version: master
+        scm:
+            type: git
+            remote: ${spash}
+            run: make.bat
+  - name: test  
+    dependencies:
+      - name: kul
+        version: master
+        local: .
+    main: test.cpp

@@ -10,25 +10,27 @@ CALL :get
 GOTO eof
 
 :get
-SET GIT_VER=master
-IF NOT EXIST %PWD%\ext\sparsehash\%GIT_VER% (
-	git clone http://github.com/dekken/google.sparsehash --branch %GIT_VER% %PWD%/ext/sparsehash/%GIT_VER%
+SET KUL_VER=master
+SET YAML_VER=master
+SET HASH_VER=master
+IF NOT EXIST %PWD%\ext\sparsehash\%HASH_VER% (
+	git clone http://github.com/dekken/google.sparsehash.git --branch %HASH_VER% %PWD%/ext/sparsehash/%HASH_VER%
 )
-IF NOT EXIST %PWD%\ext\pugixml\%GIT_VER% (
-	git clone https://github.com/dekken/pugixml --branch %GIT_VER% %PWD%/ext/pugixml/%GIT_VER%
+IF NOT EXIST %PWD%\ext\yaml\%YAML_VER% (
+	git clone https://github.com/dekken/yaml.cpp.git --branch %YAML_VER% %PWD%/ext/yaml/%YAML_VER%
 )
 GOTO eof
 
 :blank
 SET OWD=%PWD%
-SET PWD=%CD%\ext\kul\%GIT_VER%
+SET PWD=%CD%\ext\kul\%KUL_VER%
 
 CALL :get
 
-RD /S/Q %PWD%\ext\pugixml\%GIT_VER%\bin
-MKDIR %PWD%\ext\pugixml\%GIT_VER%\bin
-%VSCC% %CXXFLAGS%  %INCLUDES% /c /Fo"%PWD%\ext\pugixml\%GIT_VER%\bin\pugixml.o" "%PWD%\ext\pugixml\%GIT_VER%\src\pugixml.cpp"
-%VSCAR% /OUT:"%PWD%\ext\pugixml\%GIT_VER%\bin\pugixml.lib" /NOLOGO /LTCG %PWD%\ext\pugixml\%GIT_VER%\bin\pugixml.o
+RD /S/Q %PWD%\ext\yaml\%YAML_VER%\bin
+MKDIR %PWD%\ext\yaml\%YAML_VER%\bin
+%VSCC% %CXXFLAGS%  %INCLUDES% /c /Fo"%PWD%\ext\yaml\%YAML_VER%\bin\yaml.o" "%PWD%\ext\yaml\%YAML_VER%\src\yaml.cpp"
+%VSCAR% /OUT:"%PWD%\ext\yaml\%YAML_VER%\bin\yaml.lib" /NOLOGO /LTCG %PWD%\ext\yaml\%YAML_VER%\bin\yaml.o
 
 RD /S/Q %PWD%\bin
 MKDIR %PWD%\bin

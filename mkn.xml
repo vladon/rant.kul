@@ -3,7 +3,7 @@
 	<properties>
 		<github>http://www.github.com/Dekken</github>
 		<spash>${github}/google.sparsehash</spash>
-		<pugixml>${github}/xml.pugi</pugixml>
+		<yaml>${github}/yaml.cpp.pugi</yaml>
 	</properties>
 	<project>
 		<name>kul</name>		
@@ -22,9 +22,9 @@
 			</sources>
 			<dependencies>
 				<dependency>
-					<name>xml.pugi</name>
+					<name>yaml.cpp</name>
 					<version>master</version>
-					<scr scm="git">${pugixml}</scr>
+					<scr scm="git">${yaml}</scr>
 				</dependency>
 			</dependencies>	
 			<build type="lib" lang="cpp"/> 

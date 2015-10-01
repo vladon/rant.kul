@@ -118,7 +118,9 @@ class AProcess{
 		void setErr(std::function<void(std::string)> e) { this->e = e; }
 };
 
-std::ostream& operator<<(std::ostream &s, const AProcess &p);
+inline std::ostream& operator<<(std::ostream &s, const AProcess &p){
+	return s << p.toString();
+}
 
 class ProcessCapture{
 	private:

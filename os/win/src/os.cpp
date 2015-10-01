@@ -177,11 +177,6 @@ bool kul::File::rm() const{
 	}
 	return false;
 }
-bool kul::File::cp(const File& f) const{
-	std::ifstream src(d.join(n), std::ios::binary);
-	std::ofstream dst(f.dir().join(f.name()), std::ios::binary);
-	return (bool) (dst << src.rdbuf());
-}
 
 const kul::Dir kul::os::userDir(){
 	const char* h = env::GET("HOME");

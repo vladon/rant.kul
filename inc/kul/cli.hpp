@@ -35,7 +35,13 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace kul{  namespace cli {
 
-const std::string receive(const std::string& t = "");
+inline const std::string receive(const std::string& t = ""){
+	if(!t.empty()) std::cout << t << std::endl;
+	std::string s;
+	std::getline(std::cin, s);
+	return s;
+}
+
 const std::string hidden(const std::string& t = "");
 void show();
 
@@ -44,26 +50,11 @@ class Exception : public kul::Exception{
 		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 
-class ParseException : public kul::Exception{
-	public:
-		ParseException(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
-};
-
 class ArgNotFoundException : public Exception{
 	public:
 		ArgNotFoundException(const char*f, const int l, const std::string& s) : Exception(f, l, s){}
 };
 
-class ArgParsingException : public Exception{
-	public:
-		ArgParsingException(const char*f, const int l, const std::string& s) : Exception(f, l, s){}
-};
-
-class CmdLine{
-	public:
-		static std::vector<std::string> asArgs(const std::string& cmd) throw(ArgParsingException);
-		static void print(const std::vector<std::string>& ss, bool tab = true);		
-};
 
 class Cmd{
 	private:
@@ -126,7 +117,6 @@ class Args{
 		Args(const std::vector<Cmd>& cmds, const std::vector<Arg>& args) : cmds(cmds), args(args){}
 		void arg(const Arg& a){ args.push_back(a); }
 		void cmd(const Cmd& c){ cmds.push_back(c); }
-		void process(int argc, char* argv[], int first = 1) throw(ArgNotFoundException);
 		const Cmd& commands(const char* c) const {
 			for(const Cmd& cmd : cmds) if(strcmp(cmd.command(), c) == 0) return cmd;
 			KEXCEPT(ArgNotFoundException, "No command " + std::string(c) + " found");
@@ -151,7 +141,147 @@ class Args{
 		bool has(const std::string& s) const {
 			return vals.count(s);
 		}
+		void process(int argc, char* argv[], int first = 1) throw(ArgNotFoundException){
+			for(const Arg& a1 : arguments())
+				for(const Arg& a2 : arguments()){
+					if(&a1 == &a2) continue;
+					if((a1.dash() != ' ') && (a1.dash() == a2.dash()
+							|| strcmp(a1.dashdash(), a2.dashdash()) == 0))
+						KEXCEPT(Exception, "Duplicate argument detected");
+				}
+			for(const Cmd& c1 : commands())
+				for(const Cmd& c2 : commands()){
+					if(&c1 == &c2) continue;
+					if(strcmp(c1.command(), c2.command()) == 0)
+						KEXCEPT(Exception, "Duplicate argument detected");
+				}
+
+			Arg* arg = 0;
+			int valExpected = 0;
+			std::string valExpectedFor, c, t;
+
+			for(int i = first; i < argc; i++){
+				c = argv[i];
+				t = c;
+
+				if(c.compare("---") == 0)	KEXCEPT(Exception, "Illegal argument ---");
+				if(c.compare("--") == 0)	KEXCEPT(Exception, "Illegal argument --");
+				if(c.compare("-") == 0) 	KEXCEPT(Exception, "Illegal argument -");
+				if(valExpected == 1 || (valExpected == 2 && c.find("-") != 0)){
+					valExpected = 0;
+					vals[arg->dashdash()] = c;
+					arg = 0;
+					continue;
+				}else if(valExpected == 2) valExpected = 0;
+
+				if(c.find("--") == 0){
+					c = c.substr(c.find("--") + 2);
+					valExpectedFor = c;
+					if(c.find("=") == std::string::npos){
+						arg = const_cast<Arg*>(&doubleDashes(c.c_str()));
+						valExpected = arg->type();
+						if(!valExpected) vals[arg->dashdash()] = "";
+						continue;
+					}
+					valExpectedFor = c.substr(0, c.find("="));
+					arg = const_cast<Arg*>(&doubleDashes(valExpectedFor.c_str()));
+					valExpected = arg->type();
+					if(valExpected == 0)
+						KEXCEPT(Exception, "Found = when no value is expected for arg " + valExpectedFor);
+					c = c.substr(c.find("=") + 1);
+					vals[arg->dashdash()] = c;
+				}
+				else if(c.find("-") == 0){
+					valExpectedFor = c;
+					c = c.substr(c.find("-") + 1);
+					if(c.find("=") != std::string::npos){
+						if(c.substr(0, c.find("=")).size() > 1)
+							KEXCEPT(Exception, "Cannot mix flag and non-flag arguments");
+						arg = const_cast<Arg*>(&dashes(c.at(0)));
+						vals[arg->dashdash()] = c.substr(c.find("=") + 1);
+						valExpected = 0;
+					}else if(c.length() > 1){
+						std::string a = c;
+						for(unsigned int i = 0; i < c.length(); i++){
+							arg = const_cast<Arg*>(&dashes(a.at(0)));
+							if(i + 1 == c.length())
+								valExpected = arg->type();
+							else if(arg->type() == ArgType::STRING)
+								KEXCEPT(Exception, "Cannot mix flag and non-flag arguments");
+							vals[arg->dashdash()] = "";
+							if(a.length() > 1) a = a.substr(1);
+						}
+					}else{
+						arg = const_cast<Arg*>(&dashes(c.at(0)));
+						valExpected = arg->type();
+						vals[arg->dashdash()] = "";
+					}
+					continue;
+				}
+				if(valExpected == 1){
+					valExpected = 0;
+					continue;
+				}
+				commands(c.c_str());
+				vals[c] = "";
+			}
+			if(valExpected == 1) KEXCEPT(Exception, "Value expected for argument: \""+ valExpectedFor + "\"");
+			for(const Arg& a : args) if(a.mandatory()) get(a.dashdash());
+		}
 };
+
+inline std::vector<std::string> asArgs(const std::string& cmd){
+	std::vector<std::string> args;
+	std::string arg;
+	bool openQuotesS = false;
+	bool openQuotesD = false;
+	bool backSlashed = false;
+	for(const char c : cmd){
+		if(backSlashed){
+			backSlashed = false;
+			arg += c;
+			continue;
+		}
+		switch(c){
+			case ' ':
+				if(!openQuotesD && !openQuotesS){               //     ||||| ||||| ||||| ||||| |||||
+					if(arg.size() > 0) args.push_back(arg);	    //	   ||    || || || || ||    ||
+					arg.clear();                                //	   ||||| ||||| ||||| ||    |||||
+					continue;	                                //		  || ||    || || ||    ||
+				}		                                        //	   ||||| ||    || || ||||| |||||
+				break;                                          // 										The final frontier																																																																				... or is it?
+			case '"':
+				if(openQuotesD && !openQuotesS){
+					openQuotesD = false;
+					arg += c;
+					args.push_back(arg);
+					arg.clear();
+					continue;
+				}
+				else openQuotesD = true;
+				break;
+			case '\'':
+				if(openQuotesS && !openQuotesD){
+					openQuotesS = false;
+					arg += c;
+					args.push_back(arg);
+					arg.clear();
+					continue;
+				}
+				else openQuotesS = true;
+				break;
+			case '\\':
+				if(!openQuotesS && !openQuotesD){
+					backSlashed = true;
+					continue;
+				}
+				break;
+		}
+		arg += c;
+	}
+	if(arg.size() > 0) args.push_back(arg);
+	return args;
+}
 
 } // END NAMESPACE cli
 } // END NAMESPACE kul

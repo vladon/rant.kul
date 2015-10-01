@@ -24,10 +24,13 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _KUL_OS_HPP_
 #define _KUL_OS_HPP_
 
+// #include "kul/os.os.hpp"
 #include <vector>
 
 #include "kul/except.hpp"
 #include "kul/string.hpp"
+
+#include <fstream>
 
 namespace kul{
 namespace cpu{
@@ -44,21 +47,15 @@ class Exception : public kul::Exception{
 };
 } // END NAMESPACE FileSystem
 
-
 class Dir;
-class File;
 
 namespace env{
 const char*	CWD();
 bool		CWD(const char* c);
 bool		CWD(const Dir& d);
-
-const char*	GET(const char* c);
-void		SET(const char* var, const char* val);
-
-const char	SEP();
-bool  		WHICH(const char* c);
 }
+
+class File;
 
 class Dir{
 	private:
@@ -85,7 +82,9 @@ class Dir{
 		bool cp(const Dir& d) const;
 		bool is() const;
 		bool mk() const;
-		bool mv(const Dir& d) const;
+		bool mv(const Dir& d) const{
+			return std::rename(this->path().c_str(), d.path().c_str());
+		}
 		void rm() const;
 		bool root() const;
 
@@ -141,11 +140,20 @@ class File{
 		File(const std::string& n, const std::string& d1) : n(n), d(d1){}
 		File(const File& f) : n(f.n), d(f.d){}
 
-		bool cp(const Dir& f) const;
-		bool cp(const File& f) const;
+		bool cp(const Dir& f) const{
+			if(!d.is() && !d.mk()) KEXCEPT(fs::Exception, "Directory: \"" + d.path() + "\" is not valid");
+			return cp(kul::File(name(), d));
+		}
+		bool cp(const File& f) const{
+			std::ifstream src(d.join(n), std::ios::binary);
+			std::ofstream dst(f.dir().join(f.name()), std::ios::binary);
+			return (bool) (dst << src.rdbuf());
+		}
 		bool is() const;
 		bool mk() const;
-		bool mv(const File& f) const;
+		bool mv(const File& f) const{
+			return std::rename(this->full().c_str(), f.full().c_str());
+		}
 		bool rm() const;
 
 		const std::string& name() const { return n; }
@@ -161,6 +169,19 @@ class File{
 			return full().compare(f.full()) == 0;
 		}
 };
+
+namespace env{
+const char*	GET(const char* c);
+void		SET(const char* var, const char* val);
+
+const char	SEP();
+inline bool WHICH(const char* c){
+	for(auto& s : kul::String::split(std::string(env::GET("PATH")), kul::env::SEP()))
+		for(auto& f : kul::Dir(s).files())
+			if(f.name().compare(c) == 0) return 1;
+	return false;
+}
+}
 
 namespace os{
 

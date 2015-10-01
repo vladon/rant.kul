@@ -1,8 +1,8 @@
 /**
 
-./src/XPather.cpp
+./src/proc.cpp
 
-Created on: 14 Jan 2013
+Created on: 11 Aug 2015
 
 Copyright (c) 2013, Philip Deegan
 
@@ -21,18 +21,18 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "kul/xml.hpp"
+#include "kul/os.hpp"
+#include "kul/log.hpp"
 
-void kul::xml::XPather::writeNode(const char*x, const Node& node){
+unsigned short kul::Logger::tid(0);
 
+bool kul::Dir::cp(const Dir& d) const{
+	if(!d.is() && !d.mk()) KEXCEPT(fs::Exception, "Directory: \"" + d.path() + "\" is not valid");
+	Dir c(d.join(name()));
+	c.mk();
+	for(const auto& f : files())
+		f.cp(c);
+	for(const auto& dd : dirs())
+		dd.cp(c);
+	return 1;
 }
-
-void kul::xml::XPather::writeText(const char*x, const char*t){
-	//doc.select_single_node(x).node().set_value(t);
-	doc.select_single_node(x).node().append_child(pugi::node_pcdata).set_value(t);
-}
-
-void kul::xml::XPather::writeAttr(const char*x, const char*n, const char*v){
-
-}
-

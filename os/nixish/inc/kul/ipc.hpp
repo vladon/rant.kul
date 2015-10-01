@@ -67,7 +67,10 @@ class Server : public IPCCall{
 		int lp;
 		const kul::File uuid;
 
-		void start() throw(Exception);
+		void start() throw(Exception){
+			uuid.dir().mk();
+			mkfifo(uuid.full().c_str(), 0666);
+		}
 	protected:
 		virtual void handle(const std::string& s){
 			KLOG(INF) << s;
@@ -75,7 +78,23 @@ class Server : public IPCCall{
 		void respond(const std::string& s);
 	public:
 		virtual ~Server(){}
-		void listen() throw(Exception);
+		void listen() throw(Exception){
+			char buff[BUFSIZE];
+			while(lp){
+				memset(buff, 0, BUFSIZE);
+				fd = open(uuid.full().c_str(), O_RDONLY);
+				if (fd == -1) KEXCEPT(kul::ipc::Exception, "Cannot open FIFO for read");
+				int l;
+				read(fd, buff, 3);
+				std::istringstream ssl(buff);
+				ssl >> l;
+				memset(buff, 0, BUFSIZE);
+				read(fd, buff, l);
+				handle(buff);
+				close(fd);
+				if(lp != -1) lp--;
+			}
+		}
 		Server(const int& lp = -1) throw(Exception) : lp(lp), uuid(std::to_string(kul::this_proc::id()), Dir(_KUL_IPC_UUID_PREFIX_ + std::string("/pid/"))){ start();}
 		Server(const std::string& ui, const int& lp = -1) throw(Exception) : lp(lp), uuid(ui, Dir(_KUL_IPC_UUID_PREFIX_)){ start();}
 };
@@ -85,15 +104,23 @@ class Client : public IPCCall{
 		bool m;
 		const kul::File uuid;
 
-		void start() throw(Exception);
-		void stop() const throw(Exception);
+		void start() throw(Exception){
+			fd = open(uuid.full().c_str(), O_WRONLY);
+			if (fd == -1) KEXCEPT(kul::ipc::Exception, "Cannot contact server");
+		}
+		void stop() const throw(Exception){
+			close(fd);
+		}
 	public:
 		virtual ~Client(){
 			stop();
 		}
 		Client(const std::string& ui) throw(Exception) : m(1), uuid(ui, Dir(_KUL_IPC_UUID_PREFIX_)) { start(); }
 		Client(const int& pid) throw(Exception) : m(1), uuid(std::to_string(pid), Dir(_KUL_IPC_UUID_PREFIX_ + std::string("/pid/"))) { start(); }
-		virtual void send(const std::string& m) const throw(Exception);
+		virtual void send(const std::string& m) const throw(Exception){
+			writeLength(m);
+			write(fd, m.c_str(), m.size());
+		}
 
 };
 

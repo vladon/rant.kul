@@ -28,7 +28,10 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace kul{ namespace byte{
 
-bool isBigEndian();
+inline bool isBigEndian(){
+	const int one = 1;
+	return (*(char*)&one) == 0;
+}
 
 class LittleEndian{
 	public:
