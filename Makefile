@@ -1,6 +1,4 @@
 
-KUL_GIT=master
-YAML_GIT=master
 HASH_GIT=master
 
 OS =
@@ -10,7 +8,6 @@ CXXFLAGS=-std=c++1y -O3 -g0 -Wall -c -fmessage-length=0
 INCS = 	-I$(CURDIR)/inc \
 		-I$(CURDIR)/os/$(OS)/inc \
 		-I$(CURDIR)/os/nixish/inc \
-		-I$(CURDIR)/ext/yaml/$(YAML_GIT)/src \
 		-I$(CURDIR)/ext/sparsehash/$(HASH_GIT)/include
 LIB = bin/libkul.a
 
@@ -55,7 +52,6 @@ files:
 
 libs:
 	$(MAKE) hash
-	$(MAKE) pugi
 
 hash:
 	@if [ ! -d "$(CURDIR)/ext/sparsehash/$(HASH_GIT)" ]; then \
@@ -64,16 +60,6 @@ hash:
 		$(MAKE) -C $(CURDIR)/ext/sparsehash/$(HASH_GIT); \
 		$(MAKE) -C $(CURDIR)/ext/sparsehash/$(HASH_GIT) install; \
 	fi;
-
-pugi:
-	@if [ ! -d "$(CURDIR)/ext/yaml/$(YAML_GIT)" ]; then \
-		git clone https://github.com/dekken/yaml.cpp.git --branch $(YAML_GIT) ext/yaml/$(YAML_GIT); \
-	fi;
-	@if [ ! -d "$(CURDIR)/ext/yaml/$(YAML_GIT)/bin" ]; then \
-		mkdir ext/yaml/$(YAML_GIT)/bin; \
-	fi;
-	$(CXX) $(CXXFLAGS) -I$(CURDIR)/ext/yaml/$(YAML_GIT)/src -o "$(CURDIR)/ext/yaml/$(YAML_GIT)/bin/yaml.o" "$(CURDIR)/ext/yaml/$(YAML_GIT)/src/yaml.cpp";
-	ar -r $(CURDIR)/ext/yaml/$(YAML_GIT)/bin/libyaml.a "$(CURDIR)/ext/yaml/$(YAML_GIT)/bin/yaml.o"
 
 clean:
 	rm -rf bin
