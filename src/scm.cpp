@@ -168,3 +168,5 @@ void kul::scm::Svn::status(const std::string& d) const{
 void kul::scm::Svn::diff(const std::string& d) const{
 	KEXCEPT(Exception, "SCM ERROR - SVN NOT IMPLEMENTED");
 }
+
+

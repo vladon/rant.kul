@@ -36,3 +36,5 @@ bool kul::Dir::cp(const Dir& d) const{
 		dd.cp(c);
 	return 1;
 }
+
+

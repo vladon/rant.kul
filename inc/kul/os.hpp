@@ -116,6 +116,10 @@ class Dir{
 		}
 };
 
+inline std::ostream& operator<<(std::ostream &s, const Dir& d){
+	return s << d.path();
+}
+
 class File{
 	private:
 		std::string n;
@@ -169,6 +173,10 @@ class File{
 			return full().compare(f.full()) == 0;
 		}
 };
+
+inline std::ostream& operator<<(std::ostream &s, const File& d){
+	return s << d.full();
+}
 
 namespace env{
 const char*	GET(const char* c);

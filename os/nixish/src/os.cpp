@@ -172,3 +172,5 @@ const std::string kul::os::newLine(){
 	return "\n";
 }
 
+
+
