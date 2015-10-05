@@ -64,7 +64,7 @@ class Thread : public threading::AThread{
 	private:
 		pthread_t thr;
 		static void* threadFunction(void* th){
-			reinterpret_cast<Thread*>(th)->act(); 
+			((Thread*)th)->act();
 			return 0;
 		}
 	public:

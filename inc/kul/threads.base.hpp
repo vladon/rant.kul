@@ -101,7 +101,7 @@ class AThread{
 	public:
 		virtual ~AThread(){}
 		void join(){
-			while(!finished()) this_thread::sleep(11);
+			while(!finished()){}
 		}
 		bool started() { return s; }
 		bool finished(){ return f; }
