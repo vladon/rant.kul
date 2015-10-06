@@ -22,7 +22,6 @@ profiles:
         scm:
             type: git
             remote: ${spash}
-            run: sh make.sh
   - parent: nixc
     name: nix  
     os: nix
@@ -39,7 +38,6 @@ profiles:
         scm:
             type: git
             remote: ${spash}
-            run: make.bat
   - name: test  
     dependencies:
       - name: kul
