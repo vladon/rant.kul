@@ -87,6 +87,7 @@ class GCCompiler : public CCompiler{
 				pc.exception(std::current_exception());
 			}
 			pc.tmp(out);
+			pc.cmd(p.toString());
 			return pc; 
 		}
 		const CompilerProcessCapture buildLibrary(
@@ -115,6 +116,7 @@ class GCCompiler : public CCompiler{
 				pc.exception(std::current_exception());
 			}
 			pc.tmp(lib);
+			pc.cmd(p.toString());
 			return pc; 
 		}
 		const CompilerProcessCapture compileSource(
@@ -143,6 +145,7 @@ class GCCompiler : public CCompiler{
 				pc.exception(std::current_exception());
 			}
 
+			pc.cmd(p.toString());
 			return pc;
 		}
 		virtual void preCompileHeader(			
@@ -272,6 +275,7 @@ class WINCompiler : public CCompiler{
 				pc.exception(std::current_exception());
 			}
 			pc.tmp(exe);
+			pc.cmd(p.toString());
 			return pc; 
 		}
 		const CompilerProcessCapture buildLibrary(
@@ -299,6 +303,7 @@ class WINCompiler : public CCompiler{
 				pc.exception(std::current_exception());
 			}
 			pc.tmp(lib);
+			pc.cmd(p.toString());
 			return pc; 
 		}
 		const CompilerProcessCapture compileSource(
@@ -326,6 +331,7 @@ class WINCompiler : public CCompiler{
 			}catch(const kul::Exception& e){
 				pc.exception(std::current_exception());
 			}
+			pc.cmd(p.toString());
 			return pc;
 		}
 		virtual void preCompileHeader(			

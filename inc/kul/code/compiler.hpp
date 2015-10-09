@@ -39,14 +39,17 @@ enum Mode { NONE = 0, STAT, SHAR};
 class CompilerProcessCapture : public kul::ProcessCapture{
 	private:
 		std::exception_ptr ep;
-		std::string t;
+		std::string c, t;
 	public:
 		CompilerProcessCapture() : ep(){}
 		CompilerProcessCapture(kul::AProcess& p) : kul::ProcessCapture(p), ep(){}
-		CompilerProcessCapture(const CompilerProcessCapture& cp) : kul::ProcessCapture(cp), ep(cp.ep), t(cp.t){}
+		CompilerProcessCapture(const CompilerProcessCapture& cp) : kul::ProcessCapture(cp), ep(cp.ep), c(cp.c), t(cp.t){}
 
 		void exception(const std::exception_ptr& e)	{ ep = e; }
 		const std::exception_ptr& exception() const	{ return ep; }
+
+		void cmd(const std::string& cm) { this->c = cm; }
+		const std::string& cmd() const 	{ return c; }
 
 		void tmp(const std::string& tm) { this->t = tm; }
 		const std::string& tmp() const 	{ return t; }

@@ -71,6 +71,7 @@ class WINCompiler : public Compiler{
 				pc.exception(std::current_exception());
 			}
 
+			pc.cmd(p.toString());
 			return pc;
 		}
 		const CompilerProcessCapture buildLibrary(
