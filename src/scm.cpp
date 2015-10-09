@@ -26,7 +26,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 void kul::scm::Git::co(const std::string& d, const std::string& r, const std::string& v) const throw(Exception){
 	Dir dr(d, true);
 	kul::Process p("git", d);
-	p.arg("clone").arg(r);
+	p.arg("clone").arg(r).arg("--recursive");
 	if(!v.empty()) p.arg("-b").arg(v);
 	try{
 		p.arg(".");
@@ -43,6 +43,7 @@ void kul::scm::Git::up(const std::string& d, const std::string& r, const std::st
 		kul::Process p("git", d);
 		p.arg("pull");
 		if(!v.empty()) p.arg("-u").arg(r).arg(v);
+		p.arg("--recurse-submodules");
 		try{
 			std::cout << "PERFORMING: " << p << std::endl;
 			p.start();
