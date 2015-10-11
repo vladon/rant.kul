@@ -31,6 +31,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/math.hpp"
 #include "kul/proc.hpp"
 #include "kul/time.hpp"
+#include "kul/string.hpp"
+#include "kul/wstring.hpp"
 #include "kul/threads.hpp"
 
 #include <iomanip>
@@ -139,7 +141,7 @@ class Test{
 				KERR << "Error expected on windows without echo on path";
 			}
 
-			for(const std::string& arg : kul::cli::CmdLine::asArgs("/path/to \"words in quotes\" words\\ not\\ in\\ quotes end"))
+			for(const std::string& arg : kul::cli::asArgs("/path/to \"words in quotes\" words\\ not\\ in\\ quotes end"))
 				KOUT(NON) << "ARG: " << arg;
 
 			KOUT(NON) << "kul::Now::MILLIS(); " << kul::Now::MILLIS();
