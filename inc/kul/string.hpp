@@ -58,26 +58,32 @@ class String{
 		static void pad(std::string& s, const unsigned int& p){
 			while(s.size() < p) s += " ";
 		}
-		static std::vector<std::string> split(const std::string& s, const char& delim='\n'){
-			std::vector<std::string> ss;
-			std::string l;
-			std::stringstream stream(s);
-			while(std::getline(stream, l, delim)) {
-				if(l.compare("") != 0)
-					ss.push_back(l);
-			}
-			return ss;
+		static std::vector<std::string> split(const std::string& s, const char& d){
+			std::vector<std::string> v;
+			split(s, d, v);
+			return v;
 		}
-		static std::vector<std::string> split(const std::string& s, const std::string& delim="\n"){
+		static void split(const std::string& s, const char& d, std::vector<std::string>& v){
+			if(s.find(d) != std::string::npos){
+				std::string l;
+				std::stringstream stream(s);
+				while(std::getline(stream, l, d))
+					if(l.compare("") != 0) v.push_back(l);
+			}else v.push_back(s);
+		}
+		static std::vector<std::string> split(const std::string& s, const std::string& d){
+			std::vector<std::string> v;
+			split(s, d, v);
+			return v;
+		}
+		static void split(const std::string& s, const std::string& d, std::vector<std::string>& v){
 			std::string l = s;
-			std::vector<std::string> ss;
 			unsigned int pos = 0;
-			while((pos = s.find(delim, pos + 1)) < l.size()){
-				ss.push_back(l.substr(0, pos));
+			while((pos = s.find(d, pos + 1)) < l.size()){
+				v.push_back(l.substr(0, pos));
 				l = l.substr(pos + 1);
 			}
-			ss.push_back(l);
-			return ss;
+			v.push_back(l);
 		}
 		static bool cicmp(const std::string& a, const std::string& b){
 			    std::string aCpy(a);
@@ -87,64 +93,14 @@ class String{
 			    return (aCpy == bCpy);
 		}
 		static std::vector<std::string> lines(const std::string& s){
-			std::vector<std::string> ls;
+			std::vector<std::string> v;
 			if(s.find("\n") != std::string::npos){
 				std::string l;
 				std::stringstream ss(s);
-				while(std::getline(ss, l)) if(!l.empty()) ls.push_back(l);
-			}else ls.push_back(s);
-			return ls;
+				while(std::getline(ss, l)) if(!l.empty()) v.push_back(l);
+			}else v.push_back(s);
+			return v;
 		}
-};
-
-class WString{
-	public:
-		static std::string toString(const std::wstring& ws){
-			return std::string(ws.begin(), ws.end());
-		}
-		static void replace(std::wstring& s, const std::wstring& f, const std::wstring& r){
-			s = s.substr(0, s.find(f)) + r + s.substr(s.find(f) + f.size());
-		}
-		static void replaceAll(std::wstring& s, const std::wstring& f, const std::wstring& r){
-			while(s.find(f) < s.size())
-				replace(s, f, r);
-		}
-		static void leftTrim(std::wstring& s, const wchar_t& delim=' '){
-			while(s.find(delim) == 0)
-				s = s.substr(1);
-		}
-		static void rightTrim(std::wstring& s, const wchar_t& delim=' '){
-			while(s.rfind(delim) == s.size())
-				s = s.substr(0, s.size() - 2);
-		}
-		static void trim(std::wstring& s){
-			while(s.find(' ') == 0 || s.find('	') == 0)
-				s = s.substr(1);
-			while(s.rfind(' ') == 0 || s.rfind('	') == 0)
-				s = s.substr(0, s.size() - 2);
-		}
-		static std::vector<std::wstring> split(const std::wstring& s, const wchar_t& delim='\n'){
-			std::vector<std::wstring> ss;
-			std::wstring l = s;
-			unsigned int pos = 0;
-			while((pos = s.find(delim, pos + 1)) < l.size()){
-				ss.push_back(l.substr(0, pos));
-				l = l.substr(pos + 1);
-			}
-			ss.push_back(l);
-			return ss;
-		}
-		static std::vector<std::wstring> split(const std::wstring& s, const std::wstring& delim){
-			std::vector<std::wstring> ss;
-			std::wstring l = s;			
-			unsigned int pos = 0;
-			while((pos = s.find(delim, pos + 1)) < l.size()){
-				ss.push_back(l.substr(0, pos));
-				l = l.substr(pos + 1);
-			}
-			ss.push_back(l);
-			return ss;
-		}		
 };
 
 }
