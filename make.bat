@@ -13,7 +13,7 @@ GOTO eof
 SET KUL_VER=master
 SET HASH_VER=master
 IF NOT EXIST %PWD%\ext\sparsehash\%HASH_VER% (
-	git clone http://github.com/dekken/google.sparsehash.git --branch %HASH_VER% %PWD%/ext/sparsehash/%HASH_VER%
+	git clone http://github.com/rant/google.sparsehash.git --branch %HASH_VER% %PWD%/ext/sparsehash/%HASH_VER%
 )
 GOTO eof
 

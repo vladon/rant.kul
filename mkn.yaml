@@ -1,9 +1,9 @@
 
 
-name: kul
+name: rant.kul
 version: master
 properties:
-    github: http://www.github.com/Dekken
+    github: http://www.github.com/rant
     spash: ${github}/google.sparsehash
 scm:
     type: git
@@ -40,7 +40,7 @@ profiles:
             remote: ${spash}
   - name: test  
     dependencies:
-      - name: kul
+      - name: rant.kul
         version: master
         local: .
     main: test.cpp

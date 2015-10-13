@@ -55,7 +55,7 @@ libs:
 
 hash:
 	@if [ ! -d "$(CURDIR)/ext/sparsehash/$(HASH_GIT)" ]; then \
-		git clone http://github.com/dekken/google.sparsehash.git --branch $(HASH_GIT) ext/sparsehash/$(HASH_GIT); \
+		git clone http://github.com/rant/google.sparsehash.git --branch $(HASH_GIT) ext/sparsehash/$(HASH_GIT); \
 		cd ./ext/sparsehash/$(HASH_GIT); bash ./configure --prefix=$(CURDIR)/ext/sparsehash/$(HASH_GIT); \
 		$(MAKE) -C $(CURDIR)/ext/sparsehash/$(HASH_GIT); \
 		$(MAKE) -C $(CURDIR)/ext/sparsehash/$(HASH_GIT) install; \
