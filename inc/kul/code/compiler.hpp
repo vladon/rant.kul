@@ -71,7 +71,8 @@ class Compiler{
 			const std::string& out, 
 			const Mode& mode) 			const throw (kul::Exception) = 0;
 		virtual const CompilerProcessCapture buildLibrary(
-			const std::string& proc, 
+			const std::string& linker, 
+			const std::string& linkerEnd,
 			const std::vector<std::string>& objects, 	
 			const kul::File& out, 
 			const Mode& mode) 			const throw (kul::Exception) = 0;

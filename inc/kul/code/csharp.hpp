@@ -76,6 +76,7 @@ class WINCompiler : public Compiler{
 		}
 		const CompilerProcessCapture buildLibrary(
 			const std::string& linker, 
+			const std::string& linkerEnd,
 			const std::vector<std::string>& objects, 
 			const kul::File& out, 
 			const Mode& mode) const throw (kul::Exception){

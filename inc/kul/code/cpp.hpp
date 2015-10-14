@@ -91,17 +91,18 @@ class GCCompiler : public CCompiler{
 			return pc; 
 		}
 		const CompilerProcessCapture buildLibrary(
-			const std::string& proc, 
+			const std::string& linker, 
+			const std::string& linkerEnd,
 			const std::vector<std::string>& objects, 
 			const kul::File& out, 
 			const Mode& mode) const throw (kul::Exception) {
 
 			std::string lib = out.dir().join(sharedLib(out.name()));
 			if(mode == Mode::STAT) lib = out.dir().join(staticLib(out.name()));
-			std::string cmd = proc;
+			std::string cmd = linker;
 			std::vector<std::string> bits;
-			if(proc.find(" ") != std::string::npos){
-				bits = kul::String::split(proc, ' ');
+			if(linker.find(" ") != std::string::npos){
+				bits = kul::String::split(linker, ' ');
 				cmd = bits[0];
 			}
 			kul::Process p(cmd);
@@ -110,6 +111,7 @@ class GCCompiler : public CCompiler{
 			if(mode == Mode::SHAR)		p.arg("-shared");
 			p.arg("-o").arg(lib);
 			for(const std::string& o : objects)	p.arg(o);
+			for(const std::string& s: kul::String::split(linkerEnd, ' ')) p.arg(s);
 			try{
 				p.start();
 			}catch(const kul::proc::Exception& e){
@@ -279,24 +281,26 @@ class WINCompiler : public CCompiler{
 			return pc; 
 		}
 		const CompilerProcessCapture buildLibrary(
-			const std::string& proc, 
+			const std::string& linker, 
+			const std::string& linkerEnd,
 			const std::vector<std::string>& objects, 
 			const kul::File& out, 
 			const Mode& mode) const throw (kul::Exception) {
 
 			std::string lib = out.dir().join(sharedLib(out.name()));
 			if(mode == Mode::STAT) lib = out.dir().join(staticLib(out.name()));
-			std::string cmd = proc;
+			std::string cmd = linker;
 			std::vector<std::string> bits;
-			if(proc.find(" ") != std::string::npos){
-				bits = kul::String::split(proc, ' ');
+			if(linker.find(" ") != std::string::npos){
+				bits = kul::String::split(linker, ' ');
 				cmd = bits[0];
 			}
 			kul::Process p(cmd);
 			CompilerProcessCapture pc(p);
 			for(unsigned int i = 1; i < bits.size(); i++) p.arg(bits[i]);
 			p.arg("/OUT:\"" + lib + "\"").arg("/nologo").arg("/LTCG");
-			for(const std::string& o : objects)	p.arg(o);	
+			for(const std::string& o : objects)	p.arg(o);
+			for(const std::string& s: kul::String::split(linkerEnd, ' ')) p.arg(s);
 			try{
 				p.start();
 			}catch(const kul::proc::Exception& e){
