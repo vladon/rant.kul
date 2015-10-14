@@ -47,7 +47,7 @@ class ThreadPool{
 		kul::Ref<ThreadPool> re;
 		kul::Thread th;
 		std::shared_ptr<kul::threading::ThreadObject> to;
-		std::queue<std::shared_ptr<kul::Thread> > ts;
+		std::vector<std::shared_ptr<kul::Thread> > ts;
 		std::vector<std::exception_ptr> ePs;
 		void setStarted()	{ s = true; }
 		bool started()		{ return s; }
@@ -57,7 +57,7 @@ class ThreadPool{
 			for(unsigned int i = 0 ; i < m; i++){
 				std::shared_ptr<kul::Thread> at = std::make_shared<kul::Thread>(to);
 				at->run();
-				ts.push(at);
+				ts.push_back(at);
 				this_thread::nSleep(__KUL_THREAD_SPAWN_WAIT__);
 			}
 		}
@@ -74,22 +74,25 @@ class ThreadPool{
 		virtual void join() throw (std::exception){
 			th.join();
 			while(ts.size()){
-				const std::shared_ptr<kul::Thread>& at = ts.front();
-				if(at->finished()){
-					if(at->exception() != std::exception_ptr()){
-						if(!d) std::rethrow_exception(at->exception());
-						ePs.push_back(at->exception());
+				std::vector<const std::shared_ptr<kul::Thread>*> del;
+				for(const auto& t : ts){
+					if(t->finished()){
+						if(t->exception() != std::exception_ptr()){
+							if(!d) std::rethrow_exception(t->exception());
+							ePs.push_back(t->exception());
+						}
+						del.push_back(&t);
 					}
-					ts.pop();
 				}
-				this_thread::sleep(1);
+				this_thread::sleep(11);
+				for(auto* p : del) ts.erase(std::remove(ts.begin(), ts.end(), *p));
 			}
 		}
 		void detach(){
 			d = true;
 			th.detach();
 		}
-		void interrupt() throw(kul::threading::InterruptionException)	{ }
+		void interrupt() throw(kul::threading::InterruptionException){ }
 		const std::vector<std::exception_ptr> exceptionPointers() {
 			return ePs;
 		}
@@ -110,20 +113,21 @@ class PredicatedThreadPool : public ThreadPool{
 					c++;
 					std::shared_ptr<kul::Thread> at = std::make_shared<kul::Thread>(to);
 					at->run();
-					ts.push(at);
+					ts.push_back(at);
 					this_thread::nSleep(__KUL_THREAD_SPAWN_WAIT__);
 				}
-				const std::shared_ptr<kul::Thread>* at = &ts.front();
-				while(at && (*at)->finished()){
-					if((*at)->exception() != std::exception_ptr()){
-						if(!d) std::rethrow_exception((*at)->exception());
-						ePs.push_back((*at)->exception());
+				std::vector<const std::shared_ptr<kul::Thread>*> del;
+				for(const auto& t : ts){
+					if(t->finished()){
+						if(t->exception() != std::exception_ptr()){
+							if(!d) std::rethrow_exception(t->exception());
+							ePs.push_back(t->exception());
+						}
+						del.push_back(&t);
 					}
-					ts.pop();
-					at = 0;
-					if(ts.size()) at = &ts.front();
-					this_thread::sleep(1);
 				}
+				this_thread::sleep(11);
+				for(auto* p : del) ts.erase(std::remove(ts.begin(), ts.end(), *p));
 			}
 		}
 	public:

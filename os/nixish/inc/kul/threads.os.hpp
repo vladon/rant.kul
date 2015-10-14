@@ -27,6 +27,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "kul/type.hpp"
 #include "kul/threads.base.hpp"
 
+#include <signal.h>
 #include <pthread.h>
 
 namespace kul{ 
@@ -75,15 +76,20 @@ class Thread : public threading::AThread{
 		bool detach(){
 			return pthread_detach(thr);
 		}
-		void interrupt() throw(kul::threading::InterruptionException){ 
+		void interrupt() throw(kul::threading::InterruptionException){
 			pthread_cancel(thr);
 			f = 1;
+		}
+		void join(){
+			if(!s) run();
+			pthread_join(thr, 0);
+			s = 0;
 		}
 		void run() throw(kul::threading::Exception){
 			if(s) KEXCEPTION("Thread running");
 			f = 0;
-			pthread_create(&thr, NULL, Thread::threadFunction, this);
 			s = 1;
+			pthread_create(&thr, NULL, Thread::threadFunction, this);
 		}
 };
 

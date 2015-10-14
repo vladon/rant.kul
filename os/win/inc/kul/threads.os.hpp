@@ -69,18 +69,20 @@ class Thread : public threading::AThread{
 		template <class T> Thread(const Ref<T>& t) : AThread(t){}
 		virtual ~Thread(){}
 		void join(){
-			while(!finished()) this_thread::sleep(1);
+			if(!s) run();
+			WaitForSingleObject(h, INFINITE);
+			s = 0;
 		}
 		bool detach(){ return CloseHandle(h); }
 		void interrupt() throw(kul::threading::InterruptionException){
+			f = 1;
 			TerminateThread(h, 1);
-			f = 0;
 		}
 		void run() throw(kul::threading::Exception){
 			if(s) KEXCEPTION("Thread running");
 			s = 1;
-			h = CreateThread(0, 5120000, threading::threadFunction, this, 0, 0);
 			f = 0;
+			h = CreateThread(0, 5120000, threading::threadFunction, this, 0, 0);
 		}
 };
 

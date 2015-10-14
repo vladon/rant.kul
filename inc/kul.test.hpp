@@ -160,6 +160,8 @@ class Test{
 			th.run();
 			th.join();
 			tto1.print();
+			th.join();
+			tto1.print();
 
 			TestThreadObject tto2;
 			kul::Ref<const TestThreadObject> cref(tto2);

@@ -89,7 +89,6 @@ class AThread{
 		AThread(const std::shared_ptr<ThreadObject>& t) : to(t){}
 		template <class T> AThread(const T& t) : to(std::make_shared<ThreadCopy<T>>(t)){}
 		template <class T> AThread(const Ref<T>& t) : to(std::make_shared<ThreadRef<T>>(t)){}
-		AThread() : f(0), s(0){}
 		void act(){
 			try{
 				to->act(); 
@@ -97,15 +96,11 @@ class AThread{
 				ep = std::current_exception();
 			}
 			f = 1;
-			s = 0;
 		}
 		virtual void run() throw(kul::threading::Exception) = 0;
 	public:
 		virtual ~AThread(){}
-		void join(){
-			if(!s) run();
-			while(!f);
-		}
+		virtual void join() = 0;
 		bool started() { return s; }
 		bool finished(){ return f; }
 		const std::exception_ptr& exception(){ return ep;}
