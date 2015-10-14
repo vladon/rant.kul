@@ -25,6 +25,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define _KUL_THREADS_BASE_HPP_
 
 #include <queue>
+#include <atomic>
 #include <chrono>
 #include <memory>
 #include <thread>
@@ -81,13 +82,13 @@ class ThreadRef : public threading::ThreadObject{
 namespace threading{
 class AThread{
 	protected:
-		bool f, s;
+		std::atomic<bool> f{}, s{};
 		std::exception_ptr ep;
 		std::shared_ptr<threading::ThreadObject> to;
 
-		AThread(const std::shared_ptr<ThreadObject>& t) : f(0), s(0), to(t){}
-		template <class T> AThread(const T& t) : f(0), s(0), to(std::make_shared<ThreadCopy<T>>(t)){}
-		template <class T> AThread(const Ref<T>& t) : f(0), s(0), to(std::make_shared<ThreadRef<T>>(t)){}
+		AThread(const std::shared_ptr<ThreadObject>& t) : to(t){}
+		template <class T> AThread(const T& t) : to(std::make_shared<ThreadCopy<T>>(t)){}
+		template <class T> AThread(const Ref<T>& t) : to(std::make_shared<ThreadRef<T>>(t)){}
 		AThread() : f(0), s(0){}
 		void act(){
 			try{
@@ -98,10 +99,12 @@ class AThread{
 			f = 1;
 			s = 0;
 		}
+		virtual void run() throw(kul::threading::Exception) = 0;
 	public:
 		virtual ~AThread(){}
 		void join(){
-			while(!finished()){}
+			if(!s) run();
+			while(!f);
 		}
 		bool started() { return s; }
 		bool finished(){ return f; }
