@@ -81,6 +81,7 @@ const std::string kul::Dir::SEP(){
 }
 
 bool kul::Dir::is() const{
+	if(path().empty()) return false;
 	DIR * d = opendir(path().c_str());
 	if(d) closedir(d);
 	return d;
@@ -142,6 +143,7 @@ const std::vector<kul::File> kul::Dir::files(bool recursive) const throw(fs::Exc
 }
 
 bool kul::File::is() const{
+	if(name().empty()) return false;
 	struct stat buffer;
 	return (stat (d.join(n).c_str(), &buffer) == 0);
 }

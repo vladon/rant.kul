@@ -92,6 +92,7 @@ const std::string kul::Dir::SEP(){
 	return std::string("\\");
 }
 bool kul::Dir::is() const{
+	if(path().empty()) return false;
 	DWORD ftyp = GetFileAttributesA(path().c_str());
 	return (ftyp != INVALID_FILE_ATTRIBUTES && ftyp & FILE_ATTRIBUTE_DIRECTORY);
 }
@@ -168,7 +169,7 @@ const std::vector<kul::File> kul::Dir::files(bool recursive) const throw(fs::Exc
 }
 
 bool kul::File::is() const{
-	return (bool) std::ifstream(d.join(n).c_str());
+	return !name().empty() && (bool) std::ifstream(d.join(n).c_str());
 }
 bool kul::File::rm() const{
 	if(is()){

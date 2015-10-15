@@ -114,6 +114,7 @@ class Dir{
 			if(is() && d.is()) return real().compare(d.real()) == 0;
 			return path().compare(d.path()) == 0;
 		}
+		explicit operator bool() const { return is(); }
 };
 
 inline std::ostream& operator<<(std::ostream &s, const Dir& d){
@@ -172,6 +173,7 @@ class File{
 			if(is() && f.is()) return real().compare(f.real()) == 0;
 			return full().compare(f.full()) == 0;
 		}
+		explicit operator bool() const { return is(); }
 };
 
 inline std::ostream& operator<<(std::ostream &s, const File& d){
