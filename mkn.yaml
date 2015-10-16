@@ -38,9 +38,7 @@ profiles:
         scm:
             type: git
             remote: ${spash}
+
   - name: test  
-    dependencies:
-      - name: rant.kul
-        version: master
-        local: .
+    self: ${OS}
     main: test.cpp
