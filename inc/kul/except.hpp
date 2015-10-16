@@ -31,8 +31,9 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace kul{
 
+
 class Exception : public std::runtime_error{
-	private:
+	protected:
 		const char* f;
 		const int l;
 		const std::exception_ptr ep;
@@ -58,8 +59,20 @@ class Exception : public std::runtime_error{
 		}
 };
 
+class Exit : public Exception{
+	private:		
+		const int e;
+	public:
+		Exit(const char*f, const int& l, const std::string& s, const int& e) : Exception(f, l, s), e(e){}
+		Exit(const Exit& e) : Exception(*this), e(e.e){}		
+		const int& code() const { return e; }
+};
+
 #define KEXCEPT(c, m) throw c(__FILE__, __LINE__, m)
 #define KEXCEPTION(m) throw Exception(__FILE__, __LINE__, m)
+
+#define KEXIT(e, m) throw kul::Exit(__FILE__, __LINE__, m, e)
+
 
 }
 #endif /* _KUL_EXCEPT_HPP_ */
