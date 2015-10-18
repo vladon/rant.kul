@@ -170,9 +170,8 @@ const kul::Dir kul::os::userDir(){
 const kul::Dir kul::os::userAppDir(const std::string& app){
 	return Dir(Dir::JOIN(env::GET("HOME"), "." + app));
 }
-const std::string kul::os::newLine(){
+const std::string kul::os::EOL(){
 	return "\n";
 }
-
 
 

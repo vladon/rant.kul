@@ -125,7 +125,7 @@ void kul::Process::run() throw (kul::Exception){
 			KEXCEPT(kul::proc::Exception, "GetExitCodeProcess failure");
 		if(ec != 0)
 			kul::LogMan::INSTANCE().err()
-			? KEXCEPT(kul::proc::ExitException, "Process exit code: " + std::to_string(ec) + kul::os::newLine() + toString())
+			? KEXCEPT(kul::proc::ExitException, "Process exit code: " + std::to_string(ec) + kul::os::EOL() + toString())
 			: KEXCEPT(kul::proc::ExitException, "Process exit code: " + std::to_string(ec));
 		finish();
 		setFinished();

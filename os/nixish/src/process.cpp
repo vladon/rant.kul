@@ -41,7 +41,7 @@ void kul::Process::waitExit() throw (kul::proc::ExitException){
 	cec = WEXITSTATUS(cStat);
 	if(cec != 0)
 		kul::LogMan::INSTANCE().err()
-		? KEXCEPT(kul::proc::ExitException, "Process exit code: " + std::to_string(cec) + kul::os::newLine() + toString())
+		? KEXCEPT(kul::proc::ExitException, "Process exit code: " + std::to_string(cec) + kul::os::EOL() + toString())
 		: KEXCEPT(kul::proc::ExitException, "Process exit code: " + std::to_string(cec));
 	finish();
 	setFinished();

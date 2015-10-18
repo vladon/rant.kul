@@ -78,7 +78,7 @@ class EnvVar{
 		EnvVarMode		 	mode() 		const { return m; }
 		const std::string 	toString() 	const {
 			std::string var(value());
-			kul::String::replaceAll(var, kul::os::newLine(), "");
+			kul::String::replaceAll(var, kul::os::EOL(), "");
 			kul::String::trim(var);
 			const char* c = env::GET(name());
 			std::string ev(c ? c : "");

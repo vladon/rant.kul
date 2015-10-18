@@ -75,7 +75,7 @@ class Logger{
 			kul::String::replace(str, "%F", f);
 			kul::String::replace(str, "%L", std::to_string(l));
 			kul::String::replace(str, "%S", s);
-			str += kul::os::newLine();
+			str += kul::os::EOL();
 			out(str, m);
 		}
 		const std::string modeTxt(const log::mode& m) const{
@@ -123,10 +123,10 @@ class LogMan{
 			if(this->m >= m) logger.log(f, l, s, m);
 		}
 		void out(const log::mode& m, const std::string& s){
-			if(this->m >= m) logger.out(s + kul::os::newLine(), m);
+			if(this->m >= m) logger.out(s + kul::os::EOL(), m);
 		}
 		void err(const log::mode& m, const std::string& s){
-			logger.out(s + kul::os::newLine(), m);
+			logger.out(s + kul::os::EOL(), m);
 		}
 };
 

@@ -102,7 +102,7 @@ class BinaryReader : public AReader{
 class AWriter{
 	protected:
 		void write(std::ofstream& f, const char*c, bool nl){ 
-			if(nl) 	f << c << kul::os::newLine();
+			if(nl) 	f << c << kul::os::EOL();
 			else	f << c;
 		}
 };

@@ -95,7 +95,7 @@ bool kul::scm::Git::hasChanges(const std::string& d) const{
 	}catch(const kul::proc::ExitException& e){
 		KEXCEPT(Exception, "SCM ERROR " + std::string(e.what()));
 	}
-	return pc.outs().size() > 0;
+	return kul::String::lines(pc.outs()).size() > 1;
 }
 void kul::scm::Git::setOrigin(const std::string& d, const std::string& r) const{
 	kul::Process p("git", d);

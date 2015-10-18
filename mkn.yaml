@@ -4,24 +4,19 @@ name: rant.kul
 version: master
 properties:
     github: http://www.github.com/rant
-    spash: ${github}/google.sparsehash
-scm:
-    type: git
-    remote: ${github}/kul.git
+scm: ${github}/kul.git
 profiles:
   - name: c
     include: ./inc ./os/${OS}/inc
     source:  ./src ./os/${OS}/src
+    dependencies:
+      - name: google.sparsehash
+        version: master
+        scm: ${github}/google.sparsehash
   - parent: c
     name: nixc    
     include: ./os/nixish/inc
     source:  ./os/nixish/src
-    dependencies:
-      - name: google.sparsehash
-        version: master
-        scm:
-            type: git
-            remote: ${spash}
   - parent: nixc
     name: nix  
     os: nix
@@ -32,12 +27,6 @@ profiles:
     name: win  
     os: win
     include: ./ext/msinttypes-r26
-    dependencies:
-      - name: google.sparsehash
-        version: master
-        scm:
-            type: git
-            remote: ${spash}
 
   - name: test  
     self: ${OS}

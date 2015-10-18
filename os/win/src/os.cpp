@@ -187,7 +187,7 @@ const kul::Dir kul::os::userDir(){
 const kul::Dir kul::os::userAppDir(const std::string& app){
 	return kul::Dir(userDir().join(app));
 }
-const std::string kul::os::newLine(){
+const std::string kul::os::EOL(){
 	#if (_MSC_VER >= 1800 )
 	return "\n";
 	#else

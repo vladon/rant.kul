@@ -1,6 +1,6 @@
 /**
 
-./inc/kul/scm.hpp
+./inc/kul/SCM.hpp
 
 Created on: 24 Jan 2013
 
@@ -36,16 +36,17 @@ class Exception : public kul::Exception{
 		Exception(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
 
-class ScmNotFoundException : public kul::Exception{
+class NotFoundException : public kul::Exception{
 	public:
-		ScmNotFoundException(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
+		NotFoundException(const char*f, const int l, const std::string& s) : kul::Exception(f, l, s){}
 };
+}
 
-class Scm{
+class SCM{
 	protected:
-		Scm(){}
+		SCM(){}
 	public:
-		virtual ~Scm(){}
+		virtual ~SCM(){}
 		const std::string type() { return typeid(*this).name(); }
 		virtual void co(const std::string& l, const std::string& r, const std::string& v) const throw(Exception) = 0;
 		virtual void up(const std::string& l, const std::string& r, const std::string& v) const throw(Exception) = 0;
@@ -60,7 +61,8 @@ class Scm{
 		virtual void diff(const std::string& d) const = 0;
 };
 
-class Git : public Scm{
+namespace scm{
+class Git : public SCM{
 	public:
 		void co(const std::string& l, const std::string& r, const std::string& v) const throw(Exception);
 		void up(const std::string& l, const std::string& r, const std::string& v) const throw(Exception);
@@ -76,7 +78,7 @@ class Git : public Scm{
 };
 
 // SVN URL CHANGE: svn switch –relocate  <from URL> <to URL>
-class Svn : public Scm{
+class Svn : public SCM{
 	public:
 		void co(const std::string& l, const std::string& r, const std::string& v) const throw(Exception);
 		void up(const std::string& l, const std::string& r, const std::string& v) const throw(Exception);
@@ -96,21 +98,20 @@ class Manager{
 		Manager(){
 			git = std::make_unique<Git>();
 			svn = std::make_unique<Svn>();
-			scms.insert(std::pair<std::string, Scm*>("git", git.get()));
-			scms.insert(std::pair<std::string, Scm*>("svn", svn.get()));
+			SCMs.insert(std::pair<std::string, SCM*>("git", git.get()));
+			SCMs.insert(std::pair<std::string, SCM*>("svn", svn.get()));
 		}
-		hash::map::S2T<Scm*> scms;
-		std::unique_ptr<Scm> git;
-		std::unique_ptr<Scm> svn;
+		hash::map::S2T<SCM*> SCMs;
+		std::unique_ptr<SCM> git;
+		std::unique_ptr<SCM> svn;
 	public:
 		static Manager& INSTANCE(){ 
 			static Manager instance; 
 			return instance;
 		}
-		const Scm& get(const std::string& s) throw(ScmNotFoundException){
-			if(scms.count(s) > 0)
-				return *(*scms.find(s)).second;
-			KEXCEPT(ScmNotFoundException, "Compiler for " + s + " is not implemented");
+		const SCM& get(const std::string& s) throw(NotFoundException){
+			if(SCMs.count(s) > 0) return *(*SCMs.find(s)).second;
+			KEXCEPT(NotFoundException, "Source Control Management for " + s + " is not implemented");
 		}
 };
 

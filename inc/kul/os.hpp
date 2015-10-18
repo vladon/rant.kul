@@ -199,7 +199,7 @@ int execReturn(const std::string& cmd);
 int execNoPrintReturn(const std::string& cmd);
 int exec(const std::string& cmd, char*const args[]);
 
-const std::string newLine();
+const std::string EOL();
 
 const kul::Dir userDir();
 const kul::Dir userAppDir(const std::string& app);
